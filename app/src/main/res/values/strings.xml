@@ -1,0 +1,122 @@
+<resources>
+    <string name="app_name">CaronaApp</string>
+
+    <!--  INPUT LABEL  -->
+    <string name="label_nome">Nome</string>
+    <string name="label_email">Email</string>
+    <string name="label_cpf">CPF</string>
+    <string name="label_data_nascimento">Data de Nascimento</string>
+    <string name="label_genero">Gênero</string>
+    <string name="label_senha">Senha</string>
+    <string name="label_confirmacao_senha">Confirmação de senha</string>
+    <string name="label_cep">CEP</string>
+    <string name="label_cidade_uf">Cidade/UF</string>
+    <string name="label_bairro">Bairro</string>
+    <string name="label_logradouro">Logradouro</string>
+    <string name="label_ponto_de_partida">Ponto de partida</string>
+    <string name="label_ponto_de_chegada">Ponto de chegada</string>
+    <string name="label_ordenar_por">Ordenar por</string>
+    <string name="label_preco_maximo">Preço máximo</string>
+    <string name="label_marca">Marca</string>
+    <string name="label_modelo">Modelo</string>
+    <string name="label_cor">Cor</string>
+    <string name="label_dia">Dia</string>
+
+    <!--  COLORS  -->
+    <string name="cor_preto">Preto</string>
+    <string name="cor_branco">Branco</string>
+    <string name="cor_azul">Azul</string>
+    <string name="cor_verde">Verde</string>
+    <string name="cor_vermelho">Vermelho</string>
+    <string name="cor_roxo">Roxo</string>
+    <string name="cor_marrom">Marrom</string>
+    <string name="cor_laranja">Laranja</string>
+    <string name="cor_cinza">Cinza</string>
+    <string name="cor_amarelo">Amarelo</string>
+    <string name="cor_prata">Prata</string>
+    <string name="cor_vinho">Vinho</string>
+
+    <!--  BUTTON LABEL  -->
+    <string name="label_button_entrar">Entrar</string>
+    <string name="label_button_enviar_codigo">Enviar código</string>
+    <string name="label_button_verificar">Verificar</string>
+    <string name="label_button_proximo">Próximo</string>
+    <string name="label_button_finalizar">Finalizar</string>
+    <string name="label_button_excluir">Excluir</string>
+    <string name="label_button_editar">Editar</string>
+    <string name="label_button_atualizar">Atualizar</string>
+    <string name="label_button_avaliar">Avaliar</string>
+    <string name="label_button_solicitar_carona">Solicitar carona</string>
+    <string name="label_button_oferecer_carona">Oferecer carona</string>
+    <string name="label_button_conversar">Conversar</string>
+
+    <!--  AVALIAÇÕES  -->
+    <string name="avaliacao_geral">Avaliação geral</string>
+    <string name="dirigibilidade">Dirigibilidade</string>
+    <string name="segurança">Segurança</string>
+    <string name="comunicação">Comunicação</string>
+    <string name="pontualidade">Pontualidade</string>
+    <string name="comportamento">Comportamento</string>
+    <string name="comentario">Comentário</string>
+    <string name="comentarios">Comentários</string>
+
+    <!--  TEXTS  -->
+    <string name="cadastro">Cadastro</string>
+    <string name="esqueceu_a_senha">Esqueceu a senha?</string>
+    <string name="nao_possui_conta">Não possui conta?</string>
+    <string name="cadastre_se">Cadastre-se</string>
+    <string name="orientacao_esqueceu_a_senha">
+        Não se preocupe. Enviaremos um código ao seu email cadastrado para alterar a senha.
+    </string>
+    <string name="verifique_sua_caixa_de_entrada">Verifique sua caixa de entrada</string>
+    <string name="digite_codigo_enviado_email">Digite o código enviado para %1$s</string>
+    <string name="nao_recebeu_codigo">Não recebeu o código?</string>
+    <string name="reenviar">Reenviar</string>
+    <string name="a_senha_deve_conter">A senha deve conter:</string>
+    <string name="letra_maiuscula">Letra maíuscula</string>
+    <string name="letra_minuscula">Letra minúscula</string>
+    <string name="numero">Número</string>
+    <string name="caracter_especial">Caracter especial</string>
+    <string name="redefinir_senha">Redefinir senha</string>
+    <string name="procurar">Procurar</string>
+    <string name="chat">Chat</string>
+    <string name="pessoais">Pessoais</string>
+    <string name="perfil">Perfil</string>
+    <string name="notificações">Notificações</string>
+    <string name="avaliações">Avaliações</string>
+    <string name="fidelizados">Fidelizados</string>
+    <string name="carros">Carros</string>
+    <string name="novo_carro">Novo Carro</string>
+    <string name="feedback">Feedback</string>
+    <string name="dados_pessoais">Dados Pessoais</string>
+    <string name="endereco">Endereço</string>
+    <string name="foto">Foto</string>
+    <string name="senha">Senha</string>
+    <string name="viagens">Viagens</string>
+    <string name="viagem">Viagem</string>
+    <string name="alterar_foto">Alterar foto</string>
+    <string name="escolha_seu_perfil">Escolha seu perfil</string>
+    <string name="escolha_sua_foto_de_perfil">Escolha sua foto de perfil</string>
+    <string name="defina_sua_senha">Defina sua senha</string>
+    <string name="filtrar">Filtrar</string>
+    <string name="cifrao_rs">R$</string>
+    <string name="apenas_mulheres">Apenas mulheres</string>
+    <string name="carro">Carro</string>
+    <string name="passageiros">Passageiros</string>
+    <string name="ver_no_mapa">Ver no Mapa</string>
+    <string name="ver">Ver</string>
+    <string name="texto_distancia_ponto_de_partida">
+        %1$.1f km de distância do seu ponto de partida
+    </string>
+    <string name="texto_distancia_ponto_de_chegada">
+        %1$.1f km de distância do seu ponto de chegada
+    </string>
+    <string name="total_viagens_realizadas">%1$d viagens realizadas</string>
+    <string name="procurar_usuario">Procurar usuário</string>
+    <string name="zero">0</string>
+    <string name="cinco">5</string>
+    <string name="trajeto">Trajeto</string>
+    <string name="horario">Horário</string>
+    <string name="detalhes">Detalhes</string>
+
+</resources>
