@@ -118,5 +118,7 @@
     <string name="trajeto">Trajeto</string>
     <string name="horario">Horário</string>
     <string name="detalhes">Detalhes</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_esqueci_senha_email">EsqueciSenhaEmail</string>
 
 </resources>
