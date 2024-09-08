@@ -1,5 +1,10 @@
 package com.example.caronaapp
 
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +32,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,8 +43,18 @@ import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
+class Cadastro : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+        }
+    }
+}
+
 @Composable
 fun CadastroScreen() {
+    val contexto = LocalContext.current
     Column(
         modifier = Modifier
             .background(Color(0xFFF1F1F1))
@@ -107,7 +124,11 @@ fun CadastroScreen() {
                     onValueChange = {},
                     label = { Text(text = "Data de Nascimento")}
                 )
-                ButtonAction(handleClick = {})
+                ButtonAction(handleClick = {
+                    val login = Intent(contexto, Login::class.java)
+
+                    contexto.startActivity(login)
+                })
             }
         }
 
