@@ -1,9 +1,5 @@
 package com.example.caronaapp.cadastro
 
-import android.content.Intent
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
@@ -26,20 +21,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.Login
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 
+//class CadastroSenha : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            CadastroSenhaScreen()
+//        }
+//    }
+//}
+
 @Composable
-fun CadastroSenha() {
+fun CadastroSenha(onClick: () -> Unit) {
     val contexto = LocalContext.current
     var senha by remember { mutableStateOf("") }
     var confirmacaoSenha by remember { mutableStateOf("") }
@@ -126,9 +127,6 @@ fun CadastroSenha() {
             )
         }
 
-        ButtonAction(handleClick = {
-            val login = Intent(contexto, Login::class.java)
-            contexto.startActivity(login)
-        })
+        ButtonAction(handleClick = { onClick() })
     }
 }

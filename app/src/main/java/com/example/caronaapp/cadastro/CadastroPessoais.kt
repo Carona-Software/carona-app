@@ -1,6 +1,5 @@
 package com.example.caronaapp.cadastro
 
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,14 +29,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.Login
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 
+//class CadastroPessoais : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            CadastroPessoaisScreen()
+//        }
+//    }
+//}
+
 @Composable
-fun CadastroPessoais() {
+fun CadastroPessoais(onClick: () -> Unit) {
     val contexto = LocalContext.current
     var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -133,10 +141,7 @@ fun CadastroPessoais() {
             }
         }
 
-        ButtonAction(handleClick = {
-            val login = Intent(contexto, Login::class.java)
-            contexto.startActivity(login)
-        })
+        ButtonAction(handleClick = { onClick() })
     }
 }
 

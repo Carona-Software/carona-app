@@ -1,6 +1,5 @@
 package com.example.caronaapp.cadastro
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,15 +26,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.Login
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulPerfilSelecionado
 import com.example.caronaapp.ui.theme.CinzaDA
 
+//class CadastroPerfil : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            CadastroPessoaisScreen()
+//        }
+//    }
+//}
+
 @Composable
-fun CadastroPerfil() {
+fun CadastroPerfil(onClick: () -> Unit) {
     val contexto = LocalContext.current
     var perfil by remember { mutableStateOf("") }
 
@@ -120,10 +128,7 @@ fun CadastroPerfil() {
             )
         }
 
-        ButtonAction(handleClick = {
-            val login = Intent(contexto, Login::class.java)
-            contexto.startActivity(login)
-        })
+        ButtonAction(handleClick = { onClick() })
     }
 }
         

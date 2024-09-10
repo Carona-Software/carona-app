@@ -33,6 +33,31 @@
             android:label="Login"
             android:theme="@style/Theme.CaronaApp" />
         <activity
+            android:name=".cadastro.CadastroPessoais"
+            android:exported="false"
+            android:label="CadastroPessoais"
+            android:theme="@style/Theme.CaronaApp" />
+        <activity
+            android:name=".cadastro.CadastroPerfil"
+            android:exported="false"
+            android:label="CadastroPerfil"
+            android:theme="@style/Theme.CaronaApp" />
+        <activity
+            android:name=".cadastro.CadastroEndereco"
+            android:exported="false"
+            android:label="CadastroEndereco"
+            android:theme="@style/Theme.CaronaApp" />
+        <activity
+            android:name=".cadastro.CadastroFoto"
+            android:exported="false"
+            android:label="CadastroFoto"
+            android:theme="@style/Theme.CaronaApp" />
+        <activity
+            android:name=".cadastro.CadastroSenha"
+            android:exported="false"
+            android:label="CadastroSenha"
+            android:theme="@style/Theme.CaronaApp" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
