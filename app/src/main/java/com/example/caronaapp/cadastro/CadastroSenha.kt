@@ -1,6 +1,5 @@
 package com.example.caronaapp.cadastro
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,14 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.Login
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 
 @Composable
-fun CadastroSenha() {
+fun CadastroSenha(onClick: () -> Unit) {
     val contexto = LocalContext.current
     var senha by remember { mutableStateOf("") }
     var confirmacaoSenha by remember { mutableStateOf("") }
@@ -119,9 +117,9 @@ fun CadastroSenha() {
             )
         }
 
-        ButtonAction(label = stringResource(id = R.string.label_button_finalizar), handleClick = {
-            val login = Intent(contexto, Login::class.java)
-            contexto.startActivity(login)
-        })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_finalizar),
+            handleClick = { onClick() }
+        )
     }
 }

@@ -123,6 +123,7 @@
     <string name="masculino">Masculino</string>
     <string name="feminino">Feminino</string>
     <string name="outros">Outros</string>
-    <string name="title_activity_procurar_viagem">ProcurarViagem</string>
+    <string name="title_activity_redefinir_senha">RedefinirSenha</string>
+    <string name="title_activity_esqueci_senha_codigo">EsqueciSenhaCodigo</string>
 
 </resources>

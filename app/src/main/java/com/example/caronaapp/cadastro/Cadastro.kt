@@ -1,10 +1,12 @@
 package com.example.caronaapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,8 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.cadastro.CadastroEndereco
 import com.example.caronaapp.cadastro.CadastroFoto
-import com.example.caronaapp.cadastro.CadastroPerfil
 import com.example.caronaapp.cadastro.CadastroPessoais
+import com.example.caronaapp.cadastro.CadastroPerfil
 import com.example.caronaapp.cadastro.CadastroSenha
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
@@ -63,75 +65,93 @@ fun CadastroScreen() {
     val contexto = LocalContext.current
     var etapaAtual by remember { mutableStateOf(1) }
 
-    val telasEtapas = listOf(CadastroPessoais(), CadastroPerfil(), CadastroEndereco(), CadastroFoto(), CadastroSenha())
+//    val telasEtapas = listOf(
+//        CadastroPessoaisScreen(),
+//        CadastroPerfilScreen(),
+//        CadastroEnderecoScreen(),
+//        CadastroFotoScreen(),
+//        CadastroSenhaScreen()
+//    )
 
-    CaronaAppTheme {
-        Column(
+    Column(
+        modifier = Modifier
+            .background(Color(0xFFF1F1F1))
+            .fillMaxSize()
+            .padding(
+                top = 48.dp
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(id = R.string.cadastro),
+            color = Azul,
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
             modifier = Modifier
-                .background(Color(0xFFF1F1F1))
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(
-                    top = 48.dp
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                    start = 8.dp,
+                    end = 8.dp,
+                    top = 16.dp,
+                    bottom = 8.dp
+                )
+                .height(30.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(id = R.string.cadastro),
-                color = Azul,
-                style = MaterialTheme.typography.titleLarge,
+            CadastroStep(
+                label = stringResource(id = R.string.pessoais),
+                etapa = 1,
+                etapaAtual = etapaAtual,
+                onClick = { etapaAtual = 1 }
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = 16.dp,
-                        bottom = 8.dp
-                    )
-                    .height(30.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                CadastroStep(
-                    label = stringResource(id = R.string.pessoais),
-                    etapa = 1,
-                    etapaAtual = etapaAtual
-                )
-                CadastroStep(
-                    label = stringResource(id = R.string.perfil),
-                    etapa = 2,
-                    etapaAtual = etapaAtual
-                )
-                CadastroStep(
-                    label = stringResource(id = R.string.endereco),
-                    etapa = 3,
-                    etapaAtual = etapaAtual
-                )
-                CadastroStep(
-                    label = stringResource(id = R.string.foto),
-                    etapa = 4,
-                    etapaAtual = etapaAtual
-                )
-                CadastroStep(
-                    label = stringResource(id = R.string.senha),
-                    etapa = 5,
-                    etapaAtual = etapaAtual
-                )
-            }
+            CadastroStep(
+                label = stringResource(id = R.string.perfil),
+                etapa = 2,
+                etapaAtual = etapaAtual,
+                onClick = { etapaAtual = 2 }
+            )
+            CadastroStep(
+                label = stringResource(id = R.string.endereco),
+                etapa = 3,
+                etapaAtual = etapaAtual,
+                onClick = { etapaAtual = 3 }
+            )
+            CadastroStep(
+                label = stringResource(id = R.string.foto),
+                etapa = 4,
+                etapaAtual = etapaAtual,
+                onClick = { etapaAtual = 4 }
+            )
+            CadastroStep(
+                label = stringResource(id = R.string.senha),
+                etapa = 5,
+                etapaAtual = etapaAtual,
+                onClick = { etapaAtual = 5 }
+            )
+        }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            CustomCard(
-                shadowElevation = 16f, // Intensidade da sombra
-                shadowOffsetY = 18f, // Desloca a sombra mais para cima
-            ) {
-                CadastroPessoais()
+        CustomCard(
+            shadowElevation = 24f, // Intensidade da sombra
+            shadowOffsetY = 16f, // Desloca a sombra mais para cima
+        ) {
+            when (etapaAtual) {
+                1 -> CadastroPessoais(onClick = { etapaAtual = 2 })
+                2 -> CadastroPerfil(onClick = { etapaAtual = 3 })
+                3 -> CadastroEndereco(onClick = { etapaAtual = 4 })
+                4 -> CadastroFoto(onClick = { etapaAtual = 5 })
+                else -> CadastroSenha(onClick = {
+                    val login = Intent(contexto, Login::class.java)
+                    contexto.startActivity(login)
+                })
             }
-
         }
+
     }
 }
 
@@ -140,6 +160,7 @@ fun CadastroStep(
     label: String,
     etapa: Int,
     etapaAtual: Int,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -148,7 +169,8 @@ fun CadastroStep(
             .padding(
                 start = 4.dp,
                 end = 4.dp
-            ),
+            )
+            .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {

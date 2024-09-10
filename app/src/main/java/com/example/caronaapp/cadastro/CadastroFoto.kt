@@ -1,7 +1,5 @@
 package com.example.caronaapp.cadastro
 
-import android.content.Intent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,13 +21,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.Login
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 
 @Composable
-fun CadastroFoto() {
+fun CadastroFoto(onClick: () -> Unit) {
     val contexto = LocalContext.current
 
     Column(
@@ -68,9 +64,10 @@ fun CadastroFoto() {
             )
         }
 
-        ButtonAction(label = stringResource(id = R.string.label_button_proximo), handleClick = {
-            val login = Intent(contexto, Login::class.java)
-            contexto.startActivity(login)
-        })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_proximo),
+            handleClick = { onClick() }
+        )
+
     }
 }
