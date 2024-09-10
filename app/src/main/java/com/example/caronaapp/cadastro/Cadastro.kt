@@ -146,8 +146,8 @@ fun CadastroScreen() {
                 3 -> CadastroEndereco(onClick = { etapaAtual = 4 })
                 4 -> CadastroFoto(onClick = { etapaAtual = 5 })
                 else -> CadastroSenha(onClick = {
-                    val cadastroPerfil = Intent(contexto, Login::class.java)
-                    contexto.startActivity(cadastroPerfil)
+                    val login = Intent(contexto, Login::class.java)
+                    contexto.startActivity(login)
                 })
             }
         }
