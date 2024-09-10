@@ -3,6 +3,7 @@ package com.example.caronaapp.layout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomCard(
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(16.dp),
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     shadowColor: Color = Color.Black,
     shadowElevation: Float = 8f, // Valor da elevação
     shadowOffsetY: Float = -10f, // Offset da sombra no eixo Y (sombra para cima)
@@ -25,8 +26,7 @@ fun CustomCard(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
             .shadow(
                 elevation = shadowElevation.dp,
                 shape = shape,
