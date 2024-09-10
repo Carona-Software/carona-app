@@ -33,29 +33,9 @@
             android:label="Login"
             android:theme="@style/Theme.CaronaApp" />
         <activity
-            android:name=".cadastro.CadastroPessoais"
+            android:name=".Cadastro"
             android:exported="false"
-            android:label="CadastroPessoais"
-            android:theme="@style/Theme.CaronaApp" />
-        <activity
-            android:name=".cadastro.CadastroPerfil"
-            android:exported="false"
-            android:label="CadastroPerfil"
-            android:theme="@style/Theme.CaronaApp" />
-        <activity
-            android:name=".cadastro.CadastroEndereco"
-            android:exported="false"
-            android:label="CadastroEndereco"
-            android:theme="@style/Theme.CaronaApp" />
-        <activity
-            android:name=".cadastro.CadastroFoto"
-            android:exported="false"
-            android:label="CadastroFoto"
-            android:theme="@style/Theme.CaronaApp" />
-        <activity
-            android:name=".cadastro.CadastroSenha"
-            android:exported="false"
-            android:label="CadastroSenha"
+            android:label="Cadastro"
             android:theme="@style/Theme.CaronaApp" />
         <activity
             android:name=".MainActivity"

@@ -25,16 +25,6 @@ import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 
-//class CadastroFoto : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            CadastroFotoScreen()
-//        }
-//    }
-//}
-
 @Composable
 fun CadastroFoto(onClick: () -> Unit) {
     val contexto = LocalContext.current
@@ -74,6 +64,10 @@ fun CadastroFoto(onClick: () -> Unit) {
             )
         }
 
-        ButtonAction(handleClick = { onClick() })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_proximo),
+            handleClick = { onClick() }
+        )
+
     }
 }

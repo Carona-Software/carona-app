@@ -1,5 +1,6 @@
 package com.example.caronaapp.cadastro
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,16 +34,6 @@ import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
-
-//class CadastroPessoais : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            CadastroPessoaisScreen()
-//        }
-//    }
-//}
 
 @Composable
 fun CadastroPessoais(onClick: () -> Unit) {
@@ -141,7 +132,10 @@ fun CadastroPessoais(onClick: () -> Unit) {
             }
         }
 
-        ButtonAction(handleClick = { onClick() })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_proximo),
+            handleClick = { onClick() }
+        )
     }
 }
 

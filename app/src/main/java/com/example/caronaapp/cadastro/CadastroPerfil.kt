@@ -32,16 +32,6 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulPerfilSelecionado
 import com.example.caronaapp.ui.theme.CinzaDA
 
-//class CadastroPerfil : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            CadastroPessoaisScreen()
-//        }
-//    }
-//}
-
 @Composable
 fun CadastroPerfil(onClick: () -> Unit) {
     val contexto = LocalContext.current
@@ -128,7 +118,11 @@ fun CadastroPerfil(onClick: () -> Unit) {
             )
         }
 
-        ButtonAction(handleClick = { onClick() })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_proximo),
+            handleClick = { onClick() }
+        )
+
     }
 }
         

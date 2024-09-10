@@ -16,23 +16,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Amarelo
+import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 @Composable
-fun ButtonAction(handleClick: () -> Unit) {
-    Button(
-        onClick = { handleClick() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Amarelo,
+fun ButtonAction(label: String, handleClick: () -> Unit) {
+    CaronaAppTheme {
+        Button(
+            onClick = { handleClick() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Amarelo,
             ),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.label_button_proximo),
-            color = Color.White,
-            style = MaterialTheme.typography.labelLarge
-        )
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.label_button_proximo),
+                color = Color.White,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
     }
 }

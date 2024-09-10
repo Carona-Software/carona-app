@@ -134,7 +134,7 @@ fun CadastroScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
         CustomCard(
             shadowElevation = 24f, // Intensidade da sombra

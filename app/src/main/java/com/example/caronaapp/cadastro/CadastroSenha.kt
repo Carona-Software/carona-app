@@ -29,16 +29,6 @@ import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 
-//class CadastroSenha : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            CadastroSenhaScreen()
-//        }
-//    }
-//}
-
 @Composable
 fun CadastroSenha(onClick: () -> Unit) {
     val contexto = LocalContext.current
@@ -127,6 +117,9 @@ fun CadastroSenha(onClick: () -> Unit) {
             )
         }
 
-        ButtonAction(handleClick = { onClick() })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_finalizar),
+            handleClick = { onClick() }
+        )
     }
 }
