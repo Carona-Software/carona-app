@@ -40,9 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.caronaapp.R
-import com.example.caronaapp.esqueci_senha.ui.theme.CaronaAppTheme
+import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
+import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 class RedefinirSenha : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,117 +67,129 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
     val contexto = LocalContext.current
     var senha by remember { mutableStateOf("") }
     var confirmacaoSenha by remember { mutableStateOf("") }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(horizontal = 26.dp, vertical = 16.dp),
-    ) {
-        Column(
+
+    CaronaAppTheme {
+        Box(
             modifier = Modifier
-                .background(color = Color.White)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(16.dp),
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Image(
-                    alignment = Alignment.TopStart,
-                    painter = painterResource(id = R.mipmap.arrow_left),
-                    contentDescription = "seta para voltar",
-                    modifier = Modifier
-                        .width(35.dp)
-                        .height(35.dp)
-                        .clickable {
-                            val secondPage = Intent(
-                                contexto, EsqueciSenhaCodigo::class.java
-                            )
-                            contexto.startActivity(secondPage)
-                        },
-                )
-            }
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                text = "Redefinir senha",
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                color = Azul
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-
-
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
+                    .background(color = Color.White)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.a_senha_deve_conter),
-                        color = Azul,
-                        style = MaterialTheme.typography.labelLarge
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Image(
+                        alignment = Alignment.TopStart,
+                        painter = painterResource(id = R.mipmap.arrow_left),
+                        contentDescription = "seta para voltar",
+                        modifier = Modifier
+                            .width(35.dp)
+                            .height(35.dp)
+                            .clickable {
+                                val secondPage = Intent(
+                                    contexto, EsqueciSenhaCodigo::class.java
+                                )
+                                contexto.startActivity(secondPage)
+                            },
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.letra_maiuscula),
-                            color = Azul,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.letra_minuscula),
-                            color = Azul,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.numero),
-                            color = Azul,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.caracter_especial),
-                            color = Azul,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                    }
                 }
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    text = "Redefinir senha",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Azul
+                )
+
+                Spacer(modifier = Modifier.height(30.dp))
 
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+//                        .fillMaxSize()
+                        .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    InputField(
-                        label = stringResource(id = R.string.label_senha),
-                        value = senha,
-                        maxLines = 1,
-                        handleChange = { senha = it }
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    InputField(
-                        label = stringResource(id = R.string.label_confirmacao_senha),
-                        value = confirmacaoSenha,
-                        maxLines = 1,
-                        handleChange = { confirmacaoSenha = it }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.a_senha_deve_conter),
+                            color = Azul,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row {
+                            Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.letra_maiuscula),
+                                color = Azul,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row {
+                            Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.letra_minuscula),
+                                color = Azul,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row {
+                            Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.numero),
+                                color = Azul,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row {
+                            Icon(Icons.Default.Done, tint = Azul, contentDescription = null)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.caracter_especial),
+                                color = Azul,
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(80.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        InputField(
+                            label = stringResource(id = R.string.label_senha),
+                            value = senha,
+                            maxLines = 1,
+                            handleChange = { senha = it }
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        InputField(
+                            label = stringResource(id = R.string.label_confirmacao_senha),
+                            value = confirmacaoSenha,
+                            maxLines = 1,
+                            handleChange = { confirmacaoSenha = it }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(120.dp))
+
+                    ButtonAction(
+                        label = stringResource(id = R.string.label_button_proximo),
+                        handleClick = {  }
                     )
                 }
             }

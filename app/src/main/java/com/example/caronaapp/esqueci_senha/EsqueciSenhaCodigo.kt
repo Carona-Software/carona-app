@@ -49,11 +49,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.caronaapp.Login
 import com.example.caronaapp.R
-import com.example.caronaapp.esqueci_senha.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
+import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 class EsqueciSenhaCodigo : ComponentActivity() {
     lateinit var email: String
@@ -80,130 +79,132 @@ class EsqueciSenhaCodigo : ComponentActivity() {
 fun EsqueciSenhaCodigo(name: String, modifier: Modifier = Modifier, email: String) {
     val contexto = LocalContext.current
     var codigo by remember { mutableStateOf("") }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(horizontal = 26.dp, vertical = 16.dp),
-    ) {
-        Column(
+    CaronaAppTheme {
+        Box(
             modifier = Modifier
-                .background(color = Color.White)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(horizontal = 26.dp, vertical = 16.dp),
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Image(
-                    alignment = Alignment.TopStart,
-                    painter = painterResource(id = R.mipmap.arrow_left),
-                    contentDescription = "seta para voltar",
-                    modifier = Modifier
-                        .width(35.dp)
-                        .height(35.dp)
-                        .clickable {
-                            val firstPage = Intent(
-                                contexto, EsqueciSenhaEmail::class.java
-                            )
-                            contexto.startActivity(firstPage)
-                        },
-                )
-            }
-            Image(
-                painter = painterResource(id = R.mipmap.img_second_page_esqueci_senha),
-                contentDescription = "img esqueci senha",
+            Column(
                 modifier = Modifier
-                    .width(250.dp)
-                    .height(250.dp)
-                    .padding(horizontal = 10.dp)
-            )
-            Text(
-                text = "Verifique sua caixa de entrada",
-                color = Azul,
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(25.dp))
-            Text(
-                textAlign = TextAlign.Center,
-                text = buildAnnotatedString {
-                    append("Digite o código enviado para ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(email)
-                    }
-                },
-                style = MaterialTheme.typography.bodyLarge,
-                color = Azul,
-            )
-            Spacer(modifier = Modifier.height(35.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .background(color = Color.White)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                repeat(5) { index ->
-                    Box(
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Image(
+                        alignment = Alignment.TopStart,
+                        painter = painterResource(id = R.mipmap.arrow_left),
+                        contentDescription = "seta para voltar",
                         modifier = Modifier
-                            .size(60.dp)
-                            .border(2.dp, color = Azul, RoundedCornerShape(8.dp))
-                            .padding(8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = codigo.getOrNull(index)?.toString() ?: "",
-                            style = TextStyle(
-                                color = Azul,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp
+                            .width(35.dp)
+                            .height(35.dp)
+                            .clickable {
+                                val firstPage = Intent(
+                                    contexto, EsqueciSenhaEmail::class.java
+                                )
+                                contexto.startActivity(firstPage)
+                            },
+                    )
+                }
+                Image(
+                    painter = painterResource(id = R.mipmap.img_second_page_esqueci_senha),
+                    contentDescription = "img esqueci senha",
+                    modifier = Modifier
+                        .width(250.dp)
+                        .height(250.dp)
+                        .padding(horizontal = 10.dp)
+                )
+                Text(
+                    text = "Verifique sua caixa de entrada",
+                    color = Azul,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = buildAnnotatedString {
+                        append("Digite o código enviado para ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(email)
+                        }
+                    },
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Azul,
+                )
+                Spacer(modifier = Modifier.height(35.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    repeat(5) { index ->
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .border(2.dp, color = Azul, RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = codigo.getOrNull(index)?.toString() ?: "",
+                                style = TextStyle(
+                                    color = Azul,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp
+                                )
                             )
+                        }
+                    }
+                }
+
+                BasicTextField(
+                    value = codigo,
+                    onValueChange = {
+                        if (it.length <= 6) {
+                            codigo = it
+                        }
+                    },
+                    decorationBox = { innerTextField -> }
+                )
+                Spacer(modifier = Modifier.height(35.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Não recebeu o código?",
+                        color = Azul,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    TextButton(onClick = { }) {
+                        Text(
+                            text = "Reenviar",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Azul
                         )
                     }
                 }
-            }
-
-            BasicTextField(
-                value = codigo,
-                onValueChange = {
-                    if (it.length <= 6) {
-                        codigo = it
-                    }
-                },
-                decorationBox = { innerTextField -> }
-            )
-            Spacer(modifier = Modifier.height(35.dp))
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "Não recebeu o código?",
-                    color = Azul,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                TextButton(onClick = { }) {
+                Spacer(modifier = Modifier.height(100.dp))
+                Button(
+                    onClick = {
+                        val nextPage = Intent(contexto, RedefinirSenha::class.java)
+                        contexto.startActivity(nextPage)
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Amarelo),
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
                     Text(
-                        text = "Reenviar",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Azul
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        text = "Verificar",
+                        color = Color.White
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(100.dp))
-            Button(
-                onClick = {
-                val nextPage = Intent(contexto, RedefinirSenha::class.java)
-                contexto.startActivity(nextPage)
-                },
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Amarelo),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    text = "Verificar",
-                    color = Color.White
-                )
             }
         }
     }

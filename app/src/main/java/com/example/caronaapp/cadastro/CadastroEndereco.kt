@@ -55,38 +55,11 @@ fun CadastroEndereco(onClick: () -> Unit) {
             label = stringResource(id = R.string.numero),
             maxLines = 1,
             value = numero, handleChange = {})
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            InputField(
-                label = stringResource(id = R.string.label_cep),
-                maxLines = 1,
-                value = cep, handleChange = { cep = it })
-            InputField(
-                label = stringResource(id = R.string.label_cidade_uf),
-                maxLines = 1,
-                value = cidadeUf, handleChange = {})
-            InputField(
-                label = stringResource(id = R.string.label_bairro),
-                maxLines = 1,
-                value = bairro, handleChange = {})
-            InputField(
-                label = stringResource(id = R.string.label_logradouro),
-                maxLines = 1,
-                value = logradouro, handleChange = {})
-            InputField(
-                label = stringResource(id = R.string.numero),
-                maxLines = 1,
-                value = numero, handleChange = {})
 
-            ButtonAction(
-                label = stringResource(id = R.string.label_button_proximo),
-                handleClick = { onClick() }
-            )
-        }
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_proximo),
+            handleClick = { onClick() }
+        )
+
     }
 }

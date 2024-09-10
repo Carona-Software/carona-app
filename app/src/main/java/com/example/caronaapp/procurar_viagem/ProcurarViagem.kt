@@ -27,8 +27,8 @@ import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.layout.InputField
-import com.example.caronaapp.procurar_viagem.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.AzulMensagem
+import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 class ProcurarViagem : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
