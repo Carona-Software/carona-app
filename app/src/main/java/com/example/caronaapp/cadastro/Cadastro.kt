@@ -1,6 +1,5 @@
 package com.example.caronaapp
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,12 +36,10 @@ import com.example.caronaapp.cadastro.CadastroFoto
 import com.example.caronaapp.cadastro.CadastroPerfil
 import com.example.caronaapp.cadastro.CadastroPessoais
 import com.example.caronaapp.cadastro.CadastroSenha
-import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
 import com.example.caronaapp.ui.theme.CaronaAppTheme
-import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaD9
 
 class Cadastro : ComponentActivity() {
@@ -68,71 +65,73 @@ fun CadastroScreen() {
 
     val telasEtapas = listOf(CadastroPessoais(), CadastroPerfil(), CadastroEndereco(), CadastroFoto(), CadastroSenha())
 
-    Column(
-        modifier = Modifier
-            .background(Color(0xFFF1F1F1))
-            .fillMaxSize()
-            .padding(
-                top = 48.dp
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(id = R.string.cadastro),
-            color = Azul,
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
+    CaronaAppTheme {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .background(Color(0xFFF1F1F1))
+                .fillMaxSize()
                 .padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 16.dp,
-                    bottom = 8.dp
+                    top = 48.dp
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(id = R.string.cadastro),
+                color = Azul,
+                style = MaterialTheme.typography.titleLarge,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 16.dp,
+                        bottom = 8.dp
+                    )
+                    .height(30.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CadastroStep(
+                    label = stringResource(id = R.string.pessoais),
+                    etapa = 1,
+                    etapaAtual = etapaAtual
                 )
-                .height(30.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            CadastroStep(
-                label = stringResource(id = R.string.pessoais),
-                etapa = 1,
-                etapaAtual = etapaAtual
-            )
-            CadastroStep(
-                label = stringResource(id = R.string.perfil),
-                etapa = 2,
-                etapaAtual = etapaAtual
-            )
-            CadastroStep(
-                label = stringResource(id = R.string.endereco),
-                etapa = 3,
-                etapaAtual = etapaAtual
-            )
-            CadastroStep(
-                label = stringResource(id = R.string.foto),
-                etapa = 4,
-                etapaAtual = etapaAtual
-            )
-            CadastroStep(
-                label = stringResource(id = R.string.senha),
-                etapa = 5,
-                etapaAtual = etapaAtual
-            )
+                CadastroStep(
+                    label = stringResource(id = R.string.perfil),
+                    etapa = 2,
+                    etapaAtual = etapaAtual
+                )
+                CadastroStep(
+                    label = stringResource(id = R.string.endereco),
+                    etapa = 3,
+                    etapaAtual = etapaAtual
+                )
+                CadastroStep(
+                    label = stringResource(id = R.string.foto),
+                    etapa = 4,
+                    etapaAtual = etapaAtual
+                )
+                CadastroStep(
+                    label = stringResource(id = R.string.senha),
+                    etapa = 5,
+                    etapaAtual = etapaAtual
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CustomCard(
+                shadowElevation = 16f, // Intensidade da sombra
+                shadowOffsetY = 18f, // Desloca a sombra mais para cima
+            ) {
+                CadastroPessoais()
+            }
+
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        CustomCard(
-            shadowElevation = 16f, // Intensidade da sombra
-            shadowOffsetY = 18f, // Desloca a sombra mais para cima
-        ) {
-            CadastroPerfil()
-        }
-
     }
 }
 

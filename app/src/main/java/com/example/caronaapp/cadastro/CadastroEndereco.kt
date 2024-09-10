@@ -30,42 +30,38 @@ fun CadastroEndereco() {
     var numero by remember { mutableStateOf("") }
     var logradouro by remember { mutableStateOf("") }
 
-    CustomCard(
-        shadowElevation = 16f, // Intensidade da sombra
-        shadowOffsetY = 18f, // Desloca a sombra mais para cima
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            InputField(
-                label = stringResource(id = R.string.label_cep),
-                maxLines = 1,
-                value = cep, handleChange = { cep = it })
-            InputField(
-                label = stringResource(id = R.string.label_cidade_uf),
-                maxLines = 1,
-                value = cidadeUf, handleChange = {})
-            InputField(
-                label = stringResource(id = R.string.label_bairro),
-                maxLines = 1,
-                value = bairro, handleChange = {})
-            InputField(
-                label = stringResource(id = R.string.label_logradouro),
-                maxLines = 1,
-                value = logradouro, handleChange = {})
-            InputField(
-                label = stringResource(id = R.string.numero),
-                maxLines = 1,
-                value = numero, handleChange = {})
+        InputField(
+            label = stringResource(id = R.string.label_cep),
+            maxLines = 1,
+            value = cep, handleChange = { cep = it })
+        InputField(
+            label = stringResource(id = R.string.label_cidade_uf),
+            maxLines = 1,
+            value = cidadeUf, handleChange = {})
+        InputField(
+            label = stringResource(id = R.string.label_bairro),
+            maxLines = 1,
+            value = bairro, handleChange = {})
+        InputField(
+            label = stringResource(id = R.string.label_logradouro),
+            maxLines = 1,
+            value = logradouro, handleChange = {})
+        InputField(
+            label = stringResource(id = R.string.numero),
+            maxLines = 1,
+            value = numero, handleChange = {})
 
-            ButtonAction(handleClick = {
-                val login = Intent(contexto, Login::class.java)
-                contexto.startActivity(login)
-            })
-        }
+        ButtonAction(label = stringResource(id = R.string.label_button_proximo), handleClick = {
+            val login = Intent(contexto, Login::class.java)
+            contexto.startActivity(login)
+        })
     }
+
 }

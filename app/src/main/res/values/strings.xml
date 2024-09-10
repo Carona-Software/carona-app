@@ -123,5 +123,6 @@
     <string name="masculino">Masculino</string>
     <string name="feminino">Feminino</string>
     <string name="outros">Outros</string>
+    <string name="title_activity_procurar_viagem">ProcurarViagem</string>
 
 </resources>

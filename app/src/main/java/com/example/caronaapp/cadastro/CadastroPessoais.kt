@@ -133,7 +133,7 @@ fun CadastroPessoais() {
             }
         }
 
-        ButtonAction(handleClick = {
+        ButtonAction(label = stringResource(id = R.string.label_button_proximo), handleClick = {
             val login = Intent(contexto, Login::class.java)
             contexto.startActivity(login)
         })
