@@ -120,5 +120,8 @@
     <string name="motorista">Motorista</string>
     <string name="passageiro">Passageiro</string>
     <string name="passageiros">Passageiros</string>
+    <string name="masculino">Masculino</string>
+    <string name="feminino">Feminino</string>
+    <string name="outros">Outros</string>
 
 </resources>

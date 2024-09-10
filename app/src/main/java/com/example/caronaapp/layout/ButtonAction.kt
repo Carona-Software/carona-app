@@ -26,7 +26,6 @@ fun ButtonAction(handleClick: () -> Unit) {
             .height(52.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Amarelo,
-
             ),
         shape = RoundedCornerShape(12.dp)
     ) {
