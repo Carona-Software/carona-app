@@ -52,7 +52,9 @@ fun InputField(
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    unfocusedTextColor = Azul,
+                    focusedTextColor = Azul
                 ),
                 maxLines = maxLines,
             )

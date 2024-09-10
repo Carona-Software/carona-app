@@ -50,6 +50,9 @@ android {
 }
 
 dependencies {
+    // Biblioteca de ícones
+    implementation(libs.androidx.material.icons.extended)
+
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

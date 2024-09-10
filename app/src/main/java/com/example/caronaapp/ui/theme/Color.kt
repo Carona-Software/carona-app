@@ -13,6 +13,7 @@ val CinzaF5 = Color(0xFFF5F5F5)
 val CinzaD9 = Color(0xFFD9D9D9)
 val CinzaD6 = Color(0xFFD6D6D6)
 val CinzaDA = Color(0xFFDADADA)
+val CinzaE8 = Color(0xFFE8E8E8)
 
 val CinzaToggleButton = Color(0xFFDFDFDF)
 val VerdeToggleButton = Color(0xFF529F63)
