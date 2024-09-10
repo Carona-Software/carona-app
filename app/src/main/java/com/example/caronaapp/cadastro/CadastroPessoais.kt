@@ -132,7 +132,10 @@ fun CadastroPessoais(onClick: () -> Unit) {
             }
         }
 
-        ButtonAction(handleClick = { onClick() })
+        ButtonAction(
+            label = stringResource(id = R.string.label_button_proximo),
+            handleClick = { onClick() }
+        )
     }
 }
 
