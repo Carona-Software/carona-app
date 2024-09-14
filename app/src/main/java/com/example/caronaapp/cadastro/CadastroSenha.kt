@@ -47,9 +47,6 @@ fun CadastroSenha(onClick: (String) -> Unit) {
     var containsNumero by remember { mutableStateOf(false) }
     var containsCaracterEspecial by remember { mutableStateOf(false) }
 
-    var senhaInvalida by remember { mutableStateOf(false) }
-    var confirmacaoSenhaInvalida by remember { mutableStateOf(false) }
-
     fun onSenhaChange(it: String) {
         if (it != " ") {
             senha = it
@@ -191,7 +188,8 @@ fun CadastroSenha(onClick: (String) -> Unit) {
                 label = stringResource(id = R.string.label_confirmacao_senha),
                 value = confirmacaoSenha,
                 handleChange = { confirmacaoSenha = it },
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                endIcon = Icons.Default.RemoveRedEye
             )
         }
 

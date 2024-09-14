@@ -151,7 +151,7 @@ fun CadastroPessoais(
             isError = dataNascimentoInvalida,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             visualTransformation = DateVisualTransformation(),
-            endIcon = Icons.Default.CalendarMonth
+            startIcon = Icons.Default.CalendarMonth
         )
 
         Column {

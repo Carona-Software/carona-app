@@ -32,7 +32,7 @@ fun ButtonAction(label: String, handleClick: () -> Unit) {
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.label_button_proximo),
+                text = label,
                 color = Color.White,
                 style = MaterialTheme.typography.labelLarge
             )

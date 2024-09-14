@@ -80,7 +80,6 @@ fun InputField(
                             onIconClick()
                         }
                     }) {
-
                         Icon(
                             imageVector = startIcon,
                             contentDescription = iconDescription,
@@ -94,7 +93,7 @@ fun InputField(
                     onValueChange = { handleChange(it) },
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(if (startIcon != null || endIcon != null) 0.9f else 1f)
+                        .fillMaxWidth(if (endIcon != null) 0.9f else 1f)
                         .border(
                             BorderStroke(0.dp, Color.Transparent),
                             shape = RoundedCornerShape(12.dp)
