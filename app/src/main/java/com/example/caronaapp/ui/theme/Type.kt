@@ -61,4 +61,10 @@ val Typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 16.sp,
     ),
+    headlineSmall = TextStyle( // para erro de input
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        color = VermelhoErro
+    )
 )

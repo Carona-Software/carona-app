@@ -18,8 +18,8 @@ fun CustomCard(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     shadowColor: Color = Color.Black,
-    shadowElevation: Float, // Valor da elevação
-    shadowOffsetY: Float, // Offset da sombra no eixo Y (sombra para cima)
+    shadowElevation: Float = 24f, // Valor da elevação
+    shadowOffsetY: Float = 16f, // Offset da sombra no eixo Y (sombra para cima)
     content: @Composable () -> Unit
 ) {
     Box(

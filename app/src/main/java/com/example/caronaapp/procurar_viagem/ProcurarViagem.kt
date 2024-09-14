@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +31,7 @@ import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.layout.InputField
+import com.example.caronaapp.masks.DateVisualTransformation
 import com.example.caronaapp.ui.theme.AzulMensagem
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
@@ -63,35 +68,33 @@ fun ProcurarViagemScreen() {
                     .fillMaxWidth()
                     .scale(1.2f)
             )
-            CustomCard(
-                shadowElevation = 16f, // Intensidade da sombra
-                shadowOffsetY = 18f, // Desloca a sombra mais para cima
-            ) {
+            CustomCard {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceAround
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     InputField(
                         label = stringResource(id = R.string.label_ponto_de_partida),
                         value = pontoPartida,
-                        maxLines = 1
+                        startIcon = Icons.Default.MyLocation
                     ) {
                         pontoPartida = it
                     }
                     InputField(
                         label = stringResource(id = R.string.label_ponto_de_chegada),
                         value = pontoChegada,
-                        maxLines = 1
+                        startIcon = Icons.Default.LocationOn
                     ) {
                         pontoChegada = it
                     }
                     InputField(
                         label = stringResource(id = R.string.label_dia),
                         value = dia,
-                        maxLines = 1
+                        visualTransformation = DateVisualTransformation(),
+                        startIcon = Icons.Default.CalendarMonth
                     ) {
                         dia = it
                     }

@@ -1,6 +1,6 @@
 package com.example.caronaapp.cadastro
 
-import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,20 +34,37 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
+import com.example.caronaapp.masks.CpfVisualTransformation
+import com.example.caronaapp.masks.DateVisualTransformation
 import com.example.caronaapp.ui.theme.Azul
 
 @Composable
-fun CadastroPessoais(onClick: () -> Unit) {
-    val contexto = LocalContext.current
+fun CadastroPessoais(
+    onClick: (
+        nome: String,
+        email: String,
+        cpf: String,
+        genero: String,
+        dataNascimento: String
+    ) -> Unit
+) {
+    val context = LocalContext.current
+
     var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var cpf by remember { mutableStateOf("") }
     var genero by remember { mutableStateOf("") }
     var dataNascimento by remember { mutableStateOf("") }
+
+    var nomeInvalido by remember { mutableStateOf(false) }
+    var emailInvalido by remember { mutableStateOf(false) }
+    var cpfInvalido by remember { mutableStateOf(false) }
+    var dataNascimentoInvalida by remember { mutableStateOf(false) }
 
     val generoOptions = listOf(
         stringResource(id = R.string.masculino),
@@ -54,6 +76,43 @@ fun CadastroPessoais(onClick: () -> Unit) {
         if (option == genero) genero = "" else genero = option
     }
 
+    fun onNomeChange(it: String) {
+        nome = it
+        nomeInvalido = isNomeValido(nome)
+    }
+
+    fun onEmailChange(it: String) {
+        email = it
+        emailInvalido = isEmailValido(email)
+    }
+
+    fun onCpfChange(it: String) {
+        if (it.length < 12) {
+            cpf = it
+            cpfInvalido = isCpfValido(cpf)
+        }
+    }
+
+    fun onDataNascimentoChange(it: String) {
+        if (it.length < 9) {
+            dataNascimento = it
+            dataNascimentoInvalida = isDataNascimentoValido(it)
+        }
+    }
+
+    fun onButtonClick() {
+        if (!nomeInvalido &&
+            !emailInvalido &&
+            !cpfInvalido &&
+            !dataNascimentoInvalida &&
+            !isGeneroValido(genero)
+        ) {
+            onClick(nome, email, cpf, genero, dataNascimento)
+        } else {
+            Toast.makeText(context, "Preencha corretamente os campos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,26 +120,38 @@ fun CadastroPessoais(onClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        InputField(label = stringResource(
-            id = R.string.label_nome
-        ),
-            maxLines = 1,
-            value = nome, handleChange = { nome = it }
+        InputField(
+            label = stringResource(id = R.string.label_nome),
+            value = nome,
+            handleChange = { onNomeChange(it) },
+            supportingText = stringResource(id = R.string.input_message_error_nome),
+            isError = nomeInvalido
         )
         InputField(
             label = stringResource(id = R.string.label_email),
-            maxLines = 1,
-            value = email, handleChange = { email = it }
+            value = email,
+            handleChange = { onEmailChange(it) },
+            supportingText = stringResource(id = R.string.input_message_error_email),
+            isError = emailInvalido,
         )
         InputField(
             label = stringResource(id = R.string.label_cpf),
-            maxLines = 1,
-            value = cpf, handleChange = { cpf = it }
+            value = cpf,
+            handleChange = { onCpfChange(it) },
+            supportingText = stringResource(id = R.string.input_message_error_cpf),
+            isError = cpfInvalido,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            visualTransformation = CpfVisualTransformation()
         )
         InputField(
             label = stringResource(id = R.string.label_data_nascimento),
-            maxLines = 1,
-            value = dataNascimento, handleChange = { dataNascimento = it }
+            value = dataNascimento,
+            handleChange = { onDataNascimentoChange(it) },
+            supportingText = stringResource(id = R.string.input_message_error_data_nascimento),
+            isError = dataNascimentoInvalida,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            visualTransformation = DateVisualTransformation(),
+            startIcon = Icons.Default.CalendarMonth
         )
 
         Column {
@@ -100,7 +171,6 @@ fun CadastroPessoais(onClick: () -> Unit) {
                         shape = RoundedCornerShape(12.dp)
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically
             ) {
                 generoOptions.map {
                     Box(
@@ -134,43 +204,55 @@ fun CadastroPessoais(onClick: () -> Unit) {
 
         ButtonAction(
             label = stringResource(id = R.string.label_button_proximo),
-            handleClick = { onClick() }
+            handleClick = { onButtonClick() }
         )
     }
 }
 
-//@Composable
-//fun GeneroSet(options: List<String>, generoAtual: String) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(52.dp)
-//            .clip(RoundedCornerShape(16.dp))
-//            .border(
-//                BorderStroke(2.dp, Azul),
-//                shape = RoundedCornerShape(12.dp)
-//            ),
-//        horizontalArrangement = Arrangement.Center,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        options.map {
-//            Text(
-//                text = it,
-//                style = MaterialTheme.typography.displayLarge,
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .fillMaxWidth(0.33f)
-//                    .padding(4.dp)
-//                    .clickable { }
-//                    .background(
-//                        if (generoAtual == it) Azul
-//                        else Color.White
-//                    ),
-//                color = (
-//                        if (generoAtual == it) Color.White
-//                        else Azul
-//                        )
-//                )
-//        }
-//    }
-//}
+private fun isNomeValido(nome: String): Boolean {
+    return nome.isNotBlank() && nome.length < 5
+}
+
+private fun isEmailValido(email: String): Boolean {
+    return email.isNotBlank() && (
+            !email.contains("@") ||
+                    !email.contains(".") ||
+                    email.length < 8)
+}
+
+private fun isCpfValido(cpf: String): Boolean {
+    return cpf.isNotBlank() && !cpfExists(cpf)
+}
+
+private fun cpfExists(cpf: String): Boolean {
+    val cpfFormatado = cpf.filter { it.isDigit() }
+
+    if (cpfFormatado.length != 11) return false
+
+    if (cpfFormatado.all { it == cpfFormatado[0] }) return false
+
+    // Função para calcular o primeiro e segundo dígito verificador
+    fun calcularDigito(cpf: String, factor: Int): Int {
+        var soma = 0
+        cpf.forEachIndexed { index, c ->
+            soma += c.toString().toInt() * (factor - index)
+        }
+        val resto = soma % 11
+        return if (resto < 2) 0 else 11 - resto
+    }
+
+    val primeiroDigito = calcularDigito(cpfFormatado.substring(0, 9), 10)
+
+    val segundoDigito = calcularDigito(cpfFormatado.substring(0, 9) + primeiroDigito, 11)
+
+    return cpfFormatado[9].toString().toInt() == primeiroDigito && cpfFormatado[10].toString()
+        .toInt() == segundoDigito
+}
+
+private fun isDataNascimentoValido(dataNascimento: String): Boolean {
+    return dataNascimento.isBlank() || dataNascimento == ""
+}
+
+private fun isGeneroValido(genero: String): Boolean {
+    return genero.isBlank()
+}

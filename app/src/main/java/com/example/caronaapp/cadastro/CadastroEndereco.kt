@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,55 +15,95 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
+import com.example.caronaapp.masks.CepVisualTransformation
+import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 @Composable
-fun CadastroEndereco(onClick: () -> Unit) {
-    val contexto = LocalContext.current
+fun CadastroEndereco(onClick: (String, String, String, String, String, Int) -> Unit) {
     var cep by remember { mutableStateOf("") }
+    var cidade by remember { mutableStateOf("") }
+    var uf by remember { mutableStateOf("") }
     var cidadeUf by remember { mutableStateOf("") }
     var bairro by remember { mutableStateOf("") }
     var numero by remember { mutableStateOf("") }
     var logradouro by remember { mutableStateOf("") }
 
+    var cepInvalido by remember { mutableStateOf(false) }
+    var numeroInvalido by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        InputField(
-            label = stringResource(id = R.string.label_cep),
-            maxLines = 1,
-            value = cep, handleChange = { cep = it })
-        InputField(
-            label = stringResource(id = R.string.label_cidade_uf),
-            maxLines = 1,
-            value = cidadeUf, handleChange = {})
-        InputField(
-            label = stringResource(id = R.string.label_bairro),
-            maxLines = 1,
-            value = bairro, handleChange = {})
-        InputField(
-            label = stringResource(id = R.string.label_logradouro),
-            maxLines = 1,
-            value = logradouro, handleChange = {})
-        InputField(
-            label = stringResource(id = R.string.numero),
-            maxLines = 1,
-            value = numero, handleChange = {})
-
-        ButtonAction(
-            label = stringResource(id = R.string.label_button_proximo),
-            handleClick = { onClick() }
-        )
-
+    fun onCepChange(it: String) {
+        if (it.length < 9) {
+            cep = it
+            cepInvalido = isCepValido(it)
+        }
     }
+
+    fun onNumeroChange(it: String) {
+        numero = it
+        numeroInvalido = isNumeroValido(it)
+    }
+
+    CaronaAppTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            InputField(
+                label = stringResource(id = R.string.label_cep),
+                value = cep,
+                handleChange = { onCepChange(it) },
+                isError = cepInvalido,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                supportingText = stringResource(id = R.string.input_message_error_cep),
+                visualTransformation = CepVisualTransformation(),
+                endIcon = Icons.Default.Search
+            )
+            InputField(
+                label = stringResource(id = R.string.label_cidade_uf),
+                value = cidadeUf,
+                handleChange = { cidadeUf = it },
+            )
+            InputField(
+                label = stringResource(id = R.string.label_bairro),
+                value = bairro,
+                handleChange = { bairro = it },
+            )
+            InputField(
+                label = stringResource(id = R.string.label_logradouro),
+                value = logradouro,
+                handleChange = { logradouro = it },
+            )
+            InputField(
+                label = stringResource(id = R.string.numero),
+                value = numero,
+                handleChange = { onNumeroChange(it) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = numeroInvalido,
+                supportingText = stringResource(id = R.string.input_message_error_numero)
+            )
+
+            ButtonAction(
+                label = stringResource(id = R.string.label_button_proximo),
+                handleClick = { onClick(cep, uf, cidade, bairro, logradouro, numero.toInt()) }
+            )
+
+        }
+    }
+}
+
+fun isCepValido(cep: String): Boolean {
+    return cep.isNotBlank() && cep.length != 8
+}
+
+fun isNumeroValido(numero: String): Boolean {
+    return numero.isNotBlank() && numero.toInt() <= 0
 }
