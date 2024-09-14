@@ -126,4 +126,19 @@
     <string name="title_activity_redefinir_senha">RedefinirSenha</string>
     <string name="title_activity_esqueci_senha_codigo">EsqueciSenhaCodigo</string>
 
+    <!--  INPUT ERROR MESSAGES  -->
+    <string name="input_message_error_nome">Digite 5 ou mais letras</string>
+    <string name="input_message_error_email">Digite um email válido</string>
+    <string name="input_message_error_cpf">Digite um CPF válido</string>
+    <string name="input_message_error_genero">Selecione um Gênero</string>
+    <string name="input_message_error_data_nascimento">Selecione uma data válida</string>
+    <string name="input_message_error_idade">A idade mínima é 18 anos</string>
+    <string name="input_message_error_perfil">Selecione um Perfil</string>
+    <string name="input_message_error_cep">Digite um CEP válido</string>
+    <string name="input_message_error_numero">Digite um número válido</string>
+    <string name="input_message_error_senha">Digite uma senha válida</string>
+    <string name="input_message_error_confirmacao_senha">A confirmação de senha está diferente da senha</string>
+
+    <!--  TOAST MESSAGES  -->
+    <string name="toast_alerta_preencha_corretamente_os_campos">Preencha corretamente os campos</string>
 </resources>

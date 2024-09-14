@@ -1,5 +1,6 @@
 package com.example.caronaapp.cadastro
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,12 +34,21 @@ import com.example.caronaapp.ui.theme.AzulPerfilSelecionado
 import com.example.caronaapp.ui.theme.CinzaDA
 
 @Composable
-fun CadastroPerfil(onClick: () -> Unit) {
-    val contexto = LocalContext.current
+fun CadastroPerfil(onClick: (String) -> Unit) {
+    val context = LocalContext.current
+
     var perfil by remember { mutableStateOf("") }
 
     fun setPerfil(valor: String) {
         if (perfil == valor) perfil = "" else perfil = valor
+    }
+
+    fun onButtonClick() {
+        if ( perfil != "" ) {
+            onClick(perfil)
+        } else {
+            Toast.makeText(context, "Selecione o seu perfil", Toast.LENGTH_SHORT).show()
+        }
     }
 
     Column(
@@ -120,7 +130,7 @@ fun CadastroPerfil(onClick: () -> Unit) {
 
         ButtonAction(
             label = stringResource(id = R.string.label_button_proximo),
-            handleClick = { onClick() }
+            handleClick = { onButtonClick() }
         )
 
     }

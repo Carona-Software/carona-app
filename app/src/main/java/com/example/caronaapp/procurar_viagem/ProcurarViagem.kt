@@ -74,27 +74,27 @@ fun ProcurarViagemScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
-                    InputField(
-                        label = stringResource(id = R.string.label_ponto_de_partida),
-                        value = pontoPartida,
-                        maxLines = 1
-                    ) {
-                        pontoPartida = it
-                    }
-                    InputField(
-                        label = stringResource(id = R.string.label_ponto_de_chegada),
-                        value = pontoChegada,
-                        maxLines = 1
-                    ) {
-                        pontoChegada = it
-                    }
-                    InputField(
-                        label = stringResource(id = R.string.label_dia),
-                        value = dia,
-                        maxLines = 1
-                    ) {
-                        dia = it
-                    }
+//                    InputField(
+//                        label = stringResource(id = R.string.label_ponto_de_partida),
+//                        value = pontoPartida,
+//                        maxLines = 1
+//                    ) {
+//                        pontoPartida = it
+//                    }
+//                    InputField(
+//                        label = stringResource(id = R.string.label_ponto_de_chegada),
+//                        value = pontoChegada,
+//                        maxLines = 1
+//                    ) {
+//                        pontoChegada = it
+//                    }
+//                    InputField(
+//                        label = stringResource(id = R.string.label_dia),
+//                        value = dia,
+//                        maxLines = 1
+//                    ) {
+//                        dia = it
+//                    }
 
                     ButtonAction(label = stringResource(id = R.string.procurar)) {
 

@@ -171,19 +171,19 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        InputField(
-                            label = stringResource(id = R.string.label_senha),
-                            value = senha,
-                            maxLines = 1,
-                            handleChange = { senha = it }
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        InputField(
-                            label = stringResource(id = R.string.label_confirmacao_senha),
-                            value = confirmacaoSenha,
-                            maxLines = 1,
-                            handleChange = { confirmacaoSenha = it }
-                        )
+//                        InputField(
+//                            label = stringResource(id = R.string.label_senha),
+//                            value = senha,
+//                            maxLines = 1,
+//                            handleChange = { senha = it }
+//                        )
+//                        Spacer(modifier = Modifier.height(24.dp))
+//                        InputField(
+//                            label = stringResource(id = R.string.label_confirmacao_senha),
+//                            value = confirmacaoSenha,
+//                            maxLines = 1,
+//                            handleChange = { confirmacaoSenha = it }
+//                        )
                     }
                     Spacer(modifier = Modifier.height(120.dp))
 
