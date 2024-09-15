@@ -19,20 +19,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
+import com.example.caronaapp.data_class.Endereco
+import com.example.caronaapp.data_class.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CepVisualTransformation
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 @Composable
-fun CadastroEndereco(onClick: (String, String, String, String, String, Int) -> Unit) {
-    var cep by remember { mutableStateOf("") }
-    var cidade by remember { mutableStateOf("") }
-    var uf by remember { mutableStateOf("") }
+fun CadastroEndereco(
+    enderecoData: Endereco?,
+    onClick: (
+        String,
+        String,
+        String,
+        String,
+        String,
+        Int
+    ) -> Unit
+) {
+    var cep by remember { mutableStateOf(enderecoData?.cep ?: "") }
+    var cidade by remember { mutableStateOf(enderecoData?.cidade ?: "") }
+    var uf by remember { mutableStateOf(enderecoData?.uf ?: "") }
     var cidadeUf by remember { mutableStateOf("") }
-    var bairro by remember { mutableStateOf("") }
-    var numero by remember { mutableStateOf("") }
-    var logradouro by remember { mutableStateOf("") }
+    var bairro by remember { mutableStateOf(enderecoData?.bairro ?: "") }
+    var numero by remember { mutableStateOf(enderecoData?.numero ?: 0) }
+    var logradouro by remember { mutableStateOf(enderecoData?.logradouro ?: "") }
 
     var cepInvalido by remember { mutableStateOf(false) }
     var numeroInvalido by remember { mutableStateOf(false) }
@@ -45,7 +57,7 @@ fun CadastroEndereco(onClick: (String, String, String, String, String, Int) -> U
     }
 
     fun onNumeroChange(it: String) {
-        numero = it
+        numero = it.toInt()
         numeroInvalido = isNumeroValido(it)
     }
 
@@ -84,7 +96,7 @@ fun CadastroEndereco(onClick: (String, String, String, String, String, Int) -> U
             )
             InputField(
                 label = stringResource(id = R.string.numero),
-                value = numero,
+                value = if (numero == 0) "" else numero.toString(),
                 handleChange = { onNumeroChange(it) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = numeroInvalido,
@@ -93,7 +105,7 @@ fun CadastroEndereco(onClick: (String, String, String, String, String, Int) -> U
 
             ButtonAction(
                 label = stringResource(id = R.string.label_button_proximo),
-                handleClick = { onClick(cep, uf, cidade, bairro, logradouro, numero.toInt()) }
+                handleClick = { onClick(cep, uf, cidade, bairro, logradouro, numero) }
             )
 
         }

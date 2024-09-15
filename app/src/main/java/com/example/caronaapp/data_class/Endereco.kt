@@ -6,5 +6,5 @@ data class Endereco(
     var cidade: String = "",
     var bairro: String = "",
     var logradouro: String = "",
-    var numero: Int? = null
+    var numero: Int = 0
 )

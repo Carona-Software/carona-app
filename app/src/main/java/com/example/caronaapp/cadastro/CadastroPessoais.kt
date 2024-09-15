@@ -1,6 +1,8 @@
 package com.example.caronaapp.cadastro
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,14 +40,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
+import com.example.caronaapp.data_class.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CpfVisualTransformation
 import com.example.caronaapp.masks.DateVisualTransformation
 import com.example.caronaapp.ui.theme.Azul
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CadastroPessoais(
+    userData: Usuario,
     onClick: (
         nome: String,
         email: String,
@@ -55,11 +63,15 @@ fun CadastroPessoais(
 ) {
     val context = LocalContext.current
 
-    var nome by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var cpf by remember { mutableStateOf("") }
-    var genero by remember { mutableStateOf("") }
-    var dataNascimento by remember { mutableStateOf("") }
+    var nome by remember { mutableStateOf(userData.nome) }
+    var email by remember { mutableStateOf(userData.email) }
+    var cpf by remember { mutableStateOf(userData.cpf) }
+    var genero by remember { mutableStateOf(userData.genero) }
+    var dataNascimento by remember { mutableStateOf<LocalDate?>(null) }
+
+    val dataFormatada by remember {
+        derivedStateOf { DateTimeFormatter.ofPattern("MM/dd/yyyy") }
+    }
 
     var nomeInvalido by remember { mutableStateOf(false) }
     var emailInvalido by remember { mutableStateOf(false) }
@@ -94,10 +106,7 @@ fun CadastroPessoais(
     }
 
     fun onDataNascimentoChange(it: String) {
-        if (it.length < 9) {
-            dataNascimento = it
-            dataNascimentoInvalida = isDataNascimentoValido(it)
-        }
+
     }
 
     fun onButtonClick() {
@@ -107,7 +116,7 @@ fun CadastroPessoais(
             !dataNascimentoInvalida &&
             !isGeneroValido(genero)
         ) {
-            onClick(nome, email, cpf, genero, dataNascimento)
+            onClick(nome, email, cpf, genero, dataNascimento.toString())
         } else {
             Toast.makeText(context, "Preencha corretamente os campos", Toast.LENGTH_SHORT).show()
         }
@@ -145,7 +154,7 @@ fun CadastroPessoais(
         )
         InputField(
             label = stringResource(id = R.string.label_data_nascimento),
-            value = dataNascimento,
+            value = dataNascimento.toString(),
             handleChange = { onDataNascimentoChange(it) },
             supportingText = stringResource(id = R.string.input_message_error_data_nascimento),
             isError = dataNascimentoInvalida,

@@ -2,12 +2,10 @@ package com.example.caronaapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,7 +40,6 @@ import com.example.caronaapp.cadastro.CadastroFoto
 import com.example.caronaapp.cadastro.CadastroPessoais
 import com.example.caronaapp.cadastro.CadastroPerfil
 import com.example.caronaapp.cadastro.CadastroSenha
-import com.example.caronaapp.data_class.Endereco
 import com.example.caronaapp.data_class.Usuario
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
@@ -143,16 +143,39 @@ fun CadastroScreen() {
         )
     )
 
+    fun onBackClick() {
+        when (etapaAtual) {
+            5 -> etapaAtual = 4
+            4 -> etapaAtual = 3
+            3 -> etapaAtual = 2
+            2 -> etapaAtual = 1
+            else -> {}
+        }
+    }
+
     CaronaAppTheme {
         Column(
             modifier = Modifier
                 .background(BrancoF1)
                 .fillMaxSize()
                 .padding(
-                    top = 48.dp
+                    top = 24.dp
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                IconButton(onClick = { onBackClick() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Voltar",
+                        tint = Azul
+                    )
+                }
+            }
+
             Text(
                 text = stringResource(id = R.string.cadastro),
                 color = Azul,
@@ -186,21 +209,27 @@ fun CadastroScreen() {
 
             CustomCard {
                 when (etapaAtual) {
-                    1 -> CadastroPessoais(onClick = { nome, email, cpf, genero, dataNascimento ->
-                        handlePessoaisClick(nome, email, cpf, genero, dataNascimento)
-                    })
+                    1 -> CadastroPessoais(
+                        userData = user,
+                        onClick = { nome, email, cpf, genero, dataNascimento ->
+                            handlePessoaisClick(nome, email, cpf, genero, dataNascimento)
+                        })
 
-                    2 -> CadastroPerfil(onClick = { perfil ->
+                    2 -> CadastroPerfil(userData = user, onClick = { perfil ->
                         handlePerfilClick(perfil = perfil)
                     })
 
-                    3 -> CadastroEndereco(onClick = { cep, uf, cidade, bairro, logradouro, numero ->
-                        handleEnderecoClick(cep, uf, cidade, bairro, logradouro, numero)
-                    })
+                    3 ->
+                        CadastroEndereco(
+                            enderecoData = user.endereco,
+                            onClick = { cep, uf, cidade, bairro, logradouro, numero ->
+                                    handleEnderecoClick(cep, uf, cidade, bairro, logradouro, numero)
+                            })
 
-                    4 -> CadastroFoto(onClick = { etapaAtual = 5 })
 
-                    else -> CadastroSenha(onClick = { senha ->
+                    4 -> CadastroFoto(userData = user, onClick = { etapaAtual = 5 })
+
+                    else -> CadastroSenha(userData = user, onClick = { senha ->
                         handleSenhaClick(senha)
                     })
                 }

@@ -1,7 +1,5 @@
 package com.example.caronaapp.data_class
 
-import java.util.Date
-
 data class Usuario(
     var nome: String = "",
     var email: String = "",

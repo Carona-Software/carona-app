@@ -1,5 +1,6 @@
 package com.example.caronaapp.cadastro
 
+import android.service.autofill.UserData
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,16 +29,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
+import com.example.caronaapp.data_class.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulPerfilSelecionado
 import com.example.caronaapp.ui.theme.CinzaDA
 
 @Composable
-fun CadastroPerfil(onClick: (String) -> Unit) {
+fun CadastroPerfil(userData: Usuario, onClick: (String) -> Unit) {
     val context = LocalContext.current
 
-    var perfil by remember { mutableStateOf("") }
+    var perfil by remember { mutableStateOf(userData.perfil) }
 
     fun setPerfil(valor: String) {
         if (perfil == valor) perfil = "" else perfil = valor

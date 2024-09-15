@@ -22,11 +22,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
+import com.example.caronaapp.data_class.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 
 @Composable
-fun CadastroFoto(onClick: () -> Unit) {
+fun CadastroFoto(userData: Usuario, onClick: () -> Unit) {
     val contexto = LocalContext.current
 
     Column(
