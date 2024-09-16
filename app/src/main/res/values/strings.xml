@@ -82,8 +82,8 @@
     <string name="chat">Chat</string>
     <string name="pessoais">Pessoais</string>
     <string name="perfil">Perfil</string>
-    <string name="notificações">Notificações</string>
-    <string name="avaliações">Avaliações</string>
+    <string name="notificacoes">Notificações</string>
+    <string name="avaliacoes">Avaliações</string>
     <string name="fidelizados">Fidelizados</string>
     <string name="carros">Carros</string>
     <string name="novo_carro">Novo Carro</string>
@@ -141,4 +141,8 @@
 
     <!--  TOAST MESSAGES  -->
     <string name="toast_alerta_preencha_corretamente_os_campos">Preencha corretamente os campos</string>
+    <string name="title_activity_meu_perfil">MeuPerfil</string>
+
+    <!--  TEXTOS COM PARÂMETROS  -->
+    <string name="nota_media_criterio_feedback">(%1$.1f)</string>
 </resources>
