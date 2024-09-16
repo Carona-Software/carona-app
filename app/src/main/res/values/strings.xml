@@ -111,7 +111,7 @@
         %1$.1f km de distância do seu ponto de chegada
     </string>
     <string name="total_viagens_realizadas">%1$d viagens realizadas</string>
-    <string name="procurar_usuario">Procurar usuário</string>
+    <string name="procurar_usuario">Procurar usuário...</string>
     <string name="zero">0</string>
     <string name="cinco">5</string>
     <string name="trajeto">Trajeto</string>
@@ -145,4 +145,5 @@
 
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
+    <string name="title_activity_chat">Chat</string>
 </resources>

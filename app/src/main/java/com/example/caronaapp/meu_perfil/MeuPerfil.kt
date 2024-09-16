@@ -107,7 +107,7 @@ fun MeuPerfilScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .scale(1.2f),
                     color = CinzaE8,
-                    thickness = 2.dp
+                    thickness = 1.dp
                 )
 
                 Column(

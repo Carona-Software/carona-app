@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
+import com.example.caronaapp.layout.BottomNavBar
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.layout.InputField
@@ -52,58 +54,63 @@ fun ProcurarViagemScreen() {
     var dia by remember { mutableStateOf("") }
 
     CaronaAppTheme {
-        Column(
-            modifier = Modifier
-                .background(AzulMensagem)
-                .fillMaxSize()
-                .padding(
-                    top = 48.dp
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.background_viagem),
-                contentDescription = "Motorista",
+        Scaffold(
+            bottomBar = { BottomNavBar() }
+        ) { innerPadding ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .scale(1.2f)
-            )
-            CustomCard {
-                Column(
+                    .background(AzulMensagem)
+                    .fillMaxSize()
+                    .padding(
+                        top = 48.dp
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.background_viagem),
+                    contentDescription = "Motorista",
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    InputField(
-                        label = stringResource(id = R.string.label_ponto_de_partida),
-                        value = pontoPartida,
-                        startIcon = Icons.Default.MyLocation
+                        .fillMaxWidth()
+                        .scale(1.2f)
+                )
+                CustomCard(modifier = Modifier.padding(innerPadding)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        pontoPartida = it
-                    }
-                    InputField(
-                        label = stringResource(id = R.string.label_ponto_de_chegada),
-                        value = pontoChegada,
-                        startIcon = Icons.Default.LocationOn
-                    ) {
-                        pontoChegada = it
-                    }
-                    InputField(
-                        label = stringResource(id = R.string.label_dia),
-                        value = dia,
-                        visualTransformation = DateVisualTransformation(),
-                        startIcon = Icons.Default.CalendarMonth
-                    ) {
-                        dia = it
-                    }
+                        InputField(
+                            label = stringResource(id = R.string.label_ponto_de_partida),
+                            value = pontoPartida,
+                            startIcon = Icons.Default.MyLocation
+                        ) {
+                            pontoPartida = it
+                        }
+                        InputField(
+                            label = stringResource(id = R.string.label_ponto_de_chegada),
+                            value = pontoChegada,
+                            startIcon = Icons.Default.LocationOn
+                        ) {
+                            pontoChegada = it
+                        }
+                        InputField(
+                            label = stringResource(id = R.string.label_dia),
+                            value = dia,
+                            visualTransformation = DateVisualTransformation(),
+                            startIcon = Icons.Default.CalendarMonth
+                        ) {
+                            dia = it
+                        }
 
-                    ButtonAction(label = stringResource(id = R.string.procurar)) {
+                        ButtonAction(label = stringResource(id = R.string.procurar)) {
 
+                        }
                     }
                 }
             }
+
         }
     }
 }
