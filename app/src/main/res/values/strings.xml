@@ -143,8 +143,23 @@
     <string name="toast_alerta_preencha_corretamente_os_campos">Preencha corretamente os campos</string>
     <string name="title_activity_meu_perfil">MeuPerfil</string>
 
+    <!--  NOTIFICATION  -->
+    <string name="notification_title_reserva_de_carona">Reserva de carona</string>
+    <string name="notification_title_nova_mensagem">Nova mensagem</string>
+    <string name="notification_title_cancelamento">Cancelamento</string>
+    <string name="notification_message_reserva_de_carona">
+        %1$s solicitou a reserva de carona para a viagem do dia %2$s
+    </string>
+    <string name="notification_message_nova_mensagem">
+        %1$s enviou uma mensagem no chat
+    </string>
+    <string name="notification_message_cancelamento">
+        %1$s cancelou a a reserva na viagem do dia %2$s
+    </string>
+
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
     <string name="title_activity_chat">Chat</string>
     <string name="title_activity_avaliacoes">Avaliacoes</string>
+    <string name="title_activity_notificacoes">Notificacoes</string>
 </resources>

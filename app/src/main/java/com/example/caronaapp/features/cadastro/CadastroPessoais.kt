@@ -42,7 +42,6 @@ import com.example.caronaapp.data.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CpfVisualTransformation
-import com.example.caronaapp.masks.DateVisualTransformation
 import com.example.caronaapp.ui.theme.Azul
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

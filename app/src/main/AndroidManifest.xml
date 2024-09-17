@@ -13,15 +13,20 @@
         android:theme="@style/Theme.CaronaApp"
         tools:targetApi="31">
         <activity
+            android:name=".features.notificacoes.Notificacoes"
+            android:exported="true"
+            android:label="@string/title_activity_notificacoes"
+            android:theme="@style/Theme.CaronaApp" />
+        <activity
             android:name=".features.avaliacoes.Avaliacoes"
             android:exported="true"
             android:label="@string/title_activity_avaliacoes"
             android:theme="@style/Theme.CaronaApp" />
-<!--        <activity-->
-<!--            android:name=".features.procurar_viagem.ProcurarViagem"-->
-<!--            android:exported="true"-->
-<!--            android:label="@string/title_activity_procurar_viagem"-->
-<!--            android:theme="@style/Theme.CaronaApp" />-->
+        <!-- <activity -->
+        <!-- android:name=".features.procurar_viagem.ProcurarViagem" -->
+        <!-- android:exported="true" -->
+        <!-- android:label="@string/title_activity_procurar_viagem" -->
+        <!-- android:theme="@style/Theme.CaronaApp" /> -->
         <activity
             android:name=".features.chat.Chat"
             android:exported="true"
