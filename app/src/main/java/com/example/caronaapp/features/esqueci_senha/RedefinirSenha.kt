@@ -1,4 +1,4 @@
-package com.example.caronaapp.esqueci_senha
+package com.example.caronaapp.features.esqueci_senha
 
 import android.content.Intent
 import android.os.Bundle

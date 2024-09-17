@@ -13,33 +13,43 @@
         android:theme="@style/Theme.CaronaApp"
         tools:targetApi="31">
         <activity
-            android:name=".chat.Chat"
+            android:name=".features.avaliacoes.Avaliacoes"
+            android:exported="true"
+            android:label="@string/title_activity_avaliacoes"
+            android:theme="@style/Theme.CaronaApp" />
+<!--        <activity-->
+<!--            android:name=".features.procurar_viagem.ProcurarViagem"-->
+<!--            android:exported="true"-->
+<!--            android:label="@string/title_activity_procurar_viagem"-->
+<!--            android:theme="@style/Theme.CaronaApp" />-->
+        <activity
+            android:name=".features.chat.Chat"
             android:exported="true"
             android:label="@string/title_activity_chat"
             android:theme="@style/Theme.CaronaApp" />
         <activity
-            android:name=".meu_perfil.MeuPerfil"
+            android:name=".features.meu_perfil.MeuPerfil"
             android:exported="true"
             android:label="@string/title_activity_meu_perfil"
             android:theme="@style/Theme.CaronaApp" />
         <activity
-            android:name=".esqueci_senha.RedefinirSenha"
-            android:exported="false"
+            android:name=".features.esqueci_senha.RedefinirSenha"
+            android:exported="true"
             android:label="@string/title_activity_redefinir_senha"
             android:theme="@style/Theme.CaronaApp" />
         <activity
-            android:name=".esqueci_senha.EsqueciSenhaCodigo"
-            android:exported="false"
+            android:name=".features.esqueci_senha.EsqueciSenhaCodigo"
+            android:exported="true"
             android:label="@string/title_activity_esqueci_senha_codigo"
             android:theme="@style/Theme.CaronaApp" />
         <activity
-            android:name=".esqueci_senha.EsqueciSenhaEmail"
-            android:exported="false"
+            android:name=".features.esqueci_senha.EsqueciSenhaEmail"
+            android:exported="true"
             android:label="EsqueciSenhaEmail"
             android:theme="@style/Theme.CaronaApp" />
         <activity
-            android:name=".Login"
-            android:exported="false"
+            android:name=".features.login.Login"
+            android:exported="true"
             android:label="Login"
             android:theme="@style/Theme.CaronaApp" />
         <activity

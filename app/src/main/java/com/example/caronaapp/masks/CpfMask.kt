@@ -8,12 +8,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 class CpfVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val trimmed = if (text.text.length >= 11) text.text.substring(0, 11) else text.text
-        var out = ""
+        val out = StringBuilder()
 
-        for (i in text.text.indices) {
-            out += trimmed[i]
-            if (i == 2 || i == 5) out += "."
-            if (i == 8) out += "-"
+        for (i in trimmed.indices) {
+            out.append(trimmed[i])
+            if (i == 2 || i == 5) out.append(".")
+            if (i == 8) out.append("-")
         }
 
         val cpfOffsetTranslator = object : OffsetMapping {
@@ -22,7 +22,7 @@ class CpfVisualTransformation : VisualTransformation {
                 if (offset <= 5) return offset + 1
                 if (offset <= 8) return offset + 2
                 if (offset <= 11) return offset + 3
-                return 14
+                return out.length
             }
 
             override fun transformedToOriginal(offset: Int): Int {
@@ -30,10 +30,10 @@ class CpfVisualTransformation : VisualTransformation {
                 if (offset <= 7) return offset - 1
                 if (offset <= 11) return offset - 2
                 if (offset <= 14) return offset - 3
-                return 11
+                return trimmed.length
             }
         }
 
-        return TransformedText(AnnotatedString(out), cpfOffsetTranslator)
+        return TransformedText(AnnotatedString(out.toString()), cpfOffsetTranslator)
     }
 }

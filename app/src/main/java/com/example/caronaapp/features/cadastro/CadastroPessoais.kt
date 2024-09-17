@@ -1,4 +1,4 @@
-package com.example.caronaapp.cadastro
+package com.example.caronaapp.features.cadastro
 
 import android.os.Build
 import android.widget.Toast
@@ -21,8 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data_class.Usuario
+import com.example.caronaapp.data.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CpfVisualTransformation
@@ -150,7 +148,7 @@ fun CadastroPessoais(
             supportingText = stringResource(id = R.string.input_message_error_cpf),
             isError = cpfInvalido,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            visualTransformation = CpfVisualTransformation()
+//            visualTransformation = CpfVisualTransformation()
         )
         InputField(
             label = stringResource(id = R.string.label_data_nascimento),
@@ -159,7 +157,7 @@ fun CadastroPessoais(
             supportingText = stringResource(id = R.string.input_message_error_data_nascimento),
             isError = dataNascimentoInvalida,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            visualTransformation = DateVisualTransformation(),
+//            visualTransformation = DateVisualTransformation(),
             startIcon = Icons.Default.CalendarMonth
         )
 

@@ -1,4 +1,4 @@
-package com.example.caronaapp.meu_perfil
+package com.example.caronaapp.features.meu_perfil
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

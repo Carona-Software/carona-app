@@ -1,4 +1,4 @@
-package com.example.caronaapp.cadastro
+package com.example.caronaapp.features.cadastro
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,8 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data_class.Endereco
-import com.example.caronaapp.data_class.Usuario
+import com.example.caronaapp.data.Endereco
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CepVisualTransformation
@@ -58,7 +56,7 @@ fun CadastroEndereco(
 
     fun onNumeroChange(it: String) {
         numero = it.toInt()
-        numeroInvalido = isNumeroValido(it)
+        numeroInvalido = isNumeroValido(numero)
     }
 
     CaronaAppTheme {
@@ -76,7 +74,7 @@ fun CadastroEndereco(
                 isError = cepInvalido,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 supportingText = stringResource(id = R.string.input_message_error_cep),
-                visualTransformation = CepVisualTransformation(),
+//                visualTransformation = CepVisualTransformation(),
                 endIcon = Icons.Default.Search
             )
             InputField(
@@ -116,6 +114,6 @@ fun isCepValido(cep: String): Boolean {
     return cep.isNotBlank() && cep.length != 8
 }
 
-fun isNumeroValido(numero: String): Boolean {
-    return numero.isNotBlank() && numero.toInt() <= 0
+fun isNumeroValido(numero: Int): Boolean {
+    return numero <= 0
 }

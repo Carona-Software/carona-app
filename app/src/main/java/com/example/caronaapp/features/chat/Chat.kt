@@ -1,4 +1,4 @@
-package com.example.caronaapp.chat
+package com.example.caronaapp.features.chat
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
