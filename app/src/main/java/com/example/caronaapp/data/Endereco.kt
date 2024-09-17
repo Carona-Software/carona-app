@@ -1,4 +1,4 @@
-package com.example.caronaapp.data_class
+package com.example.caronaapp.data
 
 data class Endereco(
     var cep: String = "",

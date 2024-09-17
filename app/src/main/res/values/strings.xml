@@ -146,4 +146,5 @@
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
     <string name="title_activity_chat">Chat</string>
+    <string name="title_activity_avaliacoes">Avaliacoes</string>
 </resources>

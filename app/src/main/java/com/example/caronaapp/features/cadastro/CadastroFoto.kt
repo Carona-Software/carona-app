@@ -1,4 +1,4 @@
-package com.example.caronaapp.cadastro
+package com.example.caronaapp.features.cadastro
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data_class.Usuario
+import com.example.caronaapp.data.Usuario
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 

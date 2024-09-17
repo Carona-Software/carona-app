@@ -1,4 +1,4 @@
-package com.example.caronaapp
+package com.example.caronaapp.features.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -32,7 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.caronaapp.esqueci_senha.EsqueciSenhaEmail
+import com.example.caronaapp.Cadastro
+import com.example.caronaapp.R
+import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmail
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul

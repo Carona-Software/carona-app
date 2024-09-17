@@ -1,4 +1,4 @@
-package com.example.caronaapp.procurar_viagem
+package com.example.caronaapp.features.procurar_viagem
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -33,7 +33,6 @@ import com.example.caronaapp.layout.BottomNavBar
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.layout.InputField
-import com.example.caronaapp.masks.DateVisualTransformation
 import com.example.caronaapp.ui.theme.AzulMensagem
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
@@ -98,7 +97,6 @@ fun ProcurarViagemScreen() {
                         InputField(
                             label = stringResource(id = R.string.label_dia),
                             value = dia,
-                            visualTransformation = DateVisualTransformation(),
                             startIcon = Icons.Default.CalendarMonth
                         ) {
                             dia = it

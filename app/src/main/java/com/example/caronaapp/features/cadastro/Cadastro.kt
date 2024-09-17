@@ -1,10 +1,12 @@
 package com.example.caronaapp
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,12 +37,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.cadastro.CadastroEndereco
-import com.example.caronaapp.cadastro.CadastroFoto
-import com.example.caronaapp.cadastro.CadastroPessoais
-import com.example.caronaapp.cadastro.CadastroPerfil
-import com.example.caronaapp.cadastro.CadastroSenha
-import com.example.caronaapp.data_class.Usuario
+import com.example.caronaapp.features.cadastro.CadastroEndereco
+import com.example.caronaapp.features.cadastro.CadastroFoto
+import com.example.caronaapp.features.cadastro.CadastroPessoais
+import com.example.caronaapp.features.cadastro.CadastroPerfil
+import com.example.caronaapp.features.cadastro.CadastroSenha
+import com.example.caronaapp.data.Usuario
+import com.example.caronaapp.features.login.Login
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
@@ -49,6 +52,7 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaD9
 
 class Cadastro : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -63,12 +67,13 @@ class CadastroStepClass(
     val etapa: Int,
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CadastroScreen() {
     val context = LocalContext.current
     var etapaAtual by remember { mutableStateOf(1) }
 
-    val user = Usuario().copy()
+    val user = Usuario()
 
     fun handlePessoaisClick(
         nome: String,
@@ -279,6 +284,7 @@ fun CadastroStep(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewCadastroScreen() {

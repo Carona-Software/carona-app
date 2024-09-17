@@ -56,6 +56,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 14.sp,
     ),
+    bodySmall = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+    ),
     headlineMedium = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Light,
