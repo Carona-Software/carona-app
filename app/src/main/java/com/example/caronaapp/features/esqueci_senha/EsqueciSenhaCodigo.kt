@@ -1,10 +1,5 @@
 package com.example.caronaapp.features.esqueci_senha
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +21,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -48,36 +41,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
-class EsqueciSenhaCodigo : ComponentActivity() {
-    lateinit var email: String
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        email = intent.getStringExtra("email") ?: "null"
-
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    EsqueciSenhaCodigo(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
-                        email = email
-                    )
-                }
-            }
-        }
-    }
-}
-
 @Composable
-fun EsqueciSenhaCodigo(name: String, modifier: Modifier = Modifier, email: String) {
-    val contexto = LocalContext.current
+fun EsqueciSenhaCodigoScreen(
+    navController: NavController,
+    email: String?
+) {
     var codigo by remember { mutableStateOf("") }
+
     CaronaAppTheme {
         Box(
             modifier = Modifier
@@ -100,10 +77,7 @@ fun EsqueciSenhaCodigo(name: String, modifier: Modifier = Modifier, email: Strin
                             .width(35.dp)
                             .height(35.dp)
                             .clickable {
-                                val firstPage = Intent(
-                                    contexto, EsqueciSenhaEmail::class.java
-                                )
-                                contexto.startActivity(firstPage)
+                                navController.popBackStack()
                             },
                     )
                 }
@@ -188,8 +162,7 @@ fun EsqueciSenhaCodigo(name: String, modifier: Modifier = Modifier, email: Strin
                 Spacer(modifier = Modifier.height(100.dp))
                 Button(
                     onClick = {
-                        val nextPage = Intent(contexto, RedefinirSenha::class.java)
-                        contexto.startActivity(nextPage)
+                        navController.navigate("esqueci-senha/redefinir")
                     },
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Amarelo),
@@ -212,8 +185,9 @@ fun EsqueciSenhaCodigo(name: String, modifier: Modifier = Modifier, email: Strin
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview3() {
+fun EsqueciSenhaCodigoScreenPreview() {
     CaronaAppTheme {
-        EsqueciSenhaCodigo("Android", email = "null")
+        val navController = rememberNavController()
+        EsqueciSenhaCodigoScreen(navController = navController, email = "null")
     }
 }

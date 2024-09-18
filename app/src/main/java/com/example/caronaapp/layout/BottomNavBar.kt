@@ -12,11 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,44 +20,58 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Azul
+import com.example.caronaapp.ui.theme.AzulInativo
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.example.caronaapp.ui.theme.Chat
 import com.example.caronaapp.ui.theme.CinzaE8
+import com.example.caronaapp.ui.theme.MeuPerfil
+import com.example.caronaapp.ui.theme.Procurar
+import com.example.caronaapp.ui.theme.Viagem
 
 class BottomBarItem(
     val label: String,
     val icon: ImageVector,
+    val isCurrent: Boolean,
     val navigate: () -> Unit
 )
 
 @Composable
-fun BottomNavBar() {
-    var bottomBarItens = listOf(
+fun BottomNavBar(navController: NavController) {
+    val currentScreen = navController.currentBackStackEntry?.destination?.route
+
+    val bottomBarItens = listOf(
         BottomBarItem(
-            stringResource(id = R.string.procurar),
-            Icons.Default.Search,
+            label = stringResource(id = R.string.procurar),
+            icon = Procurar,
+            isCurrent = currentScreen == "viagens/procurar",
+            navigate = { navController.navigate("viagens/procurar") }
+        ),
+        BottomBarItem(
+            label = stringResource(id = R.string.chat),
+            icon = Chat,
+            isCurrent = currentScreen == "chat",
+            navigate = { navController.navigate("chat") }
+        ),
+        BottomBarItem(
+            label = stringResource(id = R.string.viagens),
+            icon = Viagem,
+            isCurrent = currentScreen == "",
             navigate = {}
         ),
         BottomBarItem(
-            stringResource(id = R.string.chat),
-            Icons.AutoMirrored.Filled.Chat,
-            navigate = {}
-        ),
-        BottomBarItem(
-            stringResource(id = R.string.viagens),
-            Icons.Default.Map,
-            navigate = {}
-        ),
-        BottomBarItem(
-            stringResource(id = R.string.perfil),
-            Icons.Default.Person,
-            navigate = {}
+            label = stringResource(id = R.string.perfil),
+            icon = MeuPerfil,
+            isCurrent = currentScreen == "meu-perfil",
+            navigate = { navController.navigate("meu-perfil") }
         ),
     )
 
@@ -82,26 +92,27 @@ fun BottomNavBar() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                bottomBarItens.map {
+                bottomBarItens.map { item ->
                     Column(
                         modifier = Modifier
+                            .clip(CircleShape)
                             .fillMaxHeight()
                             .weight(1f)
                             .padding(8.dp)
-                            .clickable { },
+                            .clickable { item.navigate() },
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
-                            imageVector = it.icon,
-                            contentDescription = it.label,
-                            tint = Azul,
+                            imageVector = item.icon,
+                            contentDescription = item.label,
+                            tint = if (item.isCurrent) Azul else AzulInativo,
                             modifier = Modifier.size(28.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = it.label,
-                            color = Azul,
+                            text = item.label,
+                            color = if (item.isCurrent) Azul else AzulInativo,
                             style = MaterialTheme.typography.displayMedium
                         )
                     }
@@ -115,6 +126,6 @@ fun BottomNavBar() {
 @Composable
 fun PreviewBottomNavBar() {
     CaronaAppTheme {
-        BottomNavBar()
+//        BottomNavBar()
     }
 }

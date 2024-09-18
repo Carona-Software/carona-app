@@ -63,7 +63,7 @@ val Typography = Typography(
     ),
     headlineMedium = TextStyle(
         fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
     ),
     headlineSmall = TextStyle( // para erro de input

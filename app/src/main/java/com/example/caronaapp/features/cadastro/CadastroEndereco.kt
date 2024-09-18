@@ -22,6 +22,7 @@ import com.example.caronaapp.data.Endereco
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CepVisualTransformation
+import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 @Composable
@@ -75,7 +76,7 @@ fun CadastroEndereco(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 supportingText = stringResource(id = R.string.input_message_error_cep),
 //                visualTransformation = CepVisualTransformation(),
-                endIcon = Icons.Default.Search
+                endIcon = Calendario
             )
             InputField(
                 label = stringResource(id = R.string.label_cidade_uf),

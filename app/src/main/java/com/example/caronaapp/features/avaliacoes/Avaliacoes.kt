@@ -1,9 +1,5 @@
 package com.example.caronaapp.features.avaliacoes
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.TopBarTitle
 import com.example.caronaapp.ui.theme.Amarelo
@@ -43,24 +41,12 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
 
-class Avaliacoes : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                AvaliacoesScreen()
-            }
-        }
-    }
-}
-
 @Composable
-fun AvaliacoesScreen(modifier: Modifier = Modifier) {
+fun AvaliacoesScreen(navController: NavController, modifier: Modifier = Modifier) {
     CaronaAppTheme {
         Scaffold(
             topBar = {
-                TopBarTitle(title = stringResource(id = R.string.avaliacoes)) {}
+                TopBarTitle(navController, title = stringResource(id = R.string.avaliacoes))
             }
         ) { innerPadding ->
             Column(
@@ -108,7 +94,7 @@ fun Avaliacao(
             verticalArrangement = Arrangement.Top
         ) {
             Image(
-                painter = if (fotoUser != null) fotoUser else painterResource(id = R.mipmap.foto_gustavo),
+                painter = fotoUser ?: painterResource(id = R.mipmap.foto_gustavo),
                 contentDescription = "usuário",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -176,8 +162,9 @@ fun Avaliacao(
 
 @Preview(showSystemUi = true)
 @Composable
-fun GreetingPreview5() {
+fun AvaliacoesScreenPreview() {
     CaronaAppTheme {
-        AvaliacoesScreen()
+        val navController = rememberNavController()
+        AvaliacoesScreen(navController)
     }
 }

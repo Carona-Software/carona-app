@@ -1,9 +1,5 @@
 package com.example.caronaapp.features.notificacoes
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,10 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.MarkUnreadChatAlt
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -37,33 +29,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.TopBarTitle
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulMensagem
+import com.example.caronaapp.ui.theme.Cancelamento
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
-
-class Notificacoes : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                NotificacoesScreen()
-            }
-        }
-    }
-}
+import com.example.caronaapp.ui.theme.NotificacaoNaoLida
+import com.example.caronaapp.ui.theme.SolicitacaoCarona
 
 @Composable
-fun NotificacoesScreen(modifier: Modifier = Modifier) {
+fun NotificacoesScreen(navController: NavController) {
     CaronaAppTheme {
         Scaffold(
             topBar = {
-                TopBarTitle(title = stringResource(id = R.string.notificacoes)) {}
+                TopBarTitle(navController, title = stringResource(id = R.string.notificacoes))
             }
         ) { innerPadding ->
             Column(
@@ -75,7 +60,7 @@ fun NotificacoesScreen(modifier: Modifier = Modifier) {
             ) {
                 Notificacao(
                     title = stringResource(id = R.string.notification_title_reserva_de_carona),
-                    icon = Icons.Default.PersonAdd,
+                    icon = SolicitacaoCarona,
                     message = stringResource(
                         id = R.string.notification_message_reserva_de_carona,
                         "Lucas Arantes", "20/09/2024"
@@ -83,7 +68,7 @@ fun NotificacoesScreen(modifier: Modifier = Modifier) {
                 ) {}
                 Notificacao(
                     title = stringResource(id = R.string.notification_title_nova_mensagem),
-                    icon = Icons.Default.MarkUnreadChatAlt,
+                    icon = NotificacaoNaoLida,
                     message = stringResource(
                         id = R.string.notification_message_nova_mensagem,
                         "Lucas Arantes", "20/09/2024"
@@ -91,7 +76,7 @@ fun NotificacoesScreen(modifier: Modifier = Modifier) {
                 ) {}
                 Notificacao(
                     title = stringResource(id = R.string.notification_title_cancelamento),
-                    icon = Icons.Default.Block,
+                    icon = Cancelamento,
                     message = stringResource(
                         id = R.string.notification_message_cancelamento,
                         "Lucas Arantes", "20/09/2024"
@@ -187,6 +172,7 @@ fun Notificacao(
 @Composable
 fun NotificacoesScreenPreview() {
     CaronaAppTheme {
-        NotificacoesScreen()
+        val navController = rememberNavController()
+        NotificacoesScreen(navController)
     }
 }
