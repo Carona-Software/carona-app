@@ -1,9 +1,5 @@
 package com.example.caronaapp.features.chat
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,8 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +40,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.BottomNavBar
 import com.example.caronaapp.ui.theme.Azul
@@ -53,27 +49,16 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
-
-class Chat : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                ChatScreen()
-            }
-        }
-    }
-}
+import com.example.caronaapp.ui.theme.Procurar
 
 @Composable
-fun ChatScreen(modifier: Modifier = Modifier) {
+fun ChatScreen(navController: NavController) {
     var usuarioPesquisado by remember {
         mutableStateOf("")
     }
 
-    var conversasRecentes = remember {
-        mutableStateListOf<ConversaData>(
+    val conversasRecentes = remember {
+        mutableStateListOf(
             ConversaData(
                 fotoUser = null,
                 nomeUser = "Kauã Queiroz",
@@ -88,7 +73,7 @@ fun ChatScreen(modifier: Modifier = Modifier) {
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar() }
+            bottomBar = { BottomNavBar(navController) }
         ) { innerPadding ->
             Column(
                 Modifier
@@ -103,7 +88,8 @@ fun ChatScreen(modifier: Modifier = Modifier) {
                         .height(52.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(CinzaF5),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TextField(
                         value = usuarioPesquisado,
@@ -116,7 +102,6 @@ fun ChatScreen(modifier: Modifier = Modifier) {
                             )
                         },
                         modifier = Modifier
-                            .fillMaxWidth(0.85f)
                             .fillMaxHeight()
                             .background(Color.Transparent),
                         colors = TextFieldDefaults.colors(
@@ -126,13 +111,16 @@ fun ChatScreen(modifier: Modifier = Modifier) {
                             unfocusedContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
-                        )
+                        ),
+                        textStyle = MaterialTheme.typography.headlineMedium
                     )
                     Icon(
-                        imageVector = Icons.Default.Search,
+                        imageVector = Procurar,
                         contentDescription = stringResource(id = R.string.procurar),
                         tint = Cinza90,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .size(28.dp)
                     )
                 }
 
@@ -176,7 +164,6 @@ fun Conversa(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-//            .background(BrancoF1)
             .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -215,6 +202,7 @@ fun Conversa(
 @Composable
 fun ChatScreenPreview() {
     CaronaAppTheme {
-        ChatScreen()
+        val navController = rememberNavController()
+        ChatScreen(navController)
     }
 }

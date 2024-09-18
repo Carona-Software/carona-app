@@ -1,10 +1,5 @@
 package com.example.caronaapp.features.esqueci_senha
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,40 +23,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.features.login.Login
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
-class EsqueciSenhaEmail : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    EsqueciSenhaEmail(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
-    }
-}
-
 @Composable
-fun EsqueciSenhaEmail(name: String, modifier: Modifier = Modifier) {
-    val contexto = LocalContext.current
-
+fun EsqueciSenhaEmailScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var emailInvalido by remember { mutableStateOf(false) }
 
@@ -99,8 +74,7 @@ fun EsqueciSenhaEmail(name: String, modifier: Modifier = Modifier) {
                         .width(35.dp)
                         .height(35.dp)
                         .clickable {
-                            val login = Intent(contexto, Login::class.java)
-                            contexto.startActivity(login)
+                            navController.popBackStack()
                         },
                 )
             }
@@ -145,10 +119,7 @@ fun EsqueciSenhaEmail(name: String, modifier: Modifier = Modifier) {
                     onEmailChange(it)
                 }
                 ButtonAction(label = stringResource(id = R.string.label_button_enviar_codigo)) {
-                    val nextPag = Intent(contexto, EsqueciSenhaCodigo::class.java)
-                    nextPag.putExtra("email", email)
-
-                    contexto.startActivity(nextPag)
+                    navController.navigate("esqueci-senha/codigo/$email")
                 }
             }
         }
@@ -157,8 +128,9 @@ fun EsqueciSenhaEmail(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview2() {
+fun EsqueciSenhaEmailScreenPreview() {
     CaronaAppTheme {
-        EsqueciSenhaEmail("Android")
+        val navController = rememberNavController()
+        EsqueciSenhaEmailScreen(navController)
     }
 }

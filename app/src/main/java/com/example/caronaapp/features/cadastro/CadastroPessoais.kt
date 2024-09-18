@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +41,7 @@ import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CpfVisualTransformation
 import com.example.caronaapp.ui.theme.Azul
+import com.example.caronaapp.ui.theme.Calendario
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -157,7 +156,7 @@ fun CadastroPessoais(
             isError = dataNascimentoInvalida,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 //            visualTransformation = DateVisualTransformation(),
-            startIcon = Icons.Default.CalendarMonth
+            startIcon = Calendario
         )
 
         Column {

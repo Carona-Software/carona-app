@@ -1,11 +1,6 @@
 package com.example.caronaapp.features.esqueci_senha
 
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,38 +31,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Icon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
-
-class RedefinirSenha : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RedefinirSenha(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
-    }
-}
+import com.example.caronaapp.ui.theme.Olho
 
 @Composable
-fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
+fun RedefinirSenhaScreen(navController: NavController) {
     val context = LocalContext.current
     var senha by remember { mutableStateOf("") }
     var confirmacaoSenha by remember { mutableStateOf("") }
@@ -81,10 +60,10 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
     fun onSenhaChange(it: String) {
         if (it != " ") {
             senha = it
-            containsMaiuscula = senhaContainsMaiuscula(it)
-            containsMinuscula = senhaContainsMinuscula(it)
-            containsNumero = senhaContainsNumero(it)
-            containsCaracterEspecial = senhaContainsCaracterEspecial(it)
+            containsMaiuscula = senha.any { it.isUpperCase() }
+            containsMinuscula = senha.any { it.isLowerCase() }
+            containsNumero = senha.any { it.isDigit() }
+            containsCaracterEspecial = senha.any { !it.isLetterOrDigit() }
         }
     }
 
@@ -95,10 +74,10 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
     fun onButtonClick() {
         if (!isSenhaValida()) {
             Toast.makeText(context, "Digite uma senha válida", Toast.LENGTH_SHORT).show()
-        } else if (!isConfirmacaoSenhaValido(senha, confirmacaoSenha)) {
+        } else if (confirmacaoSenha != senha) {
             Toast.makeText(context, "As senhas devem ser iguais", Toast.LENGTH_SHORT).show()
         } else {
-
+            navController.navigate("login")
         }
     }
 
@@ -125,10 +104,7 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
                             .width(35.dp)
                             .height(35.dp)
                             .clickable {
-                                val secondPage = Intent(
-                                    context, EsqueciSenhaCodigo::class.java
-                                )
-                                context.startActivity(secondPage)
+                                navController.popBackStack()
                             },
                     )
                 }
@@ -244,7 +220,7 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
                             value = senha,
                             handleChange = { onSenhaChange(it) },
                             visualTransformation = PasswordVisualTransformation(),
-                            endIcon = Icons.Default.RemoveRedEye
+                            endIcon = Olho
                         )
 
                         Spacer(modifier = Modifier.height(40.dp))
@@ -254,7 +230,7 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
                             value = confirmacaoSenha,
                             handleChange = { confirmacaoSenha = it },
                             visualTransformation = PasswordVisualTransformation(),
-                            endIcon = Icons.Default.RemoveRedEye
+                            endIcon = Olho
                         )
                     }
 
@@ -268,30 +244,11 @@ fun RedefinirSenha(name: String, modifier: Modifier = Modifier) {
     }
 }
 
-private fun senhaContainsMaiuscula(senha: String): Boolean {
-    return senha.any { it.isUpperCase() }
-}
-
-private fun senhaContainsMinuscula(senha: String): Boolean {
-    return senha.any { it.isLowerCase() }
-}
-
-private fun senhaContainsNumero(senha: String): Boolean {
-    return senha.any { it.isDigit() }
-}
-
-private fun senhaContainsCaracterEspecial(senha: String): Boolean {
-    return senha.any { !it.isLetterOrDigit() }
-}
-
-private fun isConfirmacaoSenhaValido(senha: String, confirmacaoSenha: String): Boolean {
-    return confirmacaoSenha == senha
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview4() {
+fun RedefinirSenhaScreenPreview() {
     CaronaAppTheme {
-        RedefinirSenha("Android")
+        val navController = rememberNavController()
+        RedefinirSenhaScreen(navController)
     }
 }

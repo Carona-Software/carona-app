@@ -125,8 +125,7 @@ fun InputField(
                         Icon(
                             imageVector = endIcon,
                             contentDescription = iconDescription,
-                            Modifier
-//                                .padding(end = 8.dp)
+                            modifier = Modifier
                                 .size(28.dp),
                             tint = Azul
                         )

@@ -1,11 +1,8 @@
 package com.example.caronaapp.features.meu_perfil
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,13 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.Loyalty
-import androidx.compose.material.icons.filled.NotificationsNone
-import androidx.compose.material.icons.filled.RateReview
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,34 +33,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.BottomNavBar
 import com.example.caronaapp.layout.CriterioFeedback
 import com.example.caronaapp.ui.theme.Amarelo
+import com.example.caronaapp.ui.theme.Avaliacao
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.example.caronaapp.ui.theme.Carro
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
-
-class MeuPerfil : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CaronaAppTheme {
-                MeuPerfilScreen()
-            }
-        }
-    }
-}
+import com.example.caronaapp.ui.theme.Estrela
+import com.example.caronaapp.ui.theme.Fidelizacao
+import com.example.caronaapp.ui.theme.Notificacao
+import com.example.caronaapp.ui.theme.SetaDireita
 
 @Composable
-fun MeuPerfilScreen(modifier: Modifier = Modifier) {
+fun MeuPerfilScreen(navController: NavController) {
     val scrollState = rememberScrollState()
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar() }
+            bottomBar = { BottomNavBar(navController) }
         ) { innerPadding ->
             Column(
                 Modifier
@@ -102,7 +88,6 @@ fun MeuPerfilScreen(modifier: Modifier = Modifier) {
                     )
                 }
 
-//                Spacer(modifier = Modifier.height(12.dp))
                 HorizontalDivider(
                     modifier = Modifier
                         .scale(1.2f),
@@ -133,7 +118,7 @@ fun MeuPerfilScreen(modifier: Modifier = Modifier) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Star,
+                                imageVector = Estrela,
                                 contentDescription = "Estrela",
                                 tint = Amarelo,
                                 modifier = Modifier.size(48.dp)
@@ -190,22 +175,26 @@ fun MeuPerfilScreen(modifier: Modifier = Modifier) {
                             .fillMaxWidth(),
                     ) { // funcionalidades de Meu Perfil
                         MeuPerfilTopic(
-                            icon = Icons.Default.NotificationsNone,
+                            icon = Notificacao,
                             label = stringResource(id = R.string.notificacoes)
-                        ) {}
+                        ) {
+                            navController.navigate("meu-perfil/notificacoes")
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         MeuPerfilTopic(
-                            icon = Icons.Default.RateReview,
+                            icon = Avaliacao,
                             label = stringResource(id = R.string.avaliacoes)
-                        ) {}
+                        ) {
+                            navController.navigate("meu-perfil/avaliacoes")
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         MeuPerfilTopic(
-                            icon = Icons.Default.Loyalty,
+                            icon = Fidelizacao,
                             label = stringResource(id = R.string.fidelizados)
                         ) {}
                         Spacer(modifier = Modifier.height(8.dp))
                         MeuPerfilTopic(
-                            icon = Icons.Default.DirectionsCar,
+                            icon = Carro,
                             label = stringResource(id = R.string.carros)
                         ) {}
                     }
@@ -274,7 +263,7 @@ fun MeuPerfilScreen(modifier: Modifier = Modifier) {
                                 modifier = Modifier.fillMaxWidth(0.92f)
                             )
                             Icon(
-                                imageVector = Icons.Default.ArrowForwardIos,
+                                imageVector = SetaDireita,
                                 contentDescription = "Navegar",
                                 tint = Cinza90,
                                 modifier = Modifier.size(20.dp)
@@ -292,12 +281,13 @@ fun MeuPerfilScreen(modifier: Modifier = Modifier) {
 fun MeuPerfilTopic(
     icon: ImageVector,
     label: String,
-    onClick: () -> Unit
+    navigate: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(48.dp)
+            .clickable { navigate() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -314,7 +304,7 @@ fun MeuPerfilTopic(
             modifier = Modifier.fillMaxWidth(0.92f)
         )
         Icon(
-            imageVector = Icons.Default.ArrowForwardIos,
+            imageVector = SetaDireita,
             contentDescription = "Navegar",
             tint = Cinza90,
             modifier = Modifier.size(20.dp)
@@ -356,7 +346,7 @@ fun ItemDadosPessoais(
         if (editavel) {
             IconButton(onClick = { onEditClick() }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowForwardIos,
+                    imageVector = SetaDireita,
                     contentDescription = "Navegar",
                     tint = Cinza90,
                     modifier = Modifier.size(20.dp)
@@ -371,6 +361,7 @@ fun ItemDadosPessoais(
 @Composable
 fun MeuPerfilScreenPreview() {
     CaronaAppTheme {
-        MeuPerfilScreen()
+        val navController = rememberNavController()
+        MeuPerfilScreen(navController)
     }
 }

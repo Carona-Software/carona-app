@@ -1,6 +1,5 @@
 package com.example.caronaapp.features.login
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,9 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.caronaapp.Cadastro
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmail
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
@@ -46,23 +44,20 @@ class Login : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CaronaAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Login(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+//            CaronaAppTheme {
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    LoginScreen(modifier = Modifier.padding(innerPadding))
+//                }
+//            }
         }
     }
 }
 
 @Composable
-fun Login(name: String, modifier: Modifier = Modifier) {
+fun LoginScreen(navController: NavController, modifier: Modifier = Modifier) {
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
-    val contexto = LocalContext.current
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -109,15 +104,13 @@ fun Login(name: String, modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = Modifier.height(40.dp))
                 ButtonAction(label = stringResource(id = R.string.label_button_entrar)) {
-
+                    navController.navigate("meu-perfil")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TextButton(onClick = {
-                    val esqueciSenha = Intent(contexto, EsqueciSenhaEmail::class.java)
-
-                    contexto.startActivity(esqueciSenha)
+                    navController.navigate("esqueci-senha")
                 }, modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Esqueceu a senha?",
@@ -142,8 +135,7 @@ fun Login(name: String, modifier: Modifier = Modifier) {
                         style = MaterialTheme.typography.titleSmall
                     )
                     TextButton(onClick = {
-                        val cadastro = Intent(contexto, Cadastro::class.java)
-                        contexto.startActivity(cadastro)
+                        navController.navigate("cadastro")
                     }) {
                         Text(
                             text = "Cadastre-se",
@@ -160,8 +152,9 @@ fun Login(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun LoginScreenPreview() {
     CaronaAppTheme {
-        Login("Android")
+        val navController = rememberNavController()
+        LoginScreen(navController)
     }
 }

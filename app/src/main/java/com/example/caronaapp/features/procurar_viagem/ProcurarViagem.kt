@@ -1,9 +1,5 @@
 package com.example.caronaapp.features.procurar_viagem
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,10 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,33 +20,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.layout.BottomNavBar
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.AzulMensagem
+import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
-
-class ProcurarViagem : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            ProcurarViagemScreen()
-        }
-    }
-}
+import com.example.caronaapp.ui.theme.Localizacao
+import com.example.caronaapp.ui.theme.PontoPartida
 
 @Composable
-fun ProcurarViagemScreen() {
+fun ProcurarViagemScreen(navController: NavController) {
     var pontoPartida by remember { mutableStateOf("") }
     var pontoChegada by remember { mutableStateOf("") }
     var dia by remember { mutableStateOf("") }
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar() }
+            bottomBar = { BottomNavBar(navController) }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -70,7 +57,7 @@ fun ProcurarViagemScreen() {
                     contentDescription = "Motorista",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .scale(1.2f)
+                        .scale(1.45f)
                 )
                 CustomCard(modifier = Modifier.padding(innerPadding)) {
                     Column(
@@ -83,21 +70,21 @@ fun ProcurarViagemScreen() {
                         InputField(
                             label = stringResource(id = R.string.label_ponto_de_partida),
                             value = pontoPartida,
-                            startIcon = Icons.Default.MyLocation
+                            startIcon = PontoPartida
                         ) {
                             pontoPartida = it
                         }
                         InputField(
                             label = stringResource(id = R.string.label_ponto_de_chegada),
                             value = pontoChegada,
-                            startIcon = Icons.Default.LocationOn
+                            startIcon = Localizacao
                         ) {
                             pontoChegada = it
                         }
                         InputField(
                             label = stringResource(id = R.string.label_dia),
                             value = dia,
-                            startIcon = Icons.Default.CalendarMonth
+                            startIcon = Calendario
                         ) {
                             dia = it
                         }
@@ -117,6 +104,7 @@ fun ProcurarViagemScreen() {
 @Composable
 fun PreviewProcurarViagemScreen() {
     CaronaAppTheme {
-        ProcurarViagemScreen()
+        val navController = rememberNavController()
+        ProcurarViagemScreen(navController)
     }
 }

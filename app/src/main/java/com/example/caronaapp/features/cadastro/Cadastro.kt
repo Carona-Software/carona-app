@@ -1,11 +1,6 @@
-package com.example.caronaapp
+package com.example.caronaapp.features.cadastro
 
-import android.content.Intent
 import android.os.Build
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,30 +33,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.caronaapp.features.cadastro.CadastroEndereco
-import com.example.caronaapp.features.cadastro.CadastroFoto
-import com.example.caronaapp.features.cadastro.CadastroPessoais
-import com.example.caronaapp.features.cadastro.CadastroPerfil
-import com.example.caronaapp.features.cadastro.CadastroSenha
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.caronaapp.R
 import com.example.caronaapp.data.Usuario
-import com.example.caronaapp.features.login.Login
 import com.example.caronaapp.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
 import com.example.caronaapp.ui.theme.BrancoF1
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaD9
-
-class Cadastro : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            CadastroScreen()
-        }
-    }
-}
 
 class CadastroStepClass(
     val label: String,
@@ -69,9 +51,9 @@ class CadastroStepClass(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CadastroScreen() {
+fun CadastroScreen(navController: NavController) {
     val context = LocalContext.current
-    var etapaAtual by remember { mutableStateOf(1) }
+    var etapaAtual by remember { mutableIntStateOf(1) }
 
     val user = Usuario()
 
@@ -121,8 +103,7 @@ fun CadastroScreen() {
 
     fun handleSenhaClick(senha: String) {
         user.senha = senha
-        val login = Intent(context, Login::class.java)
-        context.startActivity(login)
+        navController.navigate("login")
     }
 
     val stepsCadastro = listOf(
@@ -154,7 +135,9 @@ fun CadastroScreen() {
             4 -> etapaAtual = 3
             3 -> etapaAtual = 2
             2 -> etapaAtual = 1
-            else -> {}
+            else -> {
+                navController.popBackStack()
+            }
         }
     }
 
@@ -287,8 +270,9 @@ fun CadastroStep(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true)
 @Composable
-fun PreviewCadastroScreen() {
+fun CadastroScreenPreview() {
     CaronaAppTheme {
-        CadastroScreen()
+        val navController = rememberNavController()
+        CadastroScreen(navController)
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +34,7 @@ import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Cinza90
+import com.example.caronaapp.ui.theme.Olho
 
 @Composable
 fun CadastroSenha(userData: Usuario, onClick: (String) -> Unit) {
@@ -180,7 +180,7 @@ fun CadastroSenha(userData: Usuario, onClick: (String) -> Unit) {
                 value = senha,
                 handleChange = { onSenhaChange(it) },
                 visualTransformation = PasswordVisualTransformation(),
-                endIcon = Icons.Default.RemoveRedEye
+                endIcon = Olho
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -190,7 +190,7 @@ fun CadastroSenha(userData: Usuario, onClick: (String) -> Unit) {
                 value = confirmacaoSenha,
                 handleChange = { confirmacaoSenha = it },
                 visualTransformation = PasswordVisualTransformation(),
-                endIcon = Icons.Default.RemoveRedEye
+                endIcon = Olho
             )
         }
 
