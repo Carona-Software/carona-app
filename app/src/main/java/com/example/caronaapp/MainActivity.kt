@@ -13,6 +13,7 @@ import com.example.caronaapp.features.avaliacoes.AvaliacoesScreen
 import com.example.caronaapp.features.cadastro.CadastroScreen
 import com.example.caronaapp.features.carros.CarrosScreen
 import com.example.caronaapp.features.chat.ChatScreen
+import com.example.caronaapp.features.chat.ConversaScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmailScreen
 import com.example.caronaapp.features.esqueci_senha.RedefinirSenhaScreen
@@ -65,6 +66,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("meu-perfil/carros") {
                         CarrosScreen(navController)
+                    }
+                    composable("chat/conversa") {
+                        ConversaScreen(navController)
                     }
                 }
             }

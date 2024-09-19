@@ -3,6 +3,7 @@ package com.example.caronaapp.ui.theme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Adjust
@@ -42,3 +43,4 @@ val Estrela = Icons.Default.Star
 val Cancelamento = Icons.Default.Block
 val NotificacaoNaoLida = Icons.Default.MarkUnreadChatAlt
 val SolicitacaoCarona = Icons.Default.PersonAdd
+val EnviarMensagem = Icons.AutoMirrored.Filled.Send
