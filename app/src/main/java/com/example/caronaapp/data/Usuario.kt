@@ -1,6 +1,7 @@
 package com.example.caronaapp.data
 
 data class Usuario(
+    val id: Int? = null,
     var nome: String = "",
     var email: String = "",
     var cpf: String = "",

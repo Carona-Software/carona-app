@@ -168,7 +168,7 @@ fun Conversa(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.mipmap.foto_gustavo),
+            painter = painterResource(id = R.mipmap.user_default),
             contentDescription = "Usuário",
             modifier = Modifier
                 .size(60.dp)

@@ -48,7 +48,10 @@ fun NotificacoesScreen(navController: NavController) {
     CaronaAppTheme {
         Scaffold(
             topBar = {
-                TopBarTitle(navController, title = stringResource(id = R.string.notificacoes))
+                TopBarTitle(
+                    navController = navController,
+                    title = stringResource(id = R.string.notificacoes)
+                )
             }
         ) { innerPadding ->
             Column(

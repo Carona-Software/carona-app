@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.features.avaliacoes.AvaliacoesScreen
 import com.example.caronaapp.features.cadastro.CadastroScreen
+import com.example.caronaapp.features.carros.CarrosScreen
 import com.example.caronaapp.features.chat.ChatScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmailScreen
@@ -61,6 +62,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("viagens/procurar") {
                         ProcurarViagemScreen(navController)
+                    }
+                    composable("meu-perfil/carros") {
+                        CarrosScreen(navController)
                     }
                 }
             }
