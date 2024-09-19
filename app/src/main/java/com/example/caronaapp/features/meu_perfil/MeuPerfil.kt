@@ -196,7 +196,9 @@ fun MeuPerfilScreen(navController: NavController) {
                         MeuPerfilTopic(
                             icon = Carro,
                             label = stringResource(id = R.string.carros)
-                        ) {}
+                        ) {
+                            navController.navigate("meu-perfil/carros")
+                        }
                     }
 
                     HorizontalDivider(

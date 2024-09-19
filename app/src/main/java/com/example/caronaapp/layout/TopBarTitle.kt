@@ -1,6 +1,9 @@
 package com.example.caronaapp.layout
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,25 +24,40 @@ import com.example.caronaapp.ui.theme.SetaEsquerda
 
 @Composable
 fun TopBarTitle(navController: NavController, title: String? = null) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 16.dp)
-            .height(40.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .height(40.dp)
+            .fillMaxWidth(),
     ) {
-        IconButton(onClick = { navController.popBackStack() }) {
-            Icon(
-                imageVector = SetaEsquerda,
-                contentDescription = "Voltar",
-                tint = Azul,
-                modifier = Modifier.size(24.dp)
+        Row(
+            modifier = Modifier.fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .size(24.dp),
+            ) {
+                Icon(
+                    imageVector = SetaEsquerda,
+                    contentDescription = "Voltar",
+                    tint = Azul,
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = title ?: "",
+                color = Azul,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
         }
-        Text(
-            text = title ?: "",
-            color = Azul,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.fillMaxSize(0.8f),
-            textAlign = TextAlign.Center
-        )
     }
 }
