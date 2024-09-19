@@ -2,6 +2,7 @@ package com.example.caronaapp.features.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,8 +62,8 @@ fun ChatScreen(navController: NavController) {
         mutableStateListOf(
             ConversaData(
                 fotoUser = null,
-                nomeUser = "Kauã Queiroz",
-                ultimaMensagem = "Muito obrigado"
+                nomeUser = "Lucas Arantes",
+                ultimaMensagem = "Av. Paulista, 2000"
             ),
             ConversaData(
                 fotoUser = null,
@@ -132,9 +133,10 @@ fun ChatScreen(navController: NavController) {
                 ) {
                     items(items = conversasRecentes) { conversa ->
                         Conversa(
-                            fotoUser = painterResource(id = R.mipmap.foto_gustavo),
+                            fotoUser = painterResource(id = R.mipmap.user_default),
                             nomeUser = conversa.nomeUser,
-                            ultimaMensagem = conversa.ultimaMensagem
+                            ultimaMensagem = conversa.ultimaMensagem,
+                            navigate = { navController.navigate("chat/conversa") }
                         )
                         HorizontalDivider(
                             thickness = 1.dp,
@@ -158,12 +160,14 @@ class ConversaData(
 fun Conversa(
     fotoUser: Painter,
     nomeUser: String,
-    ultimaMensagem: String? = null
+    ultimaMensagem: String? = null,
+    navigate: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
+            .clickable { navigate() }
             .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
