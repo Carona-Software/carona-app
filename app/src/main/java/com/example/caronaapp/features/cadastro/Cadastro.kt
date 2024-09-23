@@ -53,7 +53,7 @@ class CadastroStepClass(
 @Composable
 fun CadastroScreen(navController: NavController) {
     val context = LocalContext.current
-    var etapaAtual by remember { mutableIntStateOf(1) }
+    var etapaAtual by remember { mutableIntStateOf(4) }
 
     val user = Usuario()
 
@@ -86,12 +86,12 @@ fun CadastroScreen(navController: NavController) {
         logradouro: String,
         numero: Int
     ) {
-        user.endereco?.cep ?: cep
-        user.endereco?.uf ?: uf
-        user.endereco?.cidade ?: cidade
-        user.endereco?.bairro ?: bairro
-        user.endereco?.logradouro ?: logradouro
-        user.endereco?.numero ?: numero
+        user.endereco?.cep = cep
+        user.endereco?.uf = uf
+        user.endereco?.cidade = cidade
+        user.endereco?.bairro = bairro
+        user.endereco?.logradouro = logradouro
+        user.endereco?.numero = numero
 
         etapaAtual = 4
     }
@@ -211,7 +211,7 @@ fun CadastroScreen(navController: NavController) {
                         CadastroEndereco(
                             enderecoData = user.endereco,
                             onClick = { cep, uf, cidade, bairro, logradouro, numero ->
-                                    handleEnderecoClick(cep, uf, cidade, bairro, logradouro, numero)
+                                handleEnderecoClick(cep, uf, cidade, bairro, logradouro, numero)
                             })
 
 
@@ -272,7 +272,6 @@ fun CadastroStep(
 @Composable
 fun CadastroScreenPreview() {
     CaronaAppTheme {
-        val navController = rememberNavController()
-        CadastroScreen(navController)
+        CadastroScreen(rememberNavController())
     }
 }

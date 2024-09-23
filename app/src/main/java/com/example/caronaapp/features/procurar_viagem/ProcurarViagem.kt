@@ -70,14 +70,16 @@ fun ProcurarViagemScreen(navController: NavController) {
                         InputField(
                             label = stringResource(id = R.string.label_ponto_de_partida),
                             value = pontoPartida,
-                            startIcon = PontoPartida
+                            startIcon = PontoPartida,
+                            buttonIconEnabled = false
                         ) {
                             pontoPartida = it
                         }
                         InputField(
                             label = stringResource(id = R.string.label_ponto_de_chegada),
                             value = pontoChegada,
-                            startIcon = Localizacao
+                            startIcon = Localizacao,
+                            buttonIconEnabled = false
                         ) {
                             pontoChegada = it
                         }

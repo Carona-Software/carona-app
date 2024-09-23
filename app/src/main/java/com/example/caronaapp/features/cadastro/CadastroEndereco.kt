@@ -1,12 +1,11 @@
 package com.example.caronaapp.features.cadastro
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,9 +21,15 @@ import com.example.caronaapp.data.Endereco
 import com.example.caronaapp.layout.ButtonAction
 import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CepVisualTransformation
-import com.example.caronaapp.ui.theme.Calendario
+import com.example.caronaapp.service.RetrofitService
+import com.example.caronaapp.service.interfaces.ApiViaCep
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.example.caronaapp.ui.theme.Procurar
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun CadastroEndereco(
     enderecoData: Endereco?,
@@ -76,22 +81,62 @@ fun CadastroEndereco(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 supportingText = stringResource(id = R.string.input_message_error_cep),
 //                visualTransformation = CepVisualTransformation(),
-                endIcon = Calendario
+                onIconClick = {
+                    GlobalScope.launch {
+                        val apiviaCep = RetrofitService.getApiViaCep()
+
+                        try {
+                            val getEndereco = apiviaCep.getEndereco(cep)
+
+                            if (getEndereco.isSuccessful) {
+                                Log.i("viacep", "Resposta: ${getEndereco.body()}")
+                                if (getEndereco.body()?.uf != null) {
+                                    uf = getEndereco.body()?.uf.toString()
+                                    cidade = getEndereco.body()?.cidade.toString()
+                                    bairro = getEndereco.body()?.bairro.toString()
+                                    logradouro = getEndereco.body()?.logradouro.toString()
+                                    cidadeUf = "${getEndereco.body()?.cidade.toString()}, ${getEndereco.body()?.uf.toString()}"
+                                } else {
+                                    cepInvalido = true
+                                    uf = ""
+                                    cidade = ""
+                                    bairro = ""
+                                    logradouro = ""
+                                    cidadeUf = ""
+                                }
+                            } else {
+                                Log.e(
+                                    "viacep",
+                                    "Erro na resposta: ${getEndereco.errorBody()!!.string()}"
+                                )
+                                cepInvalido = true
+                            }
+
+                        } catch (e: Exception) {
+                            Log.e("viacep", "Erro ao buscar CEP $cep: ${e.message}")
+//                            cepInvalido = true
+                        }
+                    }
+                },
+                endIcon = Procurar
             )
             InputField(
                 label = stringResource(id = R.string.label_cidade_uf),
                 value = cidadeUf,
                 handleChange = { cidadeUf = it },
+                enabled = false,
             )
             InputField(
                 label = stringResource(id = R.string.label_bairro),
                 value = bairro,
                 handleChange = { bairro = it },
+                enabled = false,
             )
             InputField(
                 label = stringResource(id = R.string.label_logradouro),
                 value = logradouro,
                 handleChange = { logradouro = it },
+                enabled = false,
             )
             InputField(
                 label = stringResource(id = R.string.numero),
