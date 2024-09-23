@@ -33,8 +33,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.caronaapp.R
 import com.example.caronaapp.data.Usuario
 import com.example.caronaapp.layout.ButtonAction
@@ -42,8 +45,13 @@ import com.example.caronaapp.layout.InputField
 import com.example.caronaapp.masks.CpfVisualTransformation
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
+import com.example.caronaapp.ui.theme.Cinza90
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -63,16 +71,21 @@ fun CadastroPessoais(
     var email by remember { mutableStateOf(userData.email) }
     var cpf by remember { mutableStateOf(userData.cpf) }
     var genero by remember { mutableStateOf(userData.genero) }
-    var dataNascimento by remember { mutableStateOf<LocalDate?>(null) }
-
-    val dataFormatada by remember {
-        derivedStateOf { DateTimeFormatter.ofPattern("MM/dd/yyyy") }
-    }
 
     var nomeInvalido by remember { mutableStateOf(false) }
     var emailInvalido by remember { mutableStateOf(false) }
     var cpfInvalido by remember { mutableStateOf(false) }
     var dataNascimentoInvalida by remember { mutableStateOf(false) }
+
+    // DateTime Picker
+    var dataNascimento by remember { mutableStateOf(LocalDate.now()) }
+
+    val dataFormatada by remember {
+        derivedStateOf { DateTimeFormatter.ofPattern("dd/MM/yyyy").format(dataNascimento) }
+    }
+
+    val dateDialogState = rememberMaterialDialogState()
+    // Fim de DateTime Picker
 
     val generoOptions = listOf(
         stringResource(id = R.string.masculino),
@@ -99,10 +112,6 @@ fun CadastroPessoais(
             cpf = it
             cpfInvalido = isCpfValido(cpf)
         }
-    }
-
-    fun onDataNascimentoChange(it: String) {
-
     }
 
     fun onButtonClick() {
@@ -150,14 +159,55 @@ fun CadastroPessoais(
         )
         InputField(
             label = stringResource(id = R.string.label_data_nascimento),
-            value = dataNascimento.toString(),
-            handleChange = { onDataNascimentoChange(it) },
+            value = dataFormatada.toString(),
+            handleChange = {},
             supportingText = stringResource(id = R.string.input_message_error_data_nascimento),
             isError = dataNascimentoInvalida,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//            visualTransformation = DateVisualTransformation(),
-            startIcon = Calendario
+            startIcon = Calendario,
+            onIconClick = {
+                dateDialogState.show()
+            }
         )
+
+        MaterialDialog(
+            dialogState = dateDialogState,
+            buttons = {
+                positiveButton(
+                    text = "Ok",
+                    TextStyle(
+                        color = Azul,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                negativeButton(
+                    text = "Cancelar",
+                    TextStyle(
+                        color = Cinza90,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            },
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            this.datepicker(
+                initialDate = LocalDate.now(),
+                title = "SELECIONE UMA DATA",
+                allowedDateValidator = { it.isBefore(LocalDate.now().minusYears(18)) },
+                colors = DatePickerDefaults.colors(
+                    calendarHeaderTextColor = Azul,
+                    dateActiveTextColor = Color.White,
+                    headerBackgroundColor = Azul,
+                    dateInactiveTextColor = Azul,
+                    headerTextColor = Color.White,
+                    dateActiveBackgroundColor = Azul,
+                )
+            ) {
+                dataNascimento = it
+            }
+        }
 
         Column {
             Text(

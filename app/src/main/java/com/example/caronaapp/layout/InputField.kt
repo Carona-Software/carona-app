@@ -44,6 +44,7 @@ fun InputField(
     enabled: Boolean = true,
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
+    buttonIconEnabled: Boolean = true,
     iconDescription: String? = null,
     onIconClick: (() -> Unit)? = null,
     handleChange: (value: String) -> Unit
@@ -71,7 +72,9 @@ fun InputField(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (startIcon != null) {
-                    IconButton(onClick = {
+                    IconButton(
+                        enabled = buttonIconEnabled,
+                        onClick = {
                         if (onIconClick != null) {
                             onIconClick()
                         }
@@ -108,7 +111,10 @@ fun InputField(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        disabledPlaceholderColor = Cinza90,
+                        disabledTextColor = Azul
                     ),
                     maxLines = maxLines,
                     keyboardOptions = keyboardOptions,

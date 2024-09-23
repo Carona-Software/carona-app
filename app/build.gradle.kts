@@ -30,6 +30,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -59,8 +60,18 @@ dependencies {
     // GSON Converter
     implementation(libs.converter.gson)
 
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
+
+    // DateTime Picker Dialog
+    implementation(libs.datetime)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Coil Compose para Imagens
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
