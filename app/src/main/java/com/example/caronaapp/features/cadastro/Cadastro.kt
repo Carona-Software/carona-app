@@ -37,7 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.data.Usuario
-import com.example.caronaapp.layout.CustomCard
+import com.example.caronaapp.utils.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
 import com.example.caronaapp.ui.theme.BrancoF1
@@ -53,7 +53,7 @@ class CadastroStepClass(
 @Composable
 fun CadastroScreen(navController: NavController) {
     val context = LocalContext.current
-    var etapaAtual by remember { mutableIntStateOf(4) }
+    var etapaAtual by remember { mutableIntStateOf(1) }
 
     val user = Usuario()
 

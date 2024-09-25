@@ -33,25 +33,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.caronaapp.R
 import com.example.caronaapp.data.Usuario
-import com.example.caronaapp.layout.ButtonAction
-import com.example.caronaapp.layout.InputField
-import com.example.caronaapp.masks.CpfVisualTransformation
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
-import com.example.caronaapp.ui.theme.Cinza90
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.example.caronaapp.utils.isCpfValido
+import com.example.caronaapp.utils.isEmailValid
+import com.example.caronaapp.utils.layout.CustomDatePickerDialog
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -94,7 +89,7 @@ fun CadastroPessoais(
     )
 
     fun setGenero(option: String) {
-        if (option == genero) genero = "" else genero = option
+        genero = if (option == genero) "" else option
     }
 
     fun onNomeChange(it: String) {
@@ -104,7 +99,7 @@ fun CadastroPessoais(
 
     fun onEmailChange(it: String) {
         email = it
-        emailInvalido = isEmailValido(email)
+        emailInvalido = isEmailValid(email)
     }
 
     fun onCpfChange(it: String) {
@@ -119,7 +114,7 @@ fun CadastroPessoais(
             !emailInvalido &&
             !cpfInvalido &&
             !dataNascimentoInvalida &&
-            !isGeneroValido(genero)
+            genero.isNotBlank()
         ) {
             onClick(nome, email, cpf, genero, dataNascimento.toString())
         } else {
@@ -160,53 +155,22 @@ fun CadastroPessoais(
         InputField(
             label = stringResource(id = R.string.label_data_nascimento),
             value = dataFormatada.toString(),
+            enabled = false,
             handleChange = {},
             supportingText = stringResource(id = R.string.input_message_error_data_nascimento),
             isError = dataNascimentoInvalida,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             startIcon = Calendario,
             onIconClick = {
                 dateDialogState.show()
             }
         )
 
-        MaterialDialog(
+        CustomDatePickerDialog(
             dialogState = dateDialogState,
-            buttons = {
-                positiveButton(
-                    text = "Ok",
-                    TextStyle(
-                        color = Azul,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                negativeButton(
-                    text = "Cancelar",
-                    TextStyle(
-                        color = Cinza90,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                )
-            },
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            this.datepicker(
-                initialDate = LocalDate.now(),
-                title = "SELECIONE UMA DATA",
-                allowedDateValidator = { it.isBefore(LocalDate.now().minusYears(18)) },
-                colors = DatePickerDefaults.colors(
-                    calendarHeaderTextColor = Azul,
-                    dateActiveTextColor = Color.White,
-                    headerBackgroundColor = Azul,
-                    dateInactiveTextColor = Azul,
-                    headerTextColor = Color.White,
-                    dateActiveBackgroundColor = Azul,
-                )
-            ) {
-                dataNascimento = it
-            }
+            allowedDateValidator = {
+                it.isBefore(LocalDate.now().minusYears(18))
+            }) { novaData ->
+            dataNascimento = novaData
         }
 
         Column {
@@ -266,48 +230,4 @@ fun CadastroPessoais(
 
 private fun isNomeValido(nome: String): Boolean {
     return nome.isNotBlank() && nome.length < 5
-}
-
-private fun isEmailValido(email: String): Boolean {
-    return email.isNotBlank() && (
-            !email.contains("@") ||
-                    !email.contains(".") ||
-                    email.length < 8)
-}
-
-private fun isCpfValido(cpf: String): Boolean {
-    return cpf.isNotBlank() && !cpfExists(cpf)
-}
-
-private fun cpfExists(cpf: String): Boolean {
-    val cpfFormatado = cpf.filter { it.isDigit() }
-
-    if (cpfFormatado.length != 11) return false
-
-    if (cpfFormatado.all { it == cpfFormatado[0] }) return false
-
-    // Função para calcular o primeiro e segundo dígito verificador
-    fun calcularDigito(cpf: String, factor: Int): Int {
-        var soma = 0
-        cpf.forEachIndexed { index, c ->
-            soma += c.toString().toInt() * (factor - index)
-        }
-        val resto = soma % 11
-        return if (resto < 2) 0 else 11 - resto
-    }
-
-    val primeiroDigito = calcularDigito(cpfFormatado.substring(0, 9), 10)
-
-    val segundoDigito = calcularDigito(cpfFormatado.substring(0, 9) + primeiroDigito, 11)
-
-    return cpfFormatado[9].toString().toInt() == primeiroDigito && cpfFormatado[10].toString()
-        .toInt() == segundoDigito
-}
-
-private fun isDataNascimentoValido(dataNascimento: String): Boolean {
-    return dataNascimento.isBlank() || dataNascimento == ""
-}
-
-private fun isGeneroValido(genero: String): Boolean {
-    return genero.isBlank()
 }

@@ -18,9 +18,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
 import com.example.caronaapp.data.Endereco
-import com.example.caronaapp.layout.ButtonAction
-import com.example.caronaapp.layout.InputField
-import com.example.caronaapp.masks.CepVisualTransformation
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.InputField
+import com.example.caronaapp.utils.masks.CepVisualTransformation
 import com.example.caronaapp.service.RetrofitService
 import com.example.caronaapp.service.interfaces.ApiViaCep
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -62,7 +62,7 @@ fun CadastroEndereco(
 
     fun onNumeroChange(it: String) {
         numero = it.toInt()
-        numeroInvalido = isNumeroValido(numero)
+        numeroInvalido = it.toInt() <= 0
     }
 
     CaronaAppTheme {
@@ -158,8 +158,4 @@ fun CadastroEndereco(
 
 fun isCepValido(cep: String): Boolean {
     return cep.isNotBlank() && cep.length != 8
-}
-
-fun isNumeroValido(numero: Int): Boolean {
-    return numero <= 0
 }

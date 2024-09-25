@@ -82,4 +82,9 @@ val Typography = Typography(
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
     ),
+    headlineLarge = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+    ),
 )

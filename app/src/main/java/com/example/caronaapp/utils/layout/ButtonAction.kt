@@ -1,4 +1,4 @@
-package com.example.caronaapp.layout
+package com.example.caronaapp.utils.layout
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

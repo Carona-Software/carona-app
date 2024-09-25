@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.layout.BottomNavBar
+import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
@@ -172,7 +172,7 @@ fun Conversa(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.mipmap.user_default),
+            painter = fotoUser,
             contentDescription = "Usuário",
             modifier = Modifier
                 .size(60.dp)
@@ -187,7 +187,7 @@ fun Conversa(
             verticalArrangement = if (ultimaMensagem != null) Arrangement.SpaceEvenly else Arrangement.Center
         ) {
             Text(
-                text = "Gustavo Medeiros Silva",
+                text = nomeUser,
                 color = Azul,
                 style = MaterialTheme.typography.labelLarge
             )

@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.layout.BottomNavBar
-import com.example.caronaapp.layout.ButtonAction
-import com.example.caronaapp.layout.CustomCard
-import com.example.caronaapp.layout.InputField
+import com.example.caronaapp.utils.layout.BottomNavBar
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.CustomCard
+import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.AzulMensagem
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme

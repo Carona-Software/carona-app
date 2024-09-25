@@ -1,4 +1,4 @@
-package com.example.caronaapp.layout
+package com.example.caronaapp.utils.layout
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -47,7 +47,7 @@ fun InputField(
     buttonIconEnabled: Boolean = true,
     iconDescription: String? = null,
     onIconClick: (() -> Unit)? = null,
-    handleChange: (value: String) -> Unit
+    handleChange: (String) -> Unit
 ) {
     CaronaAppTheme {
         Column {

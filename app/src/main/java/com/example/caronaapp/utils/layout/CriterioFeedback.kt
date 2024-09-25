@@ -1,4 +1,4 @@
-package com.example.caronaapp.layout
+package com.example.caronaapp.utils.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -50,14 +50,14 @@ fun CriterioFeedback(
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = stringResource(id = R.string.zero),
                 color = Azul,
                 style = MaterialTheme.typography.labelLarge
             )
-            Spacer(modifier = Modifier.width(8.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(0.92f)
@@ -75,7 +75,6 @@ fun CriterioFeedback(
                 ) { // row que preenche a linha com base na média do critério}
                 }
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(id = R.string.cinco),
                 color = Azul,
