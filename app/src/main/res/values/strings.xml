@@ -49,6 +49,7 @@
     <string name="label_button_solicitar_carona">Solicitar carona</string>
     <string name="label_button_oferecer_carona">Oferecer carona</string>
     <string name="label_button_conversar">Conversar</string>
+    <string name="label_button_cancelar">Cancelar</string>
 
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>

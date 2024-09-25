@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.layout.TopBarTitle
+import com.example.caronaapp.utils.layout.TopBarTitle
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulMensagem
@@ -50,7 +50,8 @@ fun NotificacoesScreen(navController: NavController) {
             topBar = {
                 TopBarTitle(
                     navController = navController,
-                    title = stringResource(id = R.string.notificacoes)
+                    title = stringResource(id = R.string.notificacoes),
+                    backGround = CinzaF5
                 )
             }
         ) { innerPadding ->

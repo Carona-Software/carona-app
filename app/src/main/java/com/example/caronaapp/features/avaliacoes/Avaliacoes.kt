@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.layout.TopBarTitle
+import com.example.caronaapp.utils.layout.TopBarTitle
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -48,7 +48,8 @@ fun AvaliacoesScreen(navController: NavController) {
             topBar = {
                 TopBarTitle(
                     navController = navController,
-                    title = stringResource(id = R.string.avaliacoes)
+                    title = stringResource(id = R.string.avaliacoes),
+                    backGround = CinzaF5
                 )
             }
         ) { innerPadding ->

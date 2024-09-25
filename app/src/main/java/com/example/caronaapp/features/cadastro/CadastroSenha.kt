@@ -30,8 +30,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
 import com.example.caronaapp.data.Usuario
-import com.example.caronaapp.layout.ButtonAction
-import com.example.caronaapp.layout.InputField
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.Olho

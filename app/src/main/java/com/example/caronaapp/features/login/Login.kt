@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.layout.ButtonAction
-import com.example.caronaapp.layout.InputField
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaE8

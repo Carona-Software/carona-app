@@ -29,8 +29,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.data.Carro
-import com.example.caronaapp.layout.CardButton
-import com.example.caronaapp.layout.TopBarTitle
+import com.example.caronaapp.utils.layout.CardButton
+import com.example.caronaapp.utils.layout.TopBarTitle
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
@@ -61,7 +61,8 @@ fun CarrosScreen(navController: NavController) {
             topBar = {
                 TopBarTitle(
                     navController = navController,
-                    title = stringResource(id = R.string.carros)
+                    title = stringResource(id = R.string.carros),
+                    backGround = CinzaF5
                 )
             }
         ) { innerPadding ->

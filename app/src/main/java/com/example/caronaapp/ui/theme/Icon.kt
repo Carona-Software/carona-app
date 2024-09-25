@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material.icons.filled.Map
@@ -44,3 +45,4 @@ val Cancelamento = Icons.Default.Block
 val NotificacaoNaoLida = Icons.Default.MarkUnreadChatAlt
 val SolicitacaoCarona = Icons.Default.PersonAdd
 val EnviarMensagem = Icons.AutoMirrored.Filled.Send
+val Editar = Icons.Default.Edit
