@@ -17,6 +17,7 @@ import com.example.caronaapp.features.chat.ConversaScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmailScreen
 import com.example.caronaapp.features.esqueci_senha.RedefinirSenhaScreen
+import com.example.caronaapp.features.fidelizados.FidelizadosScreen
 import com.example.caronaapp.features.login.LoginScreen
 import com.example.caronaapp.features.meu_perfil.MeuPerfilScreen
 import com.example.caronaapp.features.notificacoes.NotificacoesScreen
@@ -39,12 +40,6 @@ class MainActivity : ComponentActivity() {
                     composable("cadastro") {
                         CadastroScreen(navController)
                     }
-                    composable("meu-perfil/avaliacoes") {
-                        AvaliacoesScreen(navController)
-                    }
-                    composable("chat") {
-                        ChatScreen(navController)
-                    }
                     composable("esqueci-senha") {
                         EsqueciSenhaEmailScreen(navController)
                     }
@@ -61,11 +56,20 @@ class MainActivity : ComponentActivity() {
                     composable("meu-perfil/notificacoes") {
                         NotificacoesScreen(navController)
                     }
-                    composable("viagens/procurar") {
-                        ProcurarViagemScreen(navController)
+                    composable("meu-perfil/avaliacoes") {
+                        AvaliacoesScreen(navController)
+                    }
+                    composable("meu-perfil/fidelizados") {
+                        FidelizadosScreen(navController)
                     }
                     composable("meu-perfil/carros") {
                         CarrosScreen(navController)
+                    }
+                    composable("viagens/procurar") {
+                        ProcurarViagemScreen(navController)
+                    }
+                    composable("chat") {
+                        ChatScreen(navController)
                     }
                     composable("chat/conversa") {
                         ConversaScreen(navController)

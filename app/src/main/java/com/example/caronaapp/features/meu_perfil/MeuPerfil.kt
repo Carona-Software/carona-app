@@ -276,7 +276,9 @@ fun MeuPerfilScreen(navController: NavController) {
                         MeuPerfilTopic(
                             icon = Fidelizacao,
                             label = stringResource(id = R.string.fidelizados)
-                        ) {}
+                        ) {
+                            navController.navigate("meu-perfil/fidelizados")
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         MeuPerfilTopic(
                             icon = Carro,
