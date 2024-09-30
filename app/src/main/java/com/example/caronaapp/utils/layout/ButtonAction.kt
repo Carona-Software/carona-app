@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +16,11 @@ import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 @Composable
-fun ButtonAction(label: String, handleClick: () -> Unit) {
+fun ButtonAction(
+    label: String,
+    loading: Boolean = false,
+    handleClick: () -> Unit
+) {
     CaronaAppTheme {
         Button(
             onClick = { handleClick() },
@@ -27,11 +32,15 @@ fun ButtonAction(label: String, handleClick: () -> Unit) {
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(
-                text = label,
-                color = Color.White,
-                style = MaterialTheme.typography.labelLarge
-            )
+            if (loading) {
+                CircularProgressIndicator(color = Color.White)
+            } else {
+                Text(
+                    text = label,
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
     }
 }

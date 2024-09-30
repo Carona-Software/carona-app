@@ -12,8 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -21,10 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -40,58 +41,73 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.utils.layout.CustomItemCard
+
+class Avaliacao(
+    val nome: String,
+    val data: String,
+    val notaFinal: Double,
+    val comentario: String,
+)
 
 @Composable
 fun AvaliacoesScreen(navController: NavController) {
+    var avaliacoes = remember {
+        listOf(
+            Avaliacao(
+                nome = "Ewerton Lima",
+                data = "18/09/2024",
+                notaFinal = 4.3,
+                comentario = "Dirige bem, pontual e respeitoso! Recomendo!"
+            ),
+            Avaliacao(
+                nome = "Kaiky Cruz",
+                data = "18/09/2024",
+                notaFinal = 4.5,
+                comentario = "Dirige bem, pontual e respeitoso! Recomendo. Não deu nenhum problema e a viagem foi super tranquila"
+            )
+        )
+    }
+
     CaronaAppTheme {
-        Scaffold(
-            topBar = {
+        Scaffold { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(CinzaF5)
+            ) {
                 TopBarTitle(
                     navController = navController,
                     title = stringResource(id = R.string.avaliacoes),
                     backGround = CinzaF5
                 )
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(CinzaF5)
-                    .padding(innerPadding)
-                    .padding(top = 16.dp)
-            ) {
-                Avaliacao(
-                    nome = "Ewerton Lima",
-                    data = "18/09/2024",
-                    notaFinal = 4.3,
-                    comentario = "Dirige bem, pontual e respeitoso! Recomendo!"
-                )
-                Avaliacao(
-                    nome = "Ewerton Lima",
-                    data = "18/09/2024",
-                    notaFinal = 4.3,
-                    comentario = "Dirige bem, pontual e respeitoso! Recomendo. Não deu nenhum problema e a viagem foi super tranquila"
-                )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(items = avaliacoes.toList()) { avaliacao ->
+                        AvaliacaoCard(
+                            nome = avaliacao.nome,
+                            data = avaliacao.data,
+                            notaFinal = avaliacao.notaFinal,
+                            comentario = avaliacao.comentario
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun Avaliacao(
+fun AvaliacaoCard(
     nome: String,
     fotoUser: Painter? = null,
     data: String,
     notaFinal: Double,
     comentario: String
 ) {
-    Row(
-        modifier = Modifier
-            .padding(vertical = 8.dp, horizontal = 20.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-    ) {
+    CustomItemCard(verticalAlignment = Alignment.Top) {
         Column(
             modifier = Modifier
                 .padding(12.dp),
@@ -136,7 +152,8 @@ fun Avaliacao(
 
                 Row( // avaliação
                     modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,

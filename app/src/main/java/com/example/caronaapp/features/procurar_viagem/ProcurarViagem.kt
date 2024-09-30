@@ -45,59 +45,62 @@ fun ProcurarViagemScreen(navController: NavController) {
         ) { innerPadding ->
             Column(
                 modifier = Modifier
-                    .background(AzulMensagem)
+                    .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(
-                        top = 48.dp
-                    ),
+                    .background(AzulMensagem),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.background_viagem),
-                    contentDescription = "Motorista",
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .scale(1.45f)
-                )
-                CustomCard(modifier = Modifier.padding(innerPadding)) {
-                    Column(
+                        .fillMaxSize()
+                        .padding(top = 48.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.background_viagem),
+                        contentDescription = "Motorista",
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        InputField(
-                            label = stringResource(id = R.string.label_ponto_de_partida),
-                            value = pontoPartida,
-                            startIcon = PontoPartida,
-                            buttonIconEnabled = false
+                            .fillMaxWidth()
+                            .scale(1.30f)
+                    )
+                    CustomCard {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            pontoPartida = it
-                        }
-                        InputField(
-                            label = stringResource(id = R.string.label_ponto_de_chegada),
-                            value = pontoChegada,
-                            startIcon = Localizacao,
-                            buttonIconEnabled = false
-                        ) {
-                            pontoChegada = it
-                        }
-                        InputField(
-                            label = stringResource(id = R.string.label_dia),
-                            value = dia,
-                            startIcon = Calendario
-                        ) {
-                            dia = it
-                        }
+                            InputField(
+                                label = stringResource(id = R.string.label_ponto_de_partida),
+                                value = pontoPartida,
+                                startIcon = PontoPartida,
+                                buttonIconEnabled = false
+                            ) {
+                                pontoPartida = it
+                            }
+                            InputField(
+                                label = stringResource(id = R.string.label_ponto_de_chegada),
+                                value = pontoChegada,
+                                startIcon = Localizacao,
+                                buttonIconEnabled = false
+                            ) {
+                                pontoChegada = it
+                            }
+                            InputField(
+                                label = stringResource(id = R.string.label_dia),
+                                value = dia,
+                                startIcon = Calendario
+                            ) {
+                                dia = it
+                            }
 
-                        ButtonAction(label = stringResource(id = R.string.procurar)) {
+                            ButtonAction(label = stringResource(id = R.string.procurar)) {
 
+                            }
                         }
                     }
                 }
             }
-
         }
     }
 }

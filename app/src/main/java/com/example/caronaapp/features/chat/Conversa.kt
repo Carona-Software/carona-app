@@ -48,14 +48,12 @@ fun ConversaScreen(navController: NavController) {
         val scrollState = rememberScrollState()
 
         Scaffold(
-            topBar = {
-                TopBarUser(navController = navController, fotoUser = null, nome = "Lucas Arantes")
-            },
             bottomBar = {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(88.dp),
+                        .height(88.dp)
+                        .background(Color.White),
                     verticalArrangement = Arrangement.Center
                 ) {
                     HorizontalDivider(
@@ -119,44 +117,51 @@ fun ConversaScreen(navController: NavController) {
         ) { innerPadding ->
             Column(
                 modifier = Modifier
+                    .padding(innerPadding)
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(innerPadding)
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .verticalScroll(scrollState)
             ) {
-                Mensagem(
+                TopBarUser(navController = navController, fotoUser = null, nome = "Lucas Arantes")
+
+                Column(
                     modifier = Modifier
-                        .align(alignment = Alignment.End)
-                        .padding(vertical = 8.dp),
-                    mensagem = "Olá, bom dia! Tudo bem?",
-                    horario = "16:00h",
-                    enviada = true
-                )
-                Mensagem(
-                    modifier = Modifier
-                        .align(alignment = Alignment.End)
-                        .padding(vertical = 8.dp),
-                    mensagem = "Por favor, pode confirmar o local de partida?",
-                    horario = "16:00h",
-                    enviada = true
-                )
-                Mensagem(
-                    modifier = Modifier
-                        .align(alignment = Alignment.Start)
-                        .padding(vertical = 8.dp),
-                    mensagem = "Bom dia! Tudo bem e você?",
-                    horario = "16:01h",
-                    enviada = false
-                )
-                Mensagem(
-                    modifier = Modifier
-                        .align(alignment = Alignment.Start)
-                        .padding(vertical = 8.dp),
-                    mensagem = "Av. Paulista, 2000",
-                    horario = "16:01h",
-                    enviada = false
-                )
+                        .fillMaxSize()
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                        .verticalScroll(scrollState)
+                ) {
+                    Mensagem(
+                        modifier = Modifier
+                            .align(alignment = Alignment.End)
+                            .padding(vertical = 8.dp),
+                        mensagem = "Olá, bom dia! Tudo bem?",
+                        horario = "16:00h",
+                        enviada = true
+                    )
+                    Mensagem(
+                        modifier = Modifier
+                            .align(alignment = Alignment.End)
+                            .padding(vertical = 8.dp),
+                        mensagem = "Por favor, pode confirmar o local de partida?",
+                        horario = "16:00h",
+                        enviada = true
+                    )
+                    Mensagem(
+                        modifier = Modifier
+                            .align(alignment = Alignment.Start)
+                            .padding(vertical = 8.dp),
+                        mensagem = "Bom dia! Tudo bem e você?",
+                        horario = "16:01h",
+                        enviada = false
+                    )
+                    Mensagem(
+                        modifier = Modifier
+                            .align(alignment = Alignment.Start)
+                            .padding(vertical = 8.dp),
+                        mensagem = "Av. Paulista, 2000",
+                        horario = "16:01h",
+                        enviada = false
+                    )
+                }
             }
         }
     }
