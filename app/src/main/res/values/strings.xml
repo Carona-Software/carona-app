@@ -52,6 +52,7 @@
     <string name="label_button_solicitar_carona">Solicitar carona</string>
     <string name="label_button_oferecer_carona">Oferecer carona</string>
     <string name="label_button_conversar">Conversar</string>
+    <string name="label_button_remover">Remover</string>
     <string name="label_button_cancelar">Cancelar</string>
 
     <!--  AVALIAÇÕES  -->
@@ -164,4 +165,5 @@
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
     <string name="message_confirmation_delete_carro">Tem certeza que deseja excluir o carro %1$s %2$s?</string>
+    <string name="message_confirmation_remove_fidelizado">Tem certeza que deseja remover %1$s dos fidelizados?</string>
 </resources>
