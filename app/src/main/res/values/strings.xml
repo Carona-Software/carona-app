@@ -19,6 +19,7 @@
     <string name="label_preco_maximo">Preço máximo</string>
     <string name="label_marca">Marca</string>
     <string name="label_modelo">Modelo</string>
+    <string name="label_placa">Placa</string>
     <string name="label_cor">Cor</string>
     <string name="label_dia">Dia</string>
 
@@ -42,6 +43,8 @@
     <string name="label_button_verificar">Verificar</string>
     <string name="label_button_proximo">Próximo</string>
     <string name="label_button_finalizar">Finalizar</string>
+    <string name="label_button_salvar">Salvar</string>
+    <string name="label_button_adicionar">Adicionar</string>
     <string name="label_button_excluir">Excluir</string>
     <string name="label_button_editar">Editar</string>
     <string name="label_button_atualizar">Atualizar</string>
@@ -160,7 +163,5 @@
 
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
-    <string name="title_activity_chat">Chat</string>
-    <string name="title_activity_avaliacoes">Avaliacoes</string>
-    <string name="title_activity_notificacoes">Notificacoes</string>
+    <string name="message_confirmation_delete_carro">Tem certeza que deseja excluir o carro %1$s %2$s?</string>
 </resources>

@@ -42,70 +42,65 @@ import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.ui.theme.NotificacaoNaoLida
 import com.example.caronaapp.ui.theme.SolicitacaoCarona
+import com.example.caronaapp.utils.layout.CustomItemCard
 
 @Composable
 fun NotificacoesScreen(navController: NavController) {
     CaronaAppTheme {
-        Scaffold(
-            topBar = {
+        Scaffold { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(CinzaF5)
+            ) {
                 TopBarTitle(
                     navController = navController,
                     title = stringResource(id = R.string.notificacoes),
                     backGround = CinzaF5
                 )
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(CinzaF5)
-                    .padding(innerPadding)
-                    .padding(top = 16.dp)
-            ) {
-                Notificacao(
-                    title = stringResource(id = R.string.notification_title_reserva_de_carona),
-                    icon = SolicitacaoCarona,
-                    message = stringResource(
-                        id = R.string.notification_message_reserva_de_carona,
-                        "Lucas Arantes", "20/09/2024"
-                    )
-                ) {}
-                Notificacao(
-                    title = stringResource(id = R.string.notification_title_nova_mensagem),
-                    icon = NotificacaoNaoLida,
-                    message = stringResource(
-                        id = R.string.notification_message_nova_mensagem,
-                        "Lucas Arantes", "20/09/2024"
-                    )
-                ) {}
-                Notificacao(
-                    title = stringResource(id = R.string.notification_title_cancelamento),
-                    icon = Cancelamento,
-                    message = stringResource(
-                        id = R.string.notification_message_cancelamento,
-                        "Lucas Arantes", "20/09/2024"
-                    )
-                ) {}
+
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    NotificacaoCard(
+                        title = stringResource(id = R.string.notification_title_reserva_de_carona),
+                        icon = SolicitacaoCarona,
+                        message = stringResource(
+                            id = R.string.notification_message_reserva_de_carona,
+                            "Lucas Arantes", "20/09/2024"
+                        )
+                    ) {}
+                    NotificacaoCard(
+                        title = stringResource(id = R.string.notification_title_nova_mensagem),
+                        icon = NotificacaoNaoLida,
+                        message = stringResource(
+                            id = R.string.notification_message_nova_mensagem,
+                            "Lucas Arantes", "20/09/2024"
+                        )
+                    ) {}
+                    NotificacaoCard(
+                        title = stringResource(id = R.string.notification_title_cancelamento),
+                        icon = Cancelamento,
+                        message = stringResource(
+                            id = R.string.notification_message_cancelamento,
+                            "Lucas Arantes", "20/09/2024"
+                        )
+                    ) {}
+                }
             }
         }
     }
 }
 
 @Composable
-fun Notificacao(
+fun NotificacaoCard(
     title: String,
     icon: ImageVector,
     message: String,
     onVerClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .padding(vertical = 8.dp, horizontal = 20.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    CustomItemCard {
         Column( // column de icone
             modifier = Modifier
                 .padding(12.dp)
