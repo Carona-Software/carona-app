@@ -64,8 +64,8 @@ fun BottomNavBar(navController: NavController) {
         BottomBarItem(
             label = stringResource(id = R.string.viagens),
             icon = Viagem,
-            isCurrent = currentScreen == "",
-            navigate = {}
+            isCurrent = currentScreen == "viagens/historico",
+            navigate = { navController.navigate("viagens/historico") }
         ),
         BottomBarItem(
             label = stringResource(id = R.string.perfil),

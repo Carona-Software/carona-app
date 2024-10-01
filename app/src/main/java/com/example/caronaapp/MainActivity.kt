@@ -18,6 +18,7 @@ import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmailScreen
 import com.example.caronaapp.features.esqueci_senha.RedefinirSenhaScreen
 import com.example.caronaapp.features.fidelizados.FidelizadosScreen
+import com.example.caronaapp.features.historico_viagens.HistoricoViagensScreen
 import com.example.caronaapp.features.login.LoginScreen
 import com.example.caronaapp.features.meu_perfil.MeuPerfilScreen
 import com.example.caronaapp.features.notificacoes.NotificacoesScreen
@@ -67,6 +68,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("viagens/procurar") {
                         ProcurarViagemScreen(navController)
+                    }
+                    composable("viagens/historico") {
+                        HistoricoViagensScreen(navController)
                     }
                     composable("chat") {
                         ChatScreen(navController)
