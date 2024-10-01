@@ -28,8 +28,8 @@ fun CustomItemCard(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(12.dp),
                 clip = false, // Deixar o conteúdo sem sombra no topo
-                ambientColor = CinzaSombra, // Cor da sombra ambiente
-                spotColor = Cinza90 // Cor da sombra da luz pontual
+                ambientColor = CinzaSombra,
+                spotColor = Cinza90
             )
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White),
