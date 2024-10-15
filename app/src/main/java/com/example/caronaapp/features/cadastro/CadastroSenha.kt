@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data.Usuario
+import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
@@ -37,7 +37,7 @@ import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.Olho
 
 @Composable
-fun CadastroSenha(userData: Usuario, onClick: (String) -> Unit) {
+fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
     val context = LocalContext.current
 
     var senha by remember { mutableStateOf(userData.senha) }

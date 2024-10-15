@@ -17,12 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data.Endereco
+import com.example.caronaapp.data.dto.endereco.EnderecoCriacaoDto
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.InputField
-import com.example.caronaapp.utils.masks.CepVisualTransformation
-import com.example.caronaapp.service.RetrofitService
-import com.example.caronaapp.service.interfaces.ApiViaCep
+import com.example.caronaapp.service.retrofit.RetrofitService
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Procurar
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -32,7 +30,7 @@ import kotlinx.coroutines.launch
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun CadastroEndereco(
-    enderecoData: Endereco?,
+    enderecoData: EnderecoCriacaoDto?,
     onClick: (
         String,
         String,
@@ -83,7 +81,7 @@ fun CadastroEndereco(
 //                visualTransformation = CepVisualTransformation(),
                 onIconClick = {
                     GlobalScope.launch {
-                        val apiviaCep = RetrofitService.getApiViaCep()
+                        val apiviaCep = RetrofitService.getApiCarona()
 
                         try {
                             val getEndereco = apiviaCep.getEndereco(cep)

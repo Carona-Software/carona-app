@@ -54,7 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.caronaapp.R
 import com.example.caronaapp.features.cadastro.isCepValido
-import com.example.caronaapp.service.RetrofitService
+import com.example.caronaapp.service.retrofit.RetrofitService
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.CriterioFeedback
 import com.example.caronaapp.utils.layout.InputField
@@ -541,7 +541,7 @@ fun MeuPerfilScreen(navController: NavController) {
 //                                      visualTransformation = CepVisualTransformation(),
                                             onIconClick = {
                                                 GlobalScope.launch {
-                                                    val apiviaCep = RetrofitService.getApiViaCep()
+                                                    val apiviaCep = RetrofitService.getApiCarona()
 
                                                     try {
                                                         val getEndereco = apiviaCep.getEndereco(cep)

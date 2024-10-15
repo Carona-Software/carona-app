@@ -28,14 +28,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data.Usuario
+import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulPerfilSelecionado
 import com.example.caronaapp.ui.theme.CinzaDA
 
 @Composable
-fun CadastroPerfil(userData: Usuario, onClick: (String) -> Unit) {
+fun CadastroPerfil(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
     val context = LocalContext.current
 
     var perfil by remember { mutableStateOf(userData.perfil) }

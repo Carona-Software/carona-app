@@ -37,7 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.data.Carro
+import com.example.caronaapp.data.dto.carro.CarroCriacaoDto
+import com.example.caronaapp.data.entity.Carro
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.utils.layout.CardButton
 import com.example.caronaapp.utils.layout.TopBarTitle
@@ -76,8 +77,8 @@ fun CarrosScreen(navController: NavController) {
     var isEditCarroDialogOpened by remember { mutableStateOf(false) }
     var isDeleteCarroDialogOpened by remember { mutableStateOf(false) }
 
-    val novoCarro = Carro()
-    var editCarro by remember { mutableStateOf<Carro?>(null) }
+    val novoCarro = CarroCriacaoDto()
+    var editCarro by remember { mutableStateOf<CarroCriacaoDto?>(null) }
     var deleteCarro by remember { mutableStateOf<Carro?>(null) }
 
     CaronaAppTheme {
@@ -94,7 +95,7 @@ fun CarrosScreen(navController: NavController) {
                         marca = "Fiat",
                         modelo = "Mobi",
                         placa = "GJB5A12",
-                        cor = "Preto"
+                        cor = "Preto",
                     ),
                     Carro(
                         id = 2,
@@ -128,7 +129,7 @@ fun CarrosScreen(navController: NavController) {
                     LazyColumn {
                         items(items = carros) { carro ->
                             CarroCard(
-                                id = carro.id ?: -1,
+                                id = carro.id,
                                 marca = carro.marca,
                                 modelo = carro.modelo,
                                 placa = carro.placa,
@@ -138,7 +139,13 @@ fun CarrosScreen(navController: NavController) {
                                     isDeleteCarroDialogOpened = true
                                 },
                                 onEditButton = {
-                                    editCarro = carro
+                                    editCarro = CarroCriacaoDto(
+                                        id = carro.id,
+                                        cor = carro.cor,
+                                        marca = carro.marca,
+                                        modelo = carro.modelo,
+                                        placa = carro.placa
+                                    )
                                     isEditCarroDialogOpened = true
                                 }
                             )
@@ -206,30 +213,32 @@ fun CarrosScreen(navController: NavController) {
                 }
 
                 if (isEditCarroDialogOpened) {
-                    CarroInfoDialog(
-                        onDismissRequest = { isEditCarroDialogOpened = false },
-                        buttonLabel = stringResource(id = R.string.label_button_editar),
-                        carroData = editCarro!!,
-                        onMarcaChange = { marca ->
-                            editCarro!!.marca = marca
-                        },
-                        onModeloChange = { modelo ->
-                            editCarro!!.modelo = modelo
-                        },
-                        onCorChange = { cor ->
-                            editCarro!!.cor = cor
-                        },
-                        onPlacaChange = { placa ->
-                            editCarro!!.placa = placa
+                    editCarro?.let { carro ->
+                        CarroInfoDialog(
+                            onDismissRequest = { isEditCarroDialogOpened = false },
+                            buttonLabel = stringResource(id = R.string.label_button_editar),
+                            carroData = carro,
+                            onMarcaChange = { marca ->
+                                editCarro!!.marca = marca
+                            },
+                            onModeloChange = { modelo ->
+                                editCarro!!.modelo = modelo
+                            },
+                            onCorChange = { cor ->
+                                editCarro!!.cor = cor
+                            },
+                            onPlacaChange = { placa ->
+                                editCarro!!.placa = placa
+                            }
+                        ) {
+                            Toast.makeText(
+                                context,
+                                "Carro atualizado com sucesso",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            editCarro = null
+                            isEditCarroDialogOpened = false
                         }
-                    ) {
-                        Toast.makeText(
-                            context,
-                            "Carro atualizado com sucesso",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        editCarro = null
-                        isEditCarroDialogOpened = false
                     }
                 }
 
@@ -340,7 +349,7 @@ fun CarroCard(
 fun CarroInfoDialog(
     onDismissRequest: () -> Unit,
     buttonLabel: String,
-    carroData: Carro,
+    carroData: CarroCriacaoDto,
     onMarcaChange: (String) -> Unit,
     onModeloChange: (String) -> Unit,
     onCorChange: (String) -> Unit,

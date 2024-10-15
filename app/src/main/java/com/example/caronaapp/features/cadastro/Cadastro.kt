@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.data.Usuario
+import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.utils.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
@@ -55,7 +55,7 @@ fun CadastroScreen(navController: NavController) {
     val context = LocalContext.current
     var etapaAtual by remember { mutableIntStateOf(1) }
 
-    val user = Usuario()
+    val user = UsuarioCriacaoDto()
 
     fun handlePessoaisClick(
         nome: String,
@@ -97,7 +97,7 @@ fun CadastroScreen(navController: NavController) {
     }
 
     fun handleFotoClick(foto: String) {
-        user.foto = foto
+        user.fotoUrl = foto
         etapaAtual = 5
     }
 
