@@ -34,13 +34,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.caronaapp.R
-import com.example.caronaapp.data.Usuario
+import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CinzaF5
 
 @Composable
-fun CadastroFoto(userData: Usuario, onClick: () -> Unit) {
+fun CadastroFoto(userData: UsuarioCriacaoDto, onClick: () -> Unit) {
     val contexto = LocalContext.current
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
