@@ -73,6 +73,10 @@ dependencies {
     // Coil Compose para Imagens
     implementation(libs.coil.compose)
 
+    // ViewModel
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

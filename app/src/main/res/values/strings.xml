@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CaronaApp</string>
+    <string name="app_name">Carona</string>
 
     <!--  INPUT LABEL  -->
     <string name="label_nome">Nome</string>
@@ -165,6 +165,7 @@
 
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
+    <string name="nota_media_usuario">%1$.1f</string>
     <string name="message_confirmation_delete_carro">Tem certeza que deseja excluir o carro %1$s %2$s?</string>
     <string name="message_confirmation_remove_fidelizado">Tem certeza que deseja remover %1$s dos fidelizados?</string>
 </resources>

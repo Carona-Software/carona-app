@@ -28,11 +28,11 @@ interface UsuarioRepository {
     suspend fun findById(@Path("id") id: Int): Response<UsuarioDetalhesListagemDto>
 
     @DELETE("usuarios/{id}")
-    suspend fun delete(@Path("id") id: Int)
+    suspend fun delete(@Path("id") id: Int): Response<Void>
 
     @PUT("usuarios/{id}")
     suspend fun update(@Path("id") id: Int, @Body usuario: UsuarioCriacaoDto): Response<UsuarioDetalhesListagemDto>
 
     @POST("usuarios/redefinir-senha")
-    suspend fun resetPassword(@Query("email") email: String)
+    suspend fun resetPassword(@Query("email") email: String): Response<String>
 }

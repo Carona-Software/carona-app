@@ -9,20 +9,20 @@ import androidx.annotation.RequiresApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.caronaapp.features.avaliacoes.AvaliacoesScreen
-import com.example.caronaapp.features.cadastro.CadastroScreen
-import com.example.caronaapp.features.carros.CarrosScreen
-import com.example.caronaapp.features.chat.ChatScreen
-import com.example.caronaapp.features.chat.ConversaScreen
-import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaCodigoScreen
-import com.example.caronaapp.features.esqueci_senha.EsqueciSenhaEmailScreen
-import com.example.caronaapp.features.esqueci_senha.RedefinirSenhaScreen
-import com.example.caronaapp.features.fidelizados.FidelizadosScreen
-import com.example.caronaapp.features.historico_viagens.HistoricoViagensScreen
-import com.example.caronaapp.features.login.LoginScreen
-import com.example.caronaapp.features.meu_perfil.MeuPerfilScreen
-import com.example.caronaapp.features.notificacoes.NotificacoesScreen
-import com.example.caronaapp.features.procurar_viagem.ProcurarViagemScreen
+import com.example.caronaapp.screens.avaliacoes.AvaliacoesScreen
+import com.example.caronaapp.screens.cadastro.CadastroScreen
+import com.example.caronaapp.screens.carros.CarrosScreen
+import com.example.caronaapp.screens.chat.ChatScreen
+import com.example.caronaapp.screens.chat.ConversaScreen
+import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaCodigoScreen
+import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaEmailScreen
+import com.example.caronaapp.screens.esqueci_senha.RedefinirSenhaScreen
+import com.example.caronaapp.screens.fidelizados.FidelizadosScreen
+import com.example.caronaapp.screens.historico_viagens.HistoricoViagensScreen
+import com.example.caronaapp.screens.login.LoginScreen
+import com.example.caronaapp.screens.meu_perfil.MeuPerfilScreen
+import com.example.caronaapp.screens.notificacoes.NotificacoesScreen
+import com.example.caronaapp.screens.procurar_viagem.ProcurarViagemScreen
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 class MainActivity : ComponentActivity() {

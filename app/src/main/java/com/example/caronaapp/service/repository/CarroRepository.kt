@@ -25,5 +25,5 @@ interface CarroRepository {
     suspend fun edit(@Path("id") id: Int, @Body carro: CarroCriacaoDto): Response<CarroListagemDto>
 
     @DELETE("carros/{id}")
-    suspend fun delete(@Path("id") id: Int)
+    suspend fun delete(@Path("id") id: Int): Response<Void>
 }

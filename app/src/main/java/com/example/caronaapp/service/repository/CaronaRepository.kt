@@ -24,5 +24,5 @@ interface CaronaRepository {
     suspend fun delete(
         @Path("viagemId") viagemId: Int,
         @Path("usuarioId") usuarioId: Int
-    )
+    ): Response<Void>
 }
