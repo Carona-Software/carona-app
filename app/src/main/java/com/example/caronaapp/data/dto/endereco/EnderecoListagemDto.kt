@@ -8,6 +8,6 @@ data class EnderecoListagemDto(
     val bairro: String,
     val logradouro: String,
     val numero: Int,
-    val latitude: Double,
-    val longitude: Double
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

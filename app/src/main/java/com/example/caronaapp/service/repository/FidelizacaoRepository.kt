@@ -21,6 +21,6 @@ interface FidelizacaoRepository {
     suspend fun delete(
         @Path("motoristaId") motoristaId: Int,
         @Path("passageiroId") passageiroId: Int
-    )
+    ): Response<Void>
 
 }
