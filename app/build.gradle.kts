@@ -77,6 +77,9 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+    // Data Store
+    implementation(libs.androidx.datastore.preferences)
+
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

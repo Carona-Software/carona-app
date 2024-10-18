@@ -14,13 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Azul
 
 @Composable
 fun NoResultsComponent(
-    image: Painter,
     text: String,
     modifier: Modifier = Modifier.fillMaxSize()
 ) {
@@ -30,7 +31,7 @@ fun NoResultsComponent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = image,
+            painter = painterResource(id = R.drawable.no_result_image),
             contentDescription = null,
             modifier = Modifier.size(200.dp)
         )

@@ -7,6 +7,7 @@ import com.example.caronaapp.view_models.AvaliacoesViewModel
 import com.example.caronaapp.view_models.CarrosViewModel
 import com.example.caronaapp.view_models.FeedbackViewModel
 import com.example.caronaapp.view_models.FidelizadosViewModel
+import com.example.caronaapp.view_models.LoginViewModel
 import com.example.caronaapp.view_models.MeuPerfilViewModel
 import com.example.caronaapp.view_models.OferecerViagemViewModel
 import com.example.caronaapp.view_models.ProcurarViagemViewModel
@@ -41,7 +42,16 @@ fun feedbackFactory() = object : ViewModelProvider.Factory {
 fun fidelizadosFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
         return FidelizadosViewModel(
-            repository = RetrofitService.getApiFidelizacao()
+            fidelizacaoRepository = RetrofitService.getApiFidelizacao(),
+            solicitacaoFidelizacaoRepository = RetrofitService.getApiSolicitacaoFidelizacao()
+        ) as T
+    }
+}
+
+fun loginFactory() = object : ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass: Class<T>): T {
+        return LoginViewModel(
+            repository = RetrofitService.getApiUsuario()
         ) as T
     }
 }
