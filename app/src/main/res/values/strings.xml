@@ -163,6 +163,14 @@
         %1$s cancelou a a reserva na viagem do dia %2$s
     </string>
 
+    <!--  TEXTOS SEM CONTEÚDO  -->
+    <string name="sem_conteudo_avaliacoes">Nenhuma avaliação por enquanto</string>
+    <string name="sem_conteudo_fidelizados">Nenhum fidelizado por enquanto</string>
+    <string name="sem_conteudo_carros">Nenhum carro por enquanto</string>
+    <string name="sem_conteudo_viagem">Nenhuma viagem por enquanto</string>
+    <string name="sem_conteudo_solicitacao_fidelizacao">Nenhuma solicitação de fidelização por enquanto</string>
+    <string name="sem_conteudo_solicitacao_viagem">Nenhuma solicitação de viagem por enquanto</string>
+
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
     <string name="nota_media_usuario">%1$.1f</string>

@@ -6,6 +6,7 @@ import java.time.LocalDate
 data class FeedbackListagemDto(
     val data: LocalDate,
     val comentario: String,
+    val notaMedia: Double,
     val avaliador: AvaliadorDto,
     val notasCriterios: List<NotaCriterioListagemDto>
 ) {

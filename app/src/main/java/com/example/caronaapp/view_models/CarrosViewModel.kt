@@ -48,6 +48,42 @@ class CarrosViewModel(
 
     init {
 //        getCarrosUser()
+        val carrosNovos = listOf(
+            CarroListagemDto(
+                id = 1,
+                marca = "Fiat",
+                modelo = "Mobi",
+                placa = "GJB5A12",
+                cor = "Preto",
+                motorista = CarroListagemDto.MotoristaListagemDto(
+                    id = 1,
+                    nome = "Gustavo Medeiros"
+                )
+            ),
+            CarroListagemDto(
+                id = 2,
+                marca = "Chevrolet",
+                modelo = "Onix",
+                placa = "YAB7L04",
+                cor = "Vinho",
+                motorista = CarroListagemDto.MotoristaListagemDto(
+                    id = 1,
+                    nome = "Gustavo Medeiros"
+                )
+            ),
+            CarroListagemDto(
+                id = 3,
+                marca = "Honda",
+                modelo = "Fit",
+                placa = "AOC3G83",
+                cor = "Prata",
+                motorista = CarroListagemDto.MotoristaListagemDto(
+                    id = 1,
+                    nome = "Gustavo Medeiros"
+                )
+            ),
+        )
+//        carros.value = carrosNovos
     }
 
     private fun getCarrosUser() {
