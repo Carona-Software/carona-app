@@ -2,6 +2,7 @@ package com.example.caronaapp.service.repository
 
 import com.example.caronaapp.data.dto.fidelizacao.FidelizacaoCriacaoDto
 import com.example.caronaapp.data.dto.fidelizacao.FidelizacaoListagemDto
+import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -15,7 +16,7 @@ interface FidelizacaoRepository {
     suspend fun save(@Body fidelizacao: FidelizacaoCriacaoDto): Response<FidelizacaoListagemDto>
 
     @GET("fidelizacoes/usuario/{id}")
-    suspend fun findByUsuarioId(@Path("id") id: Int): Response<List<FidelizacaoListagemDto>>
+    suspend fun findByUsuarioId(@Path("id") id: Int): Response<List<FidelizadoListagemDto>>
 
     @DELETE("fidelizacoes/{motoristaId}/{passageiroId}")
     suspend fun delete(

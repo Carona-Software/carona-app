@@ -37,7 +37,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.data.dto.carro.CarroCriacaoDto
-import com.example.caronaapp.data.dto.carro.CarroListagemDto
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -132,7 +131,6 @@ fun CarrosScreen(navController: NavController) {
                         }
                     } else {
                         NoResultsComponent(
-                            image = painterResource(id = R.drawable.no_result_image),
                             text = stringResource(id = R.string.sem_conteudo_carros),
                             modifier = Modifier.fillMaxWidth().weight(1f)
                         )

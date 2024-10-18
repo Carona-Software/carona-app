@@ -54,6 +54,8 @@
     <string name="label_button_conversar">Conversar</string>
     <string name="label_button_remover">Remover</string>
     <string name="label_button_cancelar">Cancelar</string>
+    <string name="label_button_aceitar">Aceitar</string>
+    <string name="label_button_recusar">Recusar</string>
 
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>
@@ -131,6 +133,7 @@
     <string name="outros">Outros</string>
     <string name="title_activity_redefinir_senha">RedefinirSenha</string>
     <string name="title_activity_esqueci_senha_codigo">EsqueciSenhaCodigo</string>
+    <string name="solicitiacoes_pendentes">Solicitações pendentes</string>
 
     <!--  INPUT ERROR MESSAGES  -->
     <string name="input_message_error_nome">Digite 5 ou mais letras</string>
@@ -176,4 +179,6 @@
     <string name="nota_media_usuario">%1$.1f</string>
     <string name="message_confirmation_delete_carro">Tem certeza que deseja excluir o carro %1$s %2$s?</string>
     <string name="message_confirmation_remove_fidelizado">Tem certeza que deseja remover %1$s dos fidelizados?</string>
+    <string name="fidelizado_qtd_viagens_juntos">%1$d viagens juntos</string>
+    <string name="fidelizado_localidade">%1$s, %2$s</string>
 </resources>
