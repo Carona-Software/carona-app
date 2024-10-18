@@ -21,50 +21,55 @@ val montserratFontFamily = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    labelLarge = TextStyle(
-        fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-    ),
-    displayLarge = TextStyle(
-        fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
-    ),
-    displayMedium = TextStyle(
-        fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = 13.sp,
-    ),
+    // 32.sp
     titleLarge = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
+    ),
+    // 24.sp
+    bodyLarge = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 24.sp,
+    ),
+    // 20.sp
+    labelLarge = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
     ),
     titleSmall = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
     ),
-    displaySmall = TextStyle(
+    // 16.sp
+    headlineLarge = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+    ),
+    displayLarge = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 10.sp,
+        fontSize = 16.sp,
     ),
-    bodyMedium = TextStyle(
+    labelMedium = TextStyle(
         fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.Light,
-        fontSize = 14.sp,
-    ),
-    bodySmall = TextStyle(
-        fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
     ),
     headlineMedium = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
+    ),
+    // 14.sp
+    bodySmall = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
     ),
     headlineSmall = TextStyle( // para erro de input
         fontFamily = montserratFontFamily,
@@ -72,19 +77,21 @@ val Typography = Typography(
         fontSize = 14.sp,
         color = VermelhoErro
     ),
-    bodyLarge = TextStyle(
+    bodyMedium = TextStyle(
         fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
+        fontWeight = FontWeight.Light,
+        fontSize = 14.sp,
     ),
-    labelMedium = TextStyle(
-        fontFamily = montserratFontFamily,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-    ),
-    headlineLarge = TextStyle(
+    // 13.sp
+    displayMedium = TextStyle(
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
+        fontSize = 13.sp,
+    ),
+    // 10.sp
+    displaySmall = TextStyle(
+        fontFamily = montserratFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 10.sp,
     ),
 )

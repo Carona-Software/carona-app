@@ -3,6 +3,7 @@ package com.example.caronaapp.utils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.caronaapp.service.RetrofitService
+import com.example.caronaapp.view_models.AvaliacoesViewModel
 import com.example.caronaapp.view_models.CarrosViewModel
 import com.example.caronaapp.view_models.FeedbackViewModel
 import com.example.caronaapp.view_models.FidelizadosViewModel
@@ -12,6 +13,14 @@ import com.example.caronaapp.view_models.ProcurarViagemViewModel
 import com.example.caronaapp.view_models.SolicitacaoFidelizacaoViewModel
 import com.example.caronaapp.view_models.SolicitacaoViagemViewModel
 import com.example.caronaapp.view_models.ViagensHistoricoViewModel
+
+fun avaliacoesFactory() = object : ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass: Class<T>): T {
+        return AvaliacoesViewModel(
+            repository = RetrofitService.getApiFeedback()
+        ) as T
+    }
+}
 
 fun carrosFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {

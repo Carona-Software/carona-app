@@ -50,6 +50,7 @@ import com.example.caronaapp.utils.layout.CardButton
 import com.example.caronaapp.utils.layout.CustomDialog
 import com.example.caronaapp.utils.layout.CustomItemCard
 import com.example.caronaapp.utils.layout.InputField
+import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
 import com.example.caronaapp.view_models.CarrosViewModel
 
@@ -78,6 +79,8 @@ fun CarrosScreen(navController: NavController) {
         }
     }
 
+    val carros = viewModel.carros.collectAsState()
+
     val isNovoCarroDialogOpened by viewModel.isCreateDialogOpened.collectAsState()
     val isEditCarroDialogOpened by viewModel.isEditDialogOpened.collectAsState()
     val isDeleteCarroDialogOpened by viewModel.isDeleteDialogOpened.collectAsState()
@@ -91,42 +94,6 @@ fun CarrosScreen(navController: NavController) {
 
     val errorMessage by viewModel.errorMessage.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
-
-    val carros = listOf(
-        CarroListagemDto(
-            id = 1,
-            marca = "Fiat",
-            modelo = "Mobi",
-            placa = "GJB5A12",
-            cor = "Preto",
-            motorista = CarroListagemDto.MotoristaListagemDto(
-                id = 1,
-                nome = "Gustavo Medeiros"
-            )
-        ),
-        CarroListagemDto(
-            id = 2,
-            marca = "Chevrolet",
-            modelo = "Onix",
-            placa = "YAB7L04",
-            cor = "Vinho",
-            motorista = CarroListagemDto.MotoristaListagemDto(
-                id = 1,
-                nome = "Gustavo Medeiros"
-            )
-        ),
-        CarroListagemDto(
-            id = 3,
-            marca = "Honda",
-            modelo = "Fit",
-            placa = "AOC3G83",
-            cor = "Prata",
-            motorista = CarroListagemDto.MotoristaListagemDto(
-                id = 1,
-                nome = "Gustavo Medeiros"
-            )
-        ),
-    )
 
     CaronaAppTheme {
         Scaffold { innerPadding ->
@@ -149,18 +116,26 @@ fun CarrosScreen(navController: NavController) {
                         .padding(bottom = 16.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    LazyColumn {
-                        items(items = carros) { carro ->
-                            CarroCard(
-                                id = carro.id,
-                                marca = carro.marca,
-                                modelo = carro.modelo,
-                                placa = carro.placa,
-                                carroImg = returnCorCarro(cor = carro.cor),
-                                onDeleteButton = { viewModel.onDeleteCLick(carro) },
-                                onEditButton = { viewModel.onEditCLick(carro) }
-                            )
+                    if (carros.value != null) {
+                        LazyColumn {
+                            items(items = carros.value!!.toList()) { carro ->
+                                CarroCard(
+                                    id = carro.id,
+                                    marca = carro.marca,
+                                    modelo = carro.modelo,
+                                    placa = carro.placa,
+                                    carroImg = returnCorCarro(cor = carro.cor),
+                                    onDeleteButton = { viewModel.onDeleteCLick(carro) },
+                                    onEditButton = { viewModel.onEditCLick(carro) }
+                                )
+                            }
                         }
+                    } else {
+                        NoResultsComponent(
+                            image = painterResource(id = R.drawable.no_result_image),
+                            text = stringResource(id = R.string.sem_conteudo_carros),
+                            modifier = Modifier.fillMaxWidth().weight(1f)
+                        )
                     }
 
                     Row(
@@ -273,7 +248,6 @@ fun CarrosScreen(navController: NavController) {
                             viewModel.handleCreateCarro()
                         }
                     }
-
                 }
             }
 
@@ -293,7 +267,6 @@ fun CarrosScreen(navController: NavController) {
                     ).show()
                 }
             }
-
         }
     }
 }
@@ -414,6 +387,5 @@ fun CarroInfoDialog(
 @Preview
 @Composable
 fun CarrosScreenPreview() {
-    val navController = rememberNavController()
-    CarrosScreen(navController = navController)
+    CarrosScreen(navController = rememberNavController())
 }

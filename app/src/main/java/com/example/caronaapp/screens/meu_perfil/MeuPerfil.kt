@@ -163,6 +163,7 @@ fun MeuPerfilScreen(navController: NavController) {
                     nome = "Kaiky Cruz",
                     fotoUrl = "foto_kaiky"
                 ),
+                notaMedia = 4.3,
                 notasCriterios = listOf(
                     NotaCriterioListagemDto(
                         criterio = "Comunicação",
@@ -190,6 +191,7 @@ fun MeuPerfilScreen(navController: NavController) {
                     nome = "Kaiky Cruz",
                     fotoUrl = "foto_kaiky"
                 ),
+                notaMedia = 3.2,
                 notasCriterios = listOf(
                     NotaCriterioListagemDto(
                         criterio = "Comunicação",
