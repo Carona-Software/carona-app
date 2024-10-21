@@ -39,6 +39,7 @@ import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
+import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.ui.theme.CinzaSombra
 import com.example.caronaapp.ui.theme.Filtro
 import com.example.caronaapp.ui.theme.Localizacao
@@ -59,6 +60,7 @@ fun HistoricoViagensScreen(navController: NavController) {
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
+                    .background(CinzaF5)
                     .fillMaxSize()
             ) {
                 Row(
@@ -130,7 +132,9 @@ fun HistoricoViagensScreen(navController: NavController) {
                             chegada = viagem.chegada,
                             data = viagem.data,
                             hora = viagem.hora
-                        ) {}
+                        ) {
+                            navController.navigate("viagens/detalhes/${1}")
+                        }
                     }
                 }
             }
