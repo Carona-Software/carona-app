@@ -105,7 +105,7 @@ fun FidelizadosScreen(navController: NavController) {
                             .padding(top = 12.dp)
                     ) {
                         Text(
-                            text = stringResource(id = R.string.solicitiacoes_pendentes),
+                            text = stringResource(id = R.string.solicitacoes_pendentes),
                             color = Azul,
                             style = MaterialTheme.typography.labelLarge,
                             modifier = Modifier

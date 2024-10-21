@@ -14,6 +14,7 @@ import com.example.caronaapp.screens.cadastro.CadastroScreen
 import com.example.caronaapp.screens.carros.CarrosScreen
 import com.example.caronaapp.screens.chat.ChatScreen
 import com.example.caronaapp.screens.chat.ConversaScreen
+import com.example.caronaapp.screens.detalhes_viagem.DetalhesViagemScreen
 import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaEmailScreen
 import com.example.caronaapp.screens.esqueci_senha.RedefinirSenhaScreen
@@ -71,6 +72,10 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("viagens/historico") {
                         HistoricoViagensScreen(navController)
+                    }
+                    composable("viagens/detalhes/{id}") { entry ->
+                        val viagemId = entry.arguments?.getInt("id")
+                        DetalhesViagemScreen(navController, viagemId!!)
                     }
                     composable("chat") {
                         ChatScreen(navController)

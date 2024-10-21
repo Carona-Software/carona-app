@@ -78,7 +78,7 @@ fun CarrosScreen(navController: NavController) {
         }
     }
 
-    val carros = viewModel.carros.collectAsState()
+    val carros by viewModel.carros.collectAsState()
 
     val isNovoCarroDialogOpened by viewModel.isCreateDialogOpened.collectAsState()
     val isEditCarroDialogOpened by viewModel.isEditDialogOpened.collectAsState()
@@ -115,11 +115,10 @@ fun CarrosScreen(navController: NavController) {
                         .padding(bottom = 16.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (carros.value != null) {
+                    if (carros != null) {
                         LazyColumn {
-                            items(items = carros.value!!.toList()) { carro ->
+                            items(items = carros!!.toList()) { carro ->
                                 CarroCard(
-                                    id = carro.id,
                                     marca = carro.marca,
                                     modelo = carro.modelo,
                                     placa = carro.placa,
@@ -132,7 +131,9 @@ fun CarrosScreen(navController: NavController) {
                     } else {
                         NoResultsComponent(
                             text = stringResource(id = R.string.sem_conteudo_carros),
-                            modifier = Modifier.fillMaxWidth().weight(1f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
                         )
                     }
 
@@ -257,6 +258,7 @@ fun CarrosScreen(navController: NavController) {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+
                 isSuccess -> {
                     Toast.makeText(
                         context,
@@ -271,7 +273,6 @@ fun CarrosScreen(navController: NavController) {
 
 @Composable
 fun CarroCard(
-    id: Int,
     marca: String,
     modelo: String,
     placa: String,

@@ -13,10 +13,10 @@ data class ViagemDetalhesListagemDto(
     val horarioSaida: LocalTime,
     val horarioChegada: LocalTime,
     val preco: Double,
-    val statusViagem: StatusViagem,
+    val status: StatusViagem,
     val motorista: UsuarioSimplesListagemDto,
     val carro: CarroDto,
-    val passageiros: List<UsuarioSimplesListagemDto>,
+    var passageiros: List<UsuarioSimplesListagemDto>?,
     val trajeto: TrajetoDto
 ) {
     data class CarroDto(

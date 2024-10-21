@@ -19,6 +19,8 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 fun ButtonAction(
     label: String,
     loading: Boolean = false,
+    background: Color = Amarelo,
+    labelColor: Color = Color.White,
     handleClick: () -> Unit
 ) {
     CaronaAppTheme {
@@ -28,8 +30,9 @@ fun ButtonAction(
                 .fillMaxWidth()
                 .height(52.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Amarelo,
-            ),
+                containerColor = background,
+
+                ),
             shape = RoundedCornerShape(12.dp)
         ) {
             if (loading) {
@@ -37,7 +40,7 @@ fun ButtonAction(
             } else {
                 Text(
                     text = label,
-                    color = Color.White,
+                    color = labelColor,
                     style = MaterialTheme.typography.labelLarge
                 )
             }

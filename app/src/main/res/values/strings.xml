@@ -56,6 +56,7 @@
     <string name="label_button_cancelar">Cancelar</string>
     <string name="label_button_aceitar">Aceitar</string>
     <string name="label_button_recusar">Recusar</string>
+    <string name="label_button_iniciar">Iniciar</string>
 
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>
@@ -112,12 +113,14 @@
     <string name="carro">Carro</string>
     <string name="ver_no_mapa">Ver no Mapa</string>
     <string name="ver">Ver</string>
-    <string name="texto_distancia_ponto_de_partida">
-        %1$.1f km de distância do seu ponto de partida
+    <string name="viagem_texto_distancia_ponto_de_partida">
+        %1$.1f km do seu ponto de partida
     </string>
-    <string name="texto_distancia_ponto_de_chegada">
-        %1$.1f km de distância do seu ponto de chegada
+    <string name="viagem_texto_distancia_ponto_de_chegada">
+        %1$.1f km do seu ponto de chegada
     </string>
+    <string name="viagem_cidade_uf">%1$s, %2$s</string>
+    <string name="viagem_data_hora">%1$s - %2$s</string>
     <string name="total_viagens_realizadas">%1$d viagens realizadas</string>
     <string name="procurar_usuario">Procurar usuário...</string>
     <string name="zero">0</string>
@@ -133,7 +136,7 @@
     <string name="outros">Outros</string>
     <string name="title_activity_redefinir_senha">RedefinirSenha</string>
     <string name="title_activity_esqueci_senha_codigo">EsqueciSenhaCodigo</string>
-    <string name="solicitiacoes_pendentes">Solicitações pendentes</string>
+    <string name="solicitacoes_pendentes">Solicitações pendentes</string>
 
     <!--  INPUT ERROR MESSAGES  -->
     <string name="input_message_error_nome">Digite 5 ou mais letras</string>
@@ -169,10 +172,12 @@
     <!--  TEXTOS SEM CONTEÚDO  -->
     <string name="sem_conteudo_avaliacoes">Nenhuma avaliação por enquanto</string>
     <string name="sem_conteudo_fidelizados">Nenhum fidelizado por enquanto</string>
+    <string name="sem_conteudo_passageiros">Nenhum passageiro por enquanto</string>
     <string name="sem_conteudo_carros">Nenhum carro por enquanto</string>
     <string name="sem_conteudo_viagem">Nenhuma viagem por enquanto</string>
     <string name="sem_conteudo_solicitacao_fidelizacao">Nenhuma solicitação de fidelização por enquanto</string>
     <string name="sem_conteudo_solicitacao_viagem">Nenhuma solicitação de viagem por enquanto</string>
+    <string name="sem_conteudo_detalhes_viagem">Não foi possível carregar os detalhes da viagem</string>
 
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>
@@ -181,4 +186,5 @@
     <string name="message_confirmation_remove_fidelizado">Tem certeza que deseja remover %1$s dos fidelizados?</string>
     <string name="fidelizado_qtd_viagens_juntos">%1$d viagens juntos</string>
     <string name="fidelizado_localidade">%1$s, %2$s</string>
+    <string name="viagem_endereco">%1$s, %2$d - %3$s, %4$s, %5$s</string>
 </resources>
