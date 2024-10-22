@@ -198,8 +198,8 @@ class DetalhesViagemViewModel(
                 // aceitar solicitação
                 val responseSolicitacao = solicitacaoViagemRepository.refuse(solicitacao.id)
                 if (responseSolicitacao.isSuccessful) {
-                    solicitacoes.update {
-                        solicitacoes.value?.filter { it.id != solicitacao.id }
+                    solicitacoes.update { currentList ->
+                        currentList?.filter { it.id != solicitacao.id }
                     }
                     Log.i(
                         "detalhesViagem",

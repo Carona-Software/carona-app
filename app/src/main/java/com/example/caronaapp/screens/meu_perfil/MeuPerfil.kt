@@ -312,12 +312,6 @@ fun MeuPerfilScreen(navController: NavController) {
                 percentualComportamento = calculateTotalPorcentageCriterio(somaTotalComportamento / size)
                 percentualPontualidade = calculateTotalPorcentageCriterio(somaTotalPontualidade / size)
                 percentualDirigibilidade = calculateTotalPorcentageCriterio(somaTotalDirigibilidade / size)
-
-                Log.i("notaCriterio", "percentualComunicacao: $percentualComunicacao")
-                Log.i("notaCriterio", "percentualSeguranca: $percentualSeguranca")
-                Log.i("notaCriterio", "percentualComportamento: $percentualComportamento")
-                Log.i("notaCriterio", "percentualPontualidade: $percentualPontualidade")
-                Log.i("notaCriterio", "percentualDirigibilidade: $percentualDirigibilidade")
             }
         }
     }

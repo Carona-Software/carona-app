@@ -22,7 +22,7 @@ interface ViagemRepository {
     suspend fun findById(@Path("id") id: Int): Response<ViagemDetalhesListagemDto>
 
     @GET("viagens/usuario/{id}")
-    suspend fun findAllByUsuarioId(@Path("id") id: Int): Response<List<ViagemDetalhesListagemDto>>
+    suspend fun findAllByUsuarioId(@Path("id") id: Int): Response<List<ViagemListagemDto>>
 
     @DELETE("viagens/{id}")
     suspend fun delete(@Path("id") id: Int): Response<Void>
