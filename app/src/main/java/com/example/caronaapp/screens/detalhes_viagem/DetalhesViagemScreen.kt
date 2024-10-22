@@ -59,6 +59,8 @@ import com.example.caronaapp.ui.theme.SetaDireita
 import com.example.caronaapp.ui.theme.VerdePerto
 import com.example.caronaapp.ui.theme.VermelhoExcluir
 import com.example.caronaapp.utils.detalhesViagemFactory
+import com.example.caronaapp.utils.formatDate
+import com.example.caronaapp.utils.formatTime
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CardButton
 import com.example.caronaapp.utils.layout.NoResultsComponent
@@ -128,8 +130,8 @@ fun DetalhesViagemScreen(navController: NavController, viagemId: Int) {
                                 Text(
                                     text = stringResource(
                                         id = R.string.viagem_data_hora,
-                                        viagem!!.data.toString(),
-                                        viagem!!.horarioSaida.toString()
+                                        formatDate(viagem!!.data),
+                                        formatTime(viagem!!.horarioSaida)
                                     ),
                                     color = Azul,
                                     style = MaterialTheme.typography.labelLarge

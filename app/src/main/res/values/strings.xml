@@ -187,4 +187,11 @@
     <string name="fidelizado_qtd_viagens_juntos">%1$d viagens juntos</string>
     <string name="fidelizado_localidade">%1$s, %2$s</string>
     <string name="viagem_endereco">%1$s, %2$d - %3$s, %4$s, %5$s</string>
+
+    <!--  TEXTOS FILTROS  -->
+    <string name="todos">Todos</string>
+    <string name="todas">Todas</string>
+    <string name="hoje">Hoje</string>
+    <string name="filtro_data_ultima_semana">Última semana</string>
+    <string name="filtro_data_ultimo_mes">Último mês</string>
 </resources>

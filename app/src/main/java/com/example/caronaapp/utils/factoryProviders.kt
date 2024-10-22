@@ -14,7 +14,7 @@ import com.example.caronaapp.view_models.OferecerViagemViewModel
 import com.example.caronaapp.view_models.ProcurarViagemViewModel
 import com.example.caronaapp.view_models.SolicitacaoFidelizacaoViewModel
 import com.example.caronaapp.view_models.SolicitacaoViagemViewModel
-import com.example.caronaapp.view_models.ViagensHistoricoViewModel
+import com.example.caronaapp.view_models.HistoricoViagensViewModel
 
 fun avaliacoesFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
@@ -109,7 +109,7 @@ fun solicitacaoViagemFactory() = object : ViewModelProvider.Factory {
 
 fun viagensHistoricoFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
-        return ViagensHistoricoViewModel(
+        return HistoricoViagensViewModel(
             repository = RetrofitService.getApiViagem()
         ) as T
     }
