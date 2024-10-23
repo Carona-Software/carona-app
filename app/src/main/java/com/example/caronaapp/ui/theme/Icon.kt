@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Loyalty
@@ -48,3 +50,5 @@ val SolicitacaoCarona = Icons.Default.PersonAdd
 val EnviarMensagem = Icons.AutoMirrored.Filled.Send
 val Editar = Icons.Default.Edit
 val Filtro = Icons.Default.FilterAlt
+val CoracaoPreenchido = Icons.Default.Favorite
+val CoracaoVazado = Icons.Default.FavoriteBorder
