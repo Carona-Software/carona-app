@@ -16,7 +16,7 @@ import retrofit2.http.Query
 interface UsuarioRepository {
 
     @POST("usuarios")
-    suspend fun save(@Body usuarioCriacaoDto: UsuarioCriacaoDto): Response<UsuarioDetalhesListagemDto>
+    suspend fun post(@Body usuarioCriacaoDto: UsuarioCriacaoDto): Response<UsuarioDetalhesListagemDto>
 
     @GET("usuarios")
     suspend fun findAll(): Response<List<UsuarioListagemDto>>

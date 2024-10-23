@@ -35,3 +35,19 @@ private fun cpfExists(cpf: String): Boolean {
     return cpfFormatado[9].toString().toInt() == primeiroDigito && cpfFormatado[10].toString()
         .toInt() == segundoDigito
 }
+
+fun senhaContainsMaiuscula(senha: String): Boolean {
+    return senha.any { it.isUpperCase() }
+}
+
+fun senhaContainsMinuscula(senha: String): Boolean {
+    return senha.any { it.isLowerCase() }
+}
+
+fun senhaContainsNumero(senha: String): Boolean {
+    return senha.any { it.isDigit() }
+}
+
+fun senhaContainsCaractereEspecial(senha: String): Boolean {
+    return senha.any { !it.isLetterOrDigit() }
+}

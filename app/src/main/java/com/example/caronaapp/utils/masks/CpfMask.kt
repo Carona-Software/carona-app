@@ -7,33 +7,42 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 class CpfVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = if (text.text.length >= 11) text.text.substring(0, 11) else text.text
-        val out = StringBuilder()
+        val cpf = text.text.mapIndexed { i, c ->  // i -> index | c -> character
 
-        for (i in trimmed.indices) {
-            out.append(trimmed[i])
-            if (i == 2 || i == 5) out.append(".")
-            if (i == 8) out.append("-")
-        }
+            // mapeia quando o indice é um dos indices especificados,
+            // senao só retorna o valor inputado
+            when (i) {
+                2 -> "$c."
+                5 -> "$c."
+                8 -> "$c-"
+                else -> c
+            }
+        }.joinToString(separator = "")
 
-        val cpfOffsetTranslator = object : OffsetMapping {
+        // OffsetMapping para traduzir a posição do cursor corretamente
+        val cpfOffSetMap = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                if (offset <= 2) return offset
-                if (offset <= 5) return offset + 1
-                if (offset <= 8) return offset + 2
-                if (offset <= 11) return offset + 3
-                return out.length
+                return when {
+                    offset > 9 -> offset + 3
+                    offset > 5 -> offset + 2
+                    offset > 2 -> offset + 1
+                    else -> offset
+                }
+
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 3) return offset
-                if (offset <= 7) return offset - 1
-                if (offset <= 11) return offset - 2
-                if (offset <= 14) return offset - 3
-                return trimmed.length
+                return when {
+                    offset > 9 -> offset - 4
+                    offset > 5 -> offset - 2
+                    offset > 2 -> offset - 1
+                    else -> offset
+                }
             }
         }
 
-        return TransformedText(AnnotatedString(out.toString()), cpfOffsetTranslator)
+        // valor, deslocamento (o deslocamento padrão Identity é o mais usado,
+        // porém nesse caso é necessário um totalmente custom)
+        return TransformedText(AnnotatedString(cpf), cpfOffSetMap)
     }
 }

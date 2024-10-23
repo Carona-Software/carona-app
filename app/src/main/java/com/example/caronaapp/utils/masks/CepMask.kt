@@ -7,29 +7,33 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 class CepVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = if (text.text.length >= 8) text.text.substring(0, 8) else text.text
-        var out = ""
+        val cep = text.text.mapIndexed { i, c ->  // i -> index | c -> character
 
-        for (i in trimmed.indices) {
-            out += trimmed[i]
-            if (i == 4) out += "-"
-        }
+            // se o indice atual for 4 adiciona o "-", caso contrário retorna o caractere
+            when (i) {
+                4 -> "$c-"
+                else -> c
+            }
+        }.joinToString(separator = "")
 
         // OffsetMapping para traduzir a posição do cursor corretamente
-        val cepOffsetTranslator = object : OffsetMapping {
+        val cepOffSetMap = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                if (offset <= 4) return offset
-                if (offset <= 8) return offset + 1
-                return 9
+                return when {
+                    offset > 4 -> offset + 1  // Após o quarto caractere, move um passo adiante
+                    else -> offset
+                }
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 5) return offset
-                if (offset <= 9) return offset - 1
-                return 8
+                return when {
+                    offset > 4 -> offset - 1  // Ajusta o cursor ao remover o traço "-"
+                    else -> offset
+                }
             }
         }
 
-        return TransformedText(AnnotatedString(out), cepOffsetTranslator)
+        // Retorna o valor transformado e o deslocamento personalizado
+        return TransformedText(AnnotatedString(cep), cepOffSetMap)
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,10 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,16 +31,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
-import com.example.caronaapp.utils.layout.CustomCard
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
 import com.example.caronaapp.ui.theme.BrancoF1
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaD9
+import com.example.caronaapp.utils.cadastroFactory
+import com.example.caronaapp.utils.layout.CustomCard
+import com.example.caronaapp.view_models.CadastroViewModel
 
 class CadastroStepClass(
     val label: String,
@@ -52,58 +53,18 @@ class CadastroStepClass(
 @Composable
 fun CadastroScreen(navController: NavController) {
     val context = LocalContext.current
-    var etapaAtual by remember { mutableIntStateOf(1) }
 
-    val user = UsuarioCriacaoDto()
+    val viewModel = viewModel<CadastroViewModel>(
+        factory = cadastroFactory()
+    )
 
-    fun handlePessoaisClick(
-        nome: String,
-        email: String,
-        cpf: String,
-        genero: String,
-        dataNascimento: String
-    ) {
-        user.nome = nome
-        user.email = email
-        user.cpf = cpf
-        user.genero = genero
-        user.dataNascimento = dataNascimento
+    val etapaAtual by viewModel.etapaAtual.collectAsState()
 
-        etapaAtual = 2
-    }
+    val userCadastroState by viewModel.userCadastroState.collectAsState()
+    val userCadastroValidations by viewModel.userCadastroValidations.collectAsState()
 
-    fun handlePerfilClick(perfil: String) {
-        user.perfil = perfil
-        etapaAtual = 3
-    }
-
-    fun handleEnderecoClick(
-        cep: String,
-        uf: String,
-        cidade: String,
-        bairro: String,
-        logradouro: String,
-        numero: Int
-    ) {
-        user.endereco?.cep = cep
-        user.endereco?.uf = uf
-        user.endereco?.cidade = cidade
-        user.endereco?.bairro = bairro
-        user.endereco?.logradouro = logradouro
-        user.endereco?.numero = numero
-
-        etapaAtual = 4
-    }
-
-    fun handleFotoClick(foto: String) {
-        user.fotoUrl = foto
-        etapaAtual = 5
-    }
-
-    fun handleSenhaClick(senha: String) {
-        user.senha = senha
-        navController.navigate("login")
-    }
+    val isBackToLogin by viewModel.isBackToLogin.collectAsState()
+    val isSignUpSuccessful by viewModel.isSignUpSuccessful.collectAsState()
 
     val stepsCadastro = listOf(
         CadastroStepClass(
@@ -128,16 +89,12 @@ fun CadastroScreen(navController: NavController) {
         )
     )
 
-    fun onBackClick() {
-        when (etapaAtual) {
-            5 -> etapaAtual = 4
-            4 -> etapaAtual = 3
-            3 -> etapaAtual = 2
-            2 -> etapaAtual = 1
-            else -> {
-                navController.popBackStack()
-            }
-        }
+    if (isBackToLogin) {
+        navController.popBackStack()
+    }
+
+    if (isSignUpSuccessful) {
+        navController.navigate("login")
     }
 
     CaronaAppTheme {
@@ -147,14 +104,15 @@ fun CadastroScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(
                     top = 24.dp
-                ),
+                )
+                .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
-                IconButton(onClick = { onBackClick() }) {
+                IconButton(onClick = { viewModel.onBackClick() }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBackIosNew,
                         contentDescription = "Voltar",
@@ -197,31 +155,40 @@ fun CadastroScreen(navController: NavController) {
             CustomCard {
                 when (etapaAtual) {
                     1 -> CadastroPessoais(
-                        userData = user,
-                        onClick = { nome, email, cpf, genero, dataNascimento ->
-                            handlePessoaisClick(nome, email, cpf, genero, dataNascimento)
-                        })
+                        userData = userCadastroState,
+                        onNextClick = { viewModel.onNextClick() },
+                        onChangeEvent = { viewModel.onChangeEvent(it) },
+                        validations = userCadastroValidations
+                    )
 
-                    2 -> CadastroPerfil(userData = user, onClick = { perfil ->
-                        handlePerfilClick(perfil = perfil)
-                    })
+                    2 -> CadastroPerfil(
+                        userData = userCadastroState,
+                        onNextClick = { viewModel.onNextClick() },
+                        onChangeEvent = { viewModel.onChangeEvent(it) }
+                    )
 
-                    3 ->
-                        CadastroEndereco(
-                            enderecoData = user.endereco,
-                            onClick = { cep, uf, cidade, bairro, logradouro, numero ->
-                                handleEnderecoClick(cep, uf, cidade, bairro, logradouro, numero)
-                            })
+                    3 -> CadastroEndereco(
+                        userData = userCadastroState,
+                        onNextClick = { viewModel.onNextClick() },
+                        onChangeEvent = { viewModel.onChangeEvent(it) },
+                        handleSearchCep = { viewModel.handleSearchCep() },
+                        validations = userCadastroValidations
+                    )
 
+                    4 -> CadastroFoto(
+                        userData = userCadastroState,
+                        onNextClick = { viewModel.onNextClick() },
+                        onChangeEvent = { viewModel.onChangeEvent(it) }
+                    )
 
-                    4 -> CadastroFoto(userData = user, onClick = { etapaAtual = 5 })
-
-                    else -> CadastroSenha(userData = user, onClick = { senha ->
-                        handleSenhaClick(senha)
-                    })
+                    5 -> CadastroSenha(
+                        userData = userCadastroState,
+                        onSaveClick = { viewModel.onSignUpClick() },
+                        onChangeEvent = { viewModel.onChangeEvent(it) },
+                        validations = userCadastroValidations
+                    )
                 }
             }
-
         }
     }
 }

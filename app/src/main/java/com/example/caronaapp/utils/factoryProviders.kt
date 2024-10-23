@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.caronaapp.service.RetrofitService
 import com.example.caronaapp.view_models.AvaliacoesViewModel
+import com.example.caronaapp.view_models.CadastroViewModel
 import com.example.caronaapp.view_models.CarrosViewModel
 import com.example.caronaapp.view_models.DetalhesViagemViewModel
 import com.example.caronaapp.view_models.FeedbackViewModel
@@ -20,6 +21,16 @@ fun avaliacoesFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
         return AvaliacoesViewModel(
             repository = RetrofitService.getApiFeedback()
+        ) as T
+    }
+}
+
+fun cadastroFactory() = object : ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass: Class<T>): T {
+        return CadastroViewModel(
+            usuarioRepository = RetrofitService.getApiUsuario(),
+            viaCepRepository = RetrofitService.getApiViaCepRepository(),
+            cloudinaryRepository = RetrofitService.getApiCloudinaryRepository()
         ) as T
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Done
@@ -18,58 +19,37 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
-import com.example.caronaapp.utils.layout.ButtonAction
-import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.Olho
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.InputField
 
 @Composable
-fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
+fun CadastroSenha(
+    userData: UserCadastroState,
+    onChangeEvent: (CadastroField) -> Unit,
+    onSaveClick: () -> Unit,
+    validations: UserCadastroValidations
+) {
     val context = LocalContext.current
 
-    var senha by remember { mutableStateOf(userData.senha) }
-    var confirmacaoSenha by remember { mutableStateOf("") }
-
-    var containsMaiuscula by remember { mutableStateOf(false) }
-    var containsMinuscula by remember { mutableStateOf(false) }
-    var containsNumero by remember { mutableStateOf(false) }
-    var containsCaracterEspecial by remember { mutableStateOf(false) }
-
-    fun onSenhaChange(it: String) {
-        if (it != " ") {
-            senha = it
-            containsMaiuscula = senhaContainsMaiuscula(it)
-            containsMinuscula = senhaContainsMinuscula(it)
-            containsNumero = senhaContainsNumero(it)
-            containsCaracterEspecial = senhaContainsCaracterEspecial(it)
-        }
-    }
-
     fun isSenhaValida(): Boolean {
-        return containsMaiuscula && containsMinuscula && containsNumero && containsCaracterEspecial
-    }
-
-    fun onButtonClick() {
-        if (!isSenhaValida()) {
-            Toast.makeText(context, "Digite uma senha válida", Toast.LENGTH_SHORT).show()
-        } else if (!isConfirmacaoSenhaValido(senha, confirmacaoSenha)) {
-            Toast.makeText(context, "As senhas devem ser iguais", Toast.LENGTH_SHORT).show()
-        } else {
-            onClick(senha)
-        }
+        return (
+                validations.senhaContainsMaiuscula &&
+                        validations.senhaContainsMinuscula &&
+                        validations.senhaContainsNumero &&
+                        validations.senhaContainsCaractereEspecial
+                )
     }
 
     Column(
@@ -99,17 +79,17 @@ fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    if (containsMaiuscula) Icons.Default.Done else Icons.Default.Circle,
-                    tint = if (containsMaiuscula) Azul else Cinza90,
+                    if (validations.senhaContainsMaiuscula) Icons.Default.Done else Icons.Default.Circle,
+                    tint = if (validations.senhaContainsMaiuscula) Azul else Cinza90,
                     contentDescription = null,
                     modifier = Modifier.size(
-                        if (containsMaiuscula) 24.dp else 12.dp
+                        if (validations.senhaContainsMaiuscula) 24.dp else 12.dp
                     )
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = stringResource(id = R.string.letra_maiuscula),
-                    color = if (containsMaiuscula) Azul else Cinza90,
+                    color = if (validations.senhaContainsMaiuscula) Azul else Cinza90,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -118,17 +98,17 @@ fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    if (containsMinuscula) Icons.Default.Done else Icons.Default.Circle,
-                    tint = if (containsMinuscula) Azul else Cinza90,
+                    if (validations.senhaContainsMinuscula) Icons.Default.Done else Icons.Default.Circle,
+                    tint = if (validations.senhaContainsMinuscula) Azul else Cinza90,
                     contentDescription = null,
                     modifier = Modifier.size(
-                        if (containsMinuscula) 24.dp else 12.dp
+                        if (validations.senhaContainsMinuscula) 24.dp else 12.dp
                     )
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = stringResource(id = R.string.letra_minuscula),
-                    color = if (containsMinuscula) Azul else Cinza90,
+                    color = if (validations.senhaContainsMinuscula) Azul else Cinza90,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -137,17 +117,17 @@ fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    if (containsNumero) Icons.Default.Done else Icons.Default.Circle,
-                    tint = if (containsNumero) Azul else Cinza90,
+                    if (validations.senhaContainsNumero) Icons.Default.Done else Icons.Default.Circle,
+                    tint = if (validations.senhaContainsNumero) Azul else Cinza90,
                     contentDescription = null,
                     modifier = Modifier.size(
-                        if (containsNumero) 24.dp else 12.dp
+                        if (validations.senhaContainsNumero) 24.dp else 12.dp
                     )
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = stringResource(id = R.string.numero),
-                    color = if (containsNumero) Azul else Cinza90,
+                    color = if (validations.senhaContainsNumero) Azul else Cinza90,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -156,17 +136,17 @@ fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    if (containsCaracterEspecial) Icons.Default.Done else Icons.Default.Circle,
-                    tint = if (containsCaracterEspecial) Azul else Cinza90,
+                    if (validations.senhaContainsCaractereEspecial) Icons.Default.Done else Icons.Default.Circle,
+                    tint = if (validations.senhaContainsCaractereEspecial) Azul else Cinza90,
                     contentDescription = null,
                     modifier = Modifier.size(
-                        if (containsCaracterEspecial) 24.dp else 12.dp
+                        if (validations.senhaContainsCaractereEspecial) 24.dp else 12.dp
                     )
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = stringResource(id = R.string.caracter_especial),
-                    color = if (containsCaracterEspecial) Azul else Cinza90,
+                    color = if (validations.senhaContainsCaractereEspecial) Azul else Cinza90,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -177,18 +157,22 @@ fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
         ) {
             InputField(
                 label = stringResource(id = R.string.label_senha),
-                value = senha,
-                handleChange = { onSenhaChange(it) },
+                value = userData.senha,
+                handleChange = { onChangeEvent(CadastroField.Senha(it)) },
                 visualTransformation = PasswordVisualTransformation(),
-                endIcon = Olho
+                endIcon = Olho,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next,
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             InputField(
                 label = stringResource(id = R.string.label_confirmacao_senha),
-                value = confirmacaoSenha,
-                handleChange = { confirmacaoSenha = it },
+                value = userData.confirmacaoSenha,
+                handleChange = { onChangeEvent(CadastroField.ConfirmacaoSenha(it)) },
                 visualTransformation = PasswordVisualTransformation(),
                 endIcon = Olho
             )
@@ -196,27 +180,15 @@ fun CadastroSenha(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
 
         ButtonAction(
             label = stringResource(id = R.string.label_button_finalizar),
-            handleClick = { onButtonClick() }
+            handleClick = {
+                if (!isSenhaValida()) {
+                    Toast.makeText(context, "Digite uma senha válida", Toast.LENGTH_SHORT).show()
+                } else if (userData.senha != userData.confirmacaoSenha) {
+                    Toast.makeText(context, "As senhas devem ser iguais", Toast.LENGTH_SHORT).show()
+                } else {
+                    onSaveClick()
+                }
+            }
         )
     }
-}
-
-private fun senhaContainsMaiuscula(senha: String): Boolean {
-    return senha.any { it.isUpperCase() }
-}
-
-private fun senhaContainsMinuscula(senha: String): Boolean {
-    return senha.any { it.isLowerCase() }
-}
-
-private fun senhaContainsNumero(senha: String): Boolean {
-    return senha.any { it.isDigit() }
-}
-
-private fun senhaContainsCaracterEspecial(senha: String): Boolean {
-    return senha.any { !it.isLetterOrDigit() }
-}
-
-private fun isConfirmacaoSenhaValido(senha: String, confirmacaoSenha: String): Boolean {
-    return confirmacaoSenha == senha
 }

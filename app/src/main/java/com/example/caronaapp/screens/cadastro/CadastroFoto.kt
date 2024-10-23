@@ -1,6 +1,6 @@
 package com.example.caronaapp.screens.cadastro
 
-import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,10 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,21 +30,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.caronaapp.R
-import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
-import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.utils.layout.ButtonAction
 
 @Composable
-fun CadastroFoto(userData: UsuarioCriacaoDto, onClick: () -> Unit) {
-    val contexto = LocalContext.current
-
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+fun CadastroFoto(
+    userData: UserCadastroState,
+    onChangeEvent: (CadastroField) -> Unit,
+    onNextClick: () -> Unit
+) {
+    val context = LocalContext.current
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        selectedImageUri = uri
+        onChangeEvent(CadastroField.Foto(uri!!))
     }
 
     Column(
@@ -68,7 +65,7 @@ fun CadastroFoto(userData: UsuarioCriacaoDto, onClick: () -> Unit) {
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (selectedImageUri == null) {
+            if (userData.foto == null) {
                 Image(
                     painter = painterResource(id = R.mipmap.usuario_selecionar_foto),
                     contentDescription = null,
@@ -82,7 +79,7 @@ fun CadastroFoto(userData: UsuarioCriacaoDto, onClick: () -> Unit) {
                 )
             } else {
                 AsyncImage(
-                    model = selectedImageUri,
+                    model = userData.foto,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -107,7 +104,14 @@ fun CadastroFoto(userData: UsuarioCriacaoDto, onClick: () -> Unit) {
 
         ButtonAction(
             label = stringResource(id = R.string.label_button_proximo),
-            handleClick = { onClick() }
+            handleClick = {
+                if (userData.foto == null) {
+                    Toast.makeText(context, "Selecione sua foto de perfil", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    onNextClick()
+                }
+            }
         )
 
     }
