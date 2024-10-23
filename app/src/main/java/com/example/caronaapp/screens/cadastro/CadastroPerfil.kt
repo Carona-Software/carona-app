@@ -15,10 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,28 +24,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
-import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
-import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulPerfilSelecionado
 import com.example.caronaapp.ui.theme.CinzaDA
+import com.example.caronaapp.utils.layout.ButtonAction
 
 @Composable
-fun CadastroPerfil(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
+fun CadastroPerfil(
+    userData: UserCadastroState,
+    onChangeEvent: (CadastroField) -> Unit,
+    onNextClick: () -> Unit
+) {
     val context = LocalContext.current
 
-    var perfil by remember { mutableStateOf(userData.perfil) }
-
-    fun setPerfil(valor: String) {
-        if (perfil == valor) perfil = "" else perfil = valor
-    }
-
-    fun onButtonClick() {
-        if ( perfil != "" ) {
-            onClick(perfil)
-        } else {
-            Toast.makeText(context, "Selecione o seu perfil", Toast.LENGTH_SHORT).show()
-        }
+    fun setPerfil(perfilSelecionado: String) {
+        onChangeEvent(CadastroField.Perfil(if (userData.perfil == perfilSelecionado) "" else perfilSelecionado))
     }
 
     Column(
@@ -71,13 +60,13 @@ fun CadastroPerfil(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
                 .height(200.dp)
                 .border(
                     1.dp,
-                    if (perfil == "MOTORISTA") Azul
+                    if (userData.perfil == "MOTORISTA") Azul
                     else CinzaDA,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .clip(shape = RoundedCornerShape(16.dp))
                 .background(
-                    if (perfil == "MOTORISTA") AzulPerfilSelecionado
+                    if (userData.perfil == "MOTORISTA") AzulPerfilSelecionado
                     else Color.White
                 )
                 .clickable { setPerfil("MOTORISTA") }
@@ -103,13 +92,13 @@ fun CadastroPerfil(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
                 .height(200.dp)
                 .border(
                     1.dp,
-                    if (perfil == "PASSAGEIRO") Azul
+                    if (userData.perfil == "PASSAGEIRO") Azul
                     else CinzaDA,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .clip(shape = RoundedCornerShape(16.dp))
                 .background(
-                    if (perfil == "PASSAGEIRO") AzulPerfilSelecionado
+                    if (userData.perfil == "PASSAGEIRO") AzulPerfilSelecionado
                     else Color.White
                 )
                 .clickable { setPerfil("PASSAGEIRO") }
@@ -131,7 +120,13 @@ fun CadastroPerfil(userData: UsuarioCriacaoDto, onClick: (String) -> Unit) {
 
         ButtonAction(
             label = stringResource(id = R.string.label_button_proximo),
-            handleClick = { onButtonClick() }
+            handleClick = {
+                if (userData.perfil != "") {
+                    onNextClick()
+                } else {
+                    Toast.makeText(context, "Selecione o seu perfil", Toast.LENGTH_SHORT).show()
+                }
+            }
         )
 
     }

@@ -2,6 +2,7 @@ package com.example.caronaapp.service
 
 import com.example.caronaapp.service.repository.CaronaRepository
 import com.example.caronaapp.service.repository.CarroRepository
+import com.example.caronaapp.service.repository.CloudinaryRepository
 import com.example.caronaapp.service.repository.FeedbackRepository
 import com.example.caronaapp.service.repository.FidelizacaoRepository
 import com.example.caronaapp.service.repository.SolicitacaoFidelizacaoRepository
@@ -14,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitService {
     private val BASE_URL_VIACEP = "https://viacep.com.br/ws/"
+    private val BASE_URL_CLOUDINARY = "https://api.cloudinary.com/v1_1/carona/image/upload"
     private val BASE_URL_CARONA = "https://viacep.com.br/ws/" // ALTERAR
 
     fun getApi(endpoint: String): Retrofit {
@@ -26,6 +28,11 @@ object RetrofitService {
     // VIACEP
     fun getApiViaCepRepository(): ViaCepRepository {
         return getApi(BASE_URL_VIACEP).create(ViaCepRepository::class.java)
+    }
+
+    // CLOUDINARY
+    fun getApiCloudinaryRepository(): CloudinaryRepository {
+        return getApi(BASE_URL_CLOUDINARY).create(CloudinaryRepository::class.java)
     }
 
     // CARONA

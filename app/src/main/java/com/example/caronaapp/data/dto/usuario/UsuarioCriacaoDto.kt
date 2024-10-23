@@ -10,8 +10,7 @@ data class UsuarioCriacaoDto(
     var cpf: String = "",
     var perfil: String = "",
     var genero: String = "",
-//    var dataNascimento: LocalDate = LocalDate.now(),
-    var dataNascimento: String = "",
+    var dataNascimento: LocalDate = LocalDate.now(),
     var fotoUrl: String = "",
     var endereco: EnderecoCriacaoDto? = null
 )

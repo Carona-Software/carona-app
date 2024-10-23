@@ -47,7 +47,7 @@ fun InputField(
     buttonIconEnabled: Boolean = true,
     iconDescription: String? = null,
     onIconClick: (() -> Unit)? = null,
-    handleChange: (String) -> Unit
+    handleChange: (String) -> Unit = {}
 ) {
     CaronaAppTheme {
         Column {

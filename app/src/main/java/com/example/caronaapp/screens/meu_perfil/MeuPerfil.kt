@@ -61,11 +61,7 @@ import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.dto.viagem.ViagemSimplesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
-import com.example.caronaapp.screens.cadastro.isCepValido
 import com.example.caronaapp.service.RetrofitService
-import com.example.caronaapp.utils.layout.BottomNavBar
-import com.example.caronaapp.utils.layout.CriterioFeedback
-import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Avaliacao
 import com.example.caronaapp.ui.theme.Azul
@@ -82,8 +78,11 @@ import com.example.caronaapp.ui.theme.Notificacao
 import com.example.caronaapp.ui.theme.Procurar
 import com.example.caronaapp.ui.theme.SetaDireita
 import com.example.caronaapp.utils.isEmailValid
+import com.example.caronaapp.utils.layout.BottomNavBar
+import com.example.caronaapp.utils.layout.CriterioFeedback
 import com.example.caronaapp.utils.layout.CustomDatePickerDialog
 import com.example.caronaapp.utils.layout.CustomDialog
+import com.example.caronaapp.utils.layout.InputField
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -251,7 +250,7 @@ fun MeuPerfilScreen(navController: NavController) {
     fun onCepChange(it: String) {
         if (it.length < 9) {
             cep = it
-            cepInvalido = isCepValido(it)
+//            cepInvalido = isCepValido(it)
         }
     }
 
