@@ -16,6 +16,7 @@ val CinzaD9 = Color(0xFFD9D9D9)
 val CinzaD6 = Color(0xFFD6D6D6)
 val CinzaDA = Color(0xFFDADADA)
 val CinzaE8 = Color(0xFFE8E8E8)
+val CinzaCB = Color(0xFFCBCBCB)
 
 val VermelhoErro = Color(0xFFE04444)
 
