@@ -66,6 +66,8 @@ fun CadastroScreen(navController: NavController) {
     val isBackToLogin by viewModel.isBackToLogin.collectAsState()
     val isSignUpSuccessful by viewModel.isSignUpSuccessful.collectAsState()
 
+    val isCadastroLoading by viewModel.isCadastroLoading.collectAsState()
+
     val stepsCadastro = listOf(
         CadastroStepClass(
             label = stringResource(id = R.string.pessoais),
@@ -104,8 +106,7 @@ fun CadastroScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(
                     top = 24.dp
-                )
-                .imePadding(),
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
@@ -183,9 +184,10 @@ fun CadastroScreen(navController: NavController) {
 
                     5 -> CadastroSenha(
                         userData = userCadastroState,
-                        onSaveClick = { viewModel.onSignUpClick() },
+                        onSaveClick = { viewModel.onSignUpClick(context) },
                         onChangeEvent = { viewModel.onChangeEvent(it) },
-                        validations = userCadastroValidations
+                        validations = userCadastroValidations,
+                        isLoading = isCadastroLoading
                     )
                 }
             }

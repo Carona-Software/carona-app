@@ -60,6 +60,10 @@ dependencies {
     // GSON Converter
     implementation(libs.converter.gson)
 
+    // OkHttp3
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 

@@ -18,7 +18,7 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 @Composable
 fun ButtonAction(
     label: String,
-    loading: Boolean = false,
+    isLoading: Boolean = false,
     background: Color = Amarelo,
     labelColor: Color = Color.White,
     handleClick: () -> Unit
@@ -35,7 +35,7 @@ fun ButtonAction(
                 ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            if (loading) {
+            if (isLoading) {
                 CircularProgressIndicator(color = Color.White)
             } else {
                 Text(
