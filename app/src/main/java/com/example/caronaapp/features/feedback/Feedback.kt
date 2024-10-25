@@ -3,17 +3,35 @@ package com.example.caronaapp.features.feedback
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaE8
@@ -42,19 +59,31 @@ fun FeedbackScreen(navController: NavController) {
     val scrollState = rememberScrollState()
 
     Scaffold(
-
+        bottomBar = {
+            Column {
+                HorizontalDivider(color = CinzaE8, thickness = 2.dp)
+                Row(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                ) {
+                    ButtonAction(
+                        label = stringResource(id = R.string.label_button_avaliar),
+                        handleClick = { }
+                    )
+                }
+            }
+        }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(scrollState),
+                .padding(padding),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-
                 TopBarTitle(navController = navController, title = "Feedback")
 
                 Column(
@@ -66,7 +95,7 @@ fun FeedbackScreen(navController: NavController) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -94,57 +123,55 @@ fun FeedbackScreen(navController: NavController) {
                         }
                     }
                 }
-            }
-            HorizontalDivider(color = CinzaE8, thickness = 2.dp)
-
-            Column(modifier = Modifier.fillMaxSize().background(CinzaF5)) {
-                FeedbackSection(label = "Dirigibilidade")
-                FeedbackSection(label = "Segurança")
-                FeedbackSection(label = "Comunicação")
-                FeedbackSection(label = "Pontualidade")
-
-                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = CinzaE8, thickness = 2.dp)
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .background(CinzaF5)
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
                 ) {
-                    Text(
-                        text = "Comentário",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Azul
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    BasicTextField(
-                        value = comentario,
-                        onValueChange = { comentario = it },
+                    FeedbackSection(label = stringResource(id = R.string.dirigibilidade))
+                    FeedbackSection(label = stringResource(id = R.string.seguranca))
+                    FeedbackSection(label = stringResource(id = R.string.comunicacao))
+                    FeedbackSection(label = stringResource(id = R.string.pontualidade))
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Column(
                         modifier = Modifier
+                            .padding(horizontal = 20.dp)
                             .fillMaxWidth()
-                            .height(100.dp)
-                            .background(Color.White)
-                            .border(
-                                width = 1.dp,
-                                color = Azul,
-                                shape = MaterialTheme.shapes.small
-                            )
-                            .padding(8.dp),
-                        textStyle = TextStyle(fontSize = 16.sp, color = Azul),
-                    )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.comentario),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Azul
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        BasicTextField(
+                            value = comentario,
+                            onValueChange = { comentario = it },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                                .border(
+                                    width = 2.dp,
+                                    color = Azul,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color.White)
+                                .padding(8.dp),
+                            textStyle = TextStyle(fontSize = 16.sp, color = Azul),
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-
-                Spacer(modifier = Modifier.height(15.dp))
-
-                HorizontalDivider(color = CinzaE8, thickness = 2.dp)
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-
-            Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-                ButtonAction(
-                    label = stringResource(id = R.string.label_button_avaliar),
-                    handleClick = { }
-                )
             }
         }
     }
@@ -154,23 +181,28 @@ fun FeedbackScreen(navController: NavController) {
 fun FeedbackSection(label: String) {
     var selectedRating by remember { mutableStateOf(0) }
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 20.dp, vertical = 8.dp)
+    ) {
         Text(text = label, style = MaterialTheme.typography.labelLarge, color = Azul)
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
             for (i in 1..5) {
-                Icon(
-                    imageVector = if (i <= selectedRating) Icons.Default.Star else Icons.Default.StarBorder,
-                    contentDescription = null,
+                IconButton(
+                    onClick = { selectedRating = i },
                     modifier = Modifier
                         .size(52.dp)
-                        .padding(3.dp)
-                        .clickable {
-                            selectedRating = i
-                        },
-                    tint = Azul
-                )
+                ) {
+                    Icon(
+                        imageVector = if (i <= selectedRating) Icons.Default.Star else Icons.Default.StarBorder,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        tint = Azul
+                    )
+                }
             }
         }
     }
@@ -181,7 +213,6 @@ fun FeedbackSection(label: String) {
 @Composable
 fun PreviewFeedbackScreen() {
     CaronaAppTheme {
-        val navController = rememberNavController()
-        FeedbackScreen(navController)
+        FeedbackScreen(rememberNavController())
     }
 }

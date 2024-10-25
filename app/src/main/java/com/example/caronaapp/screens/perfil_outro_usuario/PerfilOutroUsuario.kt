@@ -111,13 +111,13 @@ fun PerfilOutroUsuarioScreen(navController: NavController) {
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         CriterioFeedback(
-                            label = stringResource(id = R.string.segurança),
+                            label = stringResource(id = R.string.seguranca),
                             notaMedia = 4.3,
                             percentualNotaMedia = 0.84f
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         CriterioFeedback(
-                            label = stringResource(id = R.string.comunicação),
+                            label = stringResource(id = R.string.comunicacao),
                             notaMedia = 3.2,
                             percentualNotaMedia = 0.66f
                         )

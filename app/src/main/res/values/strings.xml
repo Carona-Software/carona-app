@@ -61,8 +61,8 @@
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>
     <string name="dirigibilidade">Dirigibilidade</string>
-    <string name="segurança">Segurança</string>
-    <string name="comunicação">Comunicação</string>
+    <string name="seguranca">Segurança</string>
+    <string name="comunicacao">Comunicação</string>
     <string name="pontualidade">Pontualidade</string>
     <string name="comportamento">Comportamento</string>
     <string name="comentario">Comentário</string>
