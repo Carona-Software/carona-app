@@ -51,3 +51,15 @@ fun senhaContainsNumero(senha: String): Boolean {
 fun senhaContainsCaractereEspecial(senha: String): Boolean {
     return senha.any { !it.isLetterOrDigit() }
 }
+
+fun isNomeValido(nome: String): Boolean {
+    return nome.isNotBlank() && nome.length < 5
+}
+
+fun isCepValido(cep: String): Boolean {
+    return cep.isNotBlank() && cep.length != 8
+}
+
+fun isNumeroValido(numero: Int): Boolean {
+    return numero <= 0
+}

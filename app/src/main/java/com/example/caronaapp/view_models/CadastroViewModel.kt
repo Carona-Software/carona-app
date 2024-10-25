@@ -1,5 +1,6 @@
 package com.example.caronaapp.view_models
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,19 +12,19 @@ import com.example.caronaapp.service.repository.CloudinaryRepository
 import com.example.caronaapp.service.repository.UsuarioRepository
 import com.example.caronaapp.service.repository.ViaCepRepository
 import com.example.caronaapp.utils.formatDate
+import com.example.caronaapp.utils.isCepValido
 import com.example.caronaapp.utils.isCpfValido
 import com.example.caronaapp.utils.isEmailValid
+import com.example.caronaapp.utils.isNomeValido
+import com.example.caronaapp.utils.isNumeroValido
 import com.example.caronaapp.utils.senhaContainsCaractereEspecial
 import com.example.caronaapp.utils.senhaContainsMaiuscula
 import com.example.caronaapp.utils.senhaContainsMinuscula
 import com.example.caronaapp.utils.senhaContainsNumero
+import com.example.caronaapp.utils.uploadPhotoToCloudinary
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 
 class CadastroViewModel(
     val usuarioRepository: UsuarioRepository,
@@ -43,6 +44,10 @@ class CadastroViewModel(
         private set
 
     var isBackToLogin = MutableStateFlow(false)
+        private set
+
+    var isCadastroLoading = MutableStateFlow(false)
+        private set
 
     fun onChangeEvent(field: CadastroField) {
         when (field) {
@@ -165,34 +170,36 @@ class CadastroViewModel(
         }
     }
 
-    fun onSignUpClick() {
-        uploadFoto()
+    fun onSignUpClick(context: Context) {
         viewModelScope.launch {
+            isCadastroLoading.update { true }
+            uploadFotoUser(context)
             try {
                 val response = usuarioRepository.post(userCadastroData.value)
 
                 if (response.isSuccessful) {
                     isSignUpSuccessful.value = true
+                    Log.i("cadastro", "Sucesso ao cadastrar usuário: ${response.errorBody()}")
                 } else {
                     Log.e("cadastro", "Erro ao cadastrar usuário: ${response.errorBody()}")
                 }
-
             } catch (e: Exception) {
                 Log.e("cadastro", "Erro ao cadastrar usuário: ${e.message}")
+            } finally {
+                isCadastroLoading.update { false }
             }
         }
     }
 
-    private fun isNomeValido(nome: String): Boolean {
-        return nome.isNotBlank() && nome.length < 5
-    }
+    suspend fun uploadFotoUser(context: Context) {
+        val response =
+            uploadPhotoToCloudinary(context = context, uri = userCadastroState.value.foto!!)
 
-    fun isCepValido(cep: String): Boolean {
-        return cep.isNotBlank() && cep.length != 8
-    }
+        if (response == null) {
 
-    fun isNumeroValido(numero: Int): Boolean {
-        return numero <= 0
+        } else {
+            userCadastroData.update { it.copy(fotoUrl = response) }
+        }
     }
 
     fun handleSearchCep() {
@@ -258,35 +265,6 @@ class CadastroViewModel(
                     "Erro ao buscar CEP ${userCadastroState.value.enderecoCep}: ${e.message}"
                 )
 
-            }
-        }
-    }
-
-    fun uploadFoto() {
-        viewModelScope.launch {
-            try {
-                // Converter URI para arquivo
-                val file = userCadastroState.value.foto!!.path?.let { File(it) }
-                val requestFile = file!!.asRequestBody("image/*".toMediaTypeOrNull())
-                val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
-                val uploadPreset = "profile_pictures"
-
-                val response = cloudinaryRepository.upload(body, uploadPreset)
-
-                if (response.isSuccessful) {
-                    userCadastroData.update { it.copy(fotoUrl = response.body()!!.url) }
-                    Log.i(
-                        "uploadFoto",
-                        "Sucesso ao fazer upload de foto pro Cloudinary: ${response.errorBody()}"
-                    )
-                } else {
-                    Log.e(
-                        "uploadFoto",
-                        "Erro ao fazer upload de foto pro Cloudinary: ${response.errorBody()}"
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("uploadFoto", "Erro ao fazer upload de foto pro Cloudinary: ${e.message}")
             }
         }
     }

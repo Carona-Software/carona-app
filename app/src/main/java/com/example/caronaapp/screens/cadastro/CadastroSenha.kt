@@ -39,7 +39,8 @@ fun CadastroSenha(
     userData: UserCadastroState,
     onChangeEvent: (CadastroField) -> Unit,
     onSaveClick: () -> Unit,
-    validations: UserCadastroValidations
+    validations: UserCadastroValidations,
+    isLoading: Boolean
 ) {
     val context = LocalContext.current
 
@@ -180,6 +181,7 @@ fun CadastroSenha(
 
         ButtonAction(
             label = stringResource(id = R.string.label_button_finalizar),
+            isLoading = isLoading,
             handleClick = {
                 if (!isSenhaValida()) {
                     Toast.makeText(context, "Digite uma senha válida", Toast.LENGTH_SHORT).show()

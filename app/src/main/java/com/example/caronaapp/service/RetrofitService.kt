@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitService {
     private val BASE_URL_VIACEP = "https://viacep.com.br/ws/"
-    private val BASE_URL_CLOUDINARY = "https://api.cloudinary.com/v1_1/carona/image/upload"
+    private val BASE_URL_CLOUDINARY = "https://api.cloudinary.com/v1_1/"
     private val BASE_URL_CARONA = "https://viacep.com.br/ws/" // ALTERAR
 
     fun getApi(endpoint: String): Retrofit {

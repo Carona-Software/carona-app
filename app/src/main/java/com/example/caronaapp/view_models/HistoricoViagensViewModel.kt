@@ -230,15 +230,15 @@ class HistoricoViagensViewModel(
     }
 
     fun onDismissRequest() {
-        isExpanded.value = false
+        isExpanded.update { false }
     }
 
     fun expandDropdownMenu() {
-        isExpanded.value = true
+        isExpanded.update { true }
     }
 
     fun onMenuItemClick(novoValor: String, dataSelecionada: LocalDate?) {
-        currentFilterOption.value = novoValor
+        currentFilterOption.update { novoValor }
 
         if (dataSelecionada != null) {
             viagensFiltradas.update { _filterViagens(dataSelecionada) }
@@ -251,6 +251,7 @@ class HistoricoViagensViewModel(
 
     private fun _filterViagens(data: LocalDate): List<ViagemListagemDto> {
         val viagensFiltradas = viagens.value!!.filter { viagem -> !viagem.data.isBefore(data) }
+
         return viagensFiltradas
     }
 }

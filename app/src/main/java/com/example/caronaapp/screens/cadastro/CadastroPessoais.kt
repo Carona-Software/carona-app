@@ -102,7 +102,6 @@ fun CadastroPessoais(
             isError = validations.isCpfInvalido,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
             ),
             visualTransformation = CpfVisualTransformation()
         )

@@ -175,9 +175,11 @@
     <string name="sem_conteudo_passageiros">Nenhum passageiro por enquanto</string>
     <string name="sem_conteudo_carros">Nenhum carro por enquanto</string>
     <string name="sem_conteudo_viagem">Nenhuma viagem por enquanto</string>
+    <string name="nenhuma_viagem_encontrada">Nenhuma viagem encontrada</string>
     <string name="sem_conteudo_solicitacao_fidelizacao">Nenhuma solicitação de fidelização por enquanto</string>
     <string name="sem_conteudo_solicitacao_viagem">Nenhuma solicitação de viagem por enquanto</string>
     <string name="sem_conteudo_detalhes_viagem">Não foi possível carregar os detalhes da viagem</string>
+    <string name="sem_conteudo_meu_perfil">Não foi possível carregar os detalhes do perfil</string>
 
     <!--  TEXTOS COM PARÂMETROS  -->
     <string name="nota_media_criterio_feedback">(%1$.1f)</string>

@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,6 +54,7 @@ import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
 import com.example.caronaapp.utils.formatDate
 import com.example.caronaapp.utils.formatTime
+import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.CustomItemCard
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.viagensHistoricoFactory
@@ -70,7 +72,8 @@ fun HistoricoViagensScreen(navController: NavController) {
         factory = viagensHistoricoFactory()
     )
 
-    val viagens by viewModel.viagensFiltradas.collectAsState()
+    val viagens by viewModel.viagens.collectAsState()
+    val viagensFiltradas by viewModel.viagensFiltradas.collectAsState()
 
     val isExpanded by viewModel.isExpanded.collectAsState()
 
@@ -96,7 +99,9 @@ fun HistoricoViagensScreen(navController: NavController) {
     )
 
     CaronaAppTheme {
-        Scaffold { innerPadding ->
+        Scaffold(
+            bottomBar = { BottomNavBar(navController) }
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -177,17 +182,22 @@ fun HistoricoViagensScreen(navController: NavController) {
                     }
                 }
 
-                if (viagens == null) {
+                if (viagensFiltradas == null) {
                     NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
                 } else {
-                    LazyColumn {
-                        items(items = viagens!!.toList()) { viagem ->
-                            ViagemCard(
-                                viagemData = viagem
-                            ) {
-                                navController.navigate("viagens/detalhes/${viagem.id}")
+                    if (!viagensFiltradas!!.isEmpty()) {
+                        LazyColumn {
+                            items(items = viagensFiltradas!!.toList()) { viagem ->
+                                ViagemCard(
+                                    viagemData = viagem
+                                ) {
+                                    navController.navigate("viagens/detalhes/${viagem.id}")
+                                }
                             }
                         }
+                    } else {
+                        NoResultsComponent(text = stringResource(id = R.string.nenhuma_viagem_encontrada))
+
                     }
                 }
             }
