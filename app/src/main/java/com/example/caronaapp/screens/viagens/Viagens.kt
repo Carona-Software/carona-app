@@ -1,4 +1,4 @@
-package com.example.caronaapp.features.viagens
+package com.example.caronaapp.screens.viagens
 
 import android.widget.Space
 import androidx.compose.foundation.Image

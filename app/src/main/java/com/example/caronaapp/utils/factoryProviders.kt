@@ -16,7 +16,6 @@ import com.example.caronaapp.view_models.ProcurarViagemViewModel
 import com.example.caronaapp.view_models.SolicitacaoFidelizacaoViewModel
 import com.example.caronaapp.view_models.SolicitacaoViagemViewModel
 import com.example.caronaapp.view_models.HistoricoViagensViewModel
-import retrofit2.Retrofit
 
 fun avaliacoesFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
@@ -57,7 +56,8 @@ fun detalhesViagemFactory() = object : ViewModelProvider.Factory {
 fun feedbackFactory() = object : ViewModelProvider.Factory {
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
         return FeedbackViewModel(
-            repository = RetrofitService.getApiFeedback()
+            feedbackRepository = RetrofitService.getApiFeedback(),
+            usuarioRepository = RetrofitService.getApiUsuario()
         ) as T
     }
 }

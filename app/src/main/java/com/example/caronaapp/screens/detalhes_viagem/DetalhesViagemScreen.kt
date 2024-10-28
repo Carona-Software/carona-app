@@ -52,7 +52,7 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Carro
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
-import com.example.caronaapp.ui.theme.Estrela
+import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
 import com.example.caronaapp.ui.theme.SetaDireita
@@ -477,7 +477,7 @@ fun UserRow(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Icon(
-                    imageVector = Estrela,
+                    imageVector = EstrelaPreenchida,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = Amarelo
@@ -552,7 +552,7 @@ fun SolicitacaoUserRow(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Icon(
-                    imageVector = Estrela,
+                    imageVector = EstrelaPreenchida,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = Amarelo

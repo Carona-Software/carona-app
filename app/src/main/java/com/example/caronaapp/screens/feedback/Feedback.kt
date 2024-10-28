@@ -1,4 +1,4 @@
-package com.example.caronaapp.features.feedback
+package com.example.caronaapp.screens.feedback
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,9 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,10 +25,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +39,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
@@ -50,12 +47,29 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.ui.theme.EstrelaPreenchida
+import com.example.caronaapp.ui.theme.EstrelaVazada
+import com.example.caronaapp.utils.feedbackFactory
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.TopBarTitle
+import com.example.caronaapp.view_models.FeedbackViewModel
 
 @Composable
-fun FeedbackScreen(navController: NavController) {
-    var comentario by remember { mutableStateOf("") }
+fun FeedbackScreen(navController: NavController, viagemId: Int?, usuarioId: Int?) {
+
+    val viewModel = viewModel<FeedbackViewModel>(
+        factory = feedbackFactory()
+    )
+
+    LaunchedEffect(key1 = viagemId, key2 = usuarioId) {
+        viewModel.setupFeedback(viagemId!!, usuarioId!!)
+    }
+
+    val usuarioAvaliado by viewModel.usuarioAvaliado.collectAsState()
+    val criteriosFeedback by viewModel.criteriosFeedback.collectAsState()
+
+    val feedbackState by viewModel.feedbackState.collectAsState()
+
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -69,7 +83,7 @@ fun FeedbackScreen(navController: NavController) {
                 ) {
                     ButtonAction(
                         label = stringResource(id = R.string.label_button_avaliar),
-                        handleClick = { }
+                        handleClick = { viewModel.saveFeedback() }
                     )
                 }
             }
@@ -101,7 +115,7 @@ fun FeedbackScreen(navController: NavController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.mipmap.foto_gustavo),
-                            contentDescription = "Foto do motorista",
+                            contentDescription = usuarioAvaliado?.nome,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(64.dp)
@@ -111,18 +125,19 @@ fun FeedbackScreen(navController: NavController) {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
-                                text = "Gustavo",
-                                style = MaterialTheme.typography.bodyLarge,
+                                text = usuarioAvaliado?.nome ?: "",
+                                style = MaterialTheme.typography.labelLarge,
                                 color = Azul
                             )
                             Text(
                                 text = "Motorista",
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.displayLarge,
                                 color = Color.Gray
                             )
                         }
                     }
                 }
+
                 HorizontalDivider(color = CinzaE8, thickness = 2.dp)
 
                 Column(
@@ -133,10 +148,14 @@ fun FeedbackScreen(navController: NavController) {
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    FeedbackSection(label = stringResource(id = R.string.dirigibilidade))
-                    FeedbackSection(label = stringResource(id = R.string.seguranca))
-                    FeedbackSection(label = stringResource(id = R.string.comunicacao))
-                    FeedbackSection(label = stringResource(id = R.string.pontualidade))
+                    criteriosFeedback?.map { criterio ->
+                        FeedbackSection(label = criterio.nome,
+                            value = viewModel.getNotaCriterio(criterio.id),
+                            onStarClick = { nota ->
+                                viewModel.onChangeEvent(FeedbackField.Criterio(criterio.id, nota))
+                            }
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -153,8 +172,12 @@ fun FeedbackScreen(navController: NavController) {
                         Spacer(modifier = Modifier.height(8.dp))
 
                         BasicTextField(
-                            value = comentario,
-                            onValueChange = { comentario = it },
+                            value = feedbackState.comentario,
+                            onValueChange = {
+                                if (feedbackState.comentario.length <= 256) {
+                                    viewModel.onChangeEvent(FeedbackField.Comentario(it))
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
@@ -167,7 +190,8 @@ fun FeedbackScreen(navController: NavController) {
                                 .background(Color.White)
                                 .padding(8.dp),
                             textStyle = TextStyle(fontSize = 16.sp, color = Azul),
-                        )
+
+                            )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -178,25 +202,31 @@ fun FeedbackScreen(navController: NavController) {
 }
 
 @Composable
-fun FeedbackSection(label: String) {
-    var selectedRating by remember { mutableStateOf(0) }
-
+fun FeedbackSection(
+    label: String,
+    value: Double,
+    onStarClick: (Double) -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 20.dp, vertical = 8.dp)
     ) {
-        Text(text = label, style = MaterialTheme.typography.labelLarge, color = Azul)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            color = Azul
+        )
         Spacer(modifier = Modifier.height(8.dp))
-
         Row {
             for (i in 1..5) {
                 IconButton(
-                    onClick = { selectedRating = i },
+                    onClick = { onStarClick(i * 1.0) },
                     modifier = Modifier
                         .size(52.dp)
                 ) {
                     Icon(
-                        imageVector = if (i <= selectedRating) Icons.Default.Star else Icons.Default.StarBorder,
+                        imageVector = if (i <= (value / 1)) EstrelaPreenchida
+                        else EstrelaVazada,
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize(),
@@ -213,6 +243,6 @@ fun FeedbackSection(label: String) {
 @Composable
 fun PreviewFeedbackScreen() {
     CaronaAppTheme {
-        FeedbackScreen(rememberNavController())
+        FeedbackScreen(rememberNavController(), 1, 1)
     }
 }
