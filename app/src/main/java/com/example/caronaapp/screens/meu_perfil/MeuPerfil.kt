@@ -59,7 +59,7 @@ import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.ui.theme.Editar
-import com.example.caronaapp.ui.theme.Estrela
+import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Fidelizacao
 import com.example.caronaapp.ui.theme.Notificacao
 import com.example.caronaapp.ui.theme.Procurar
@@ -190,7 +190,7 @@ fun MeuPerfilScreen(navController: NavController) {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    imageVector = Estrela,
+                                    imageVector = EstrelaPreenchida,
                                     contentDescription = "Estrela",
                                     tint = Amarelo,
                                     modifier = Modifier.size(48.dp)

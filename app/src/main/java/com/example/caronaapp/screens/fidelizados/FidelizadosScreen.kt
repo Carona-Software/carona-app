@@ -41,7 +41,7 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
-import com.example.caronaapp.ui.theme.Estrela
+import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.VermelhoExcluir
 import com.example.caronaapp.ui.theme.Viagem
@@ -226,7 +226,7 @@ fun FidelizadoCard(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Icon(
-                            imageVector = Estrela,
+                            imageVector = EstrelaPreenchida,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
                             tint = Amarelo

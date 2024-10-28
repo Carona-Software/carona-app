@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 
 val Procurar = Icons.Default.Search
 val Oferecer = Icons.Default.AddCircleOutline
@@ -43,7 +44,8 @@ val Fidelizacao = Icons.Default.Loyalty
 val Carro = Icons.Default.DirectionsCar
 val SetaDireita = Icons.AutoMirrored.Filled.ArrowForwardIos
 val SetaEsquerda = Icons.Default.ArrowBackIosNew
-val Estrela = Icons.Default.Star
+val EstrelaPreenchida = Icons.Default.Star
+val EstrelaVazada = Icons.Default.StarBorder
 val Cancelamento = Icons.Default.Block
 val NotificacaoNaoLida = Icons.Default.MarkUnreadChatAlt
 val SolicitacaoCarona = Icons.Default.PersonAdd

@@ -17,6 +17,7 @@ import com.example.caronaapp.screens.detalhes_viagem.DetalhesViagemScreen
 import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaEmailScreen
 import com.example.caronaapp.screens.esqueci_senha.RedefinirSenhaScreen
+import com.example.caronaapp.screens.feedback.FeedbackScreen
 import com.example.caronaapp.screens.fidelizados.FidelizadosScreen
 import com.example.caronaapp.screens.historico_viagens.HistoricoViagensScreen
 import com.example.caronaapp.screens.login.LoginScreen
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
             CaronaAppTheme {
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "feedback/1/1") {
                     composable("login") {
                         LoginScreen(navController)
                     }
@@ -81,6 +82,11 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("chat/conversa") {
                         ConversaScreen(navController)
+                    }
+                    composable("feedback/{viagemId}/{usuarioId}") { entry ->
+                        val viagemId = entry.arguments?.getInt("viagemId")
+                        val usuarioId = entry.arguments?.getInt("usuarioId")
+                        FeedbackScreen(navController, viagemId, usuarioId)
                     }
                 }
             }

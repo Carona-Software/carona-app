@@ -42,7 +42,7 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
-import com.example.caronaapp.ui.theme.Estrela
+import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.Viagem
 
@@ -85,7 +85,7 @@ fun PerfilOutroUsuarioScreen(navController: NavController) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Estrela,
+                                imageVector = EstrelaPreenchida,
                                 contentDescription = "Estrela",
                                 tint = Amarelo,
                                 modifier = Modifier.size(48.dp)
