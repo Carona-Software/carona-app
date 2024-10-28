@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             CaronaAppTheme {
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "feedback/1/1") {
+                NavHost(navController = navController, startDestination = "login") {
                     composable("login") {
                         LoginScreen(navController)
                     }
