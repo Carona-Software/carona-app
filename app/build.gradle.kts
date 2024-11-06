@@ -39,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -83,6 +84,11 @@ dependencies {
 
     // Data Store
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.core)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
