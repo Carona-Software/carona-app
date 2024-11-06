@@ -132,7 +132,7 @@ val repositoryModule = module {
 
 val viewModelModule = module {
     viewModel { LoginViewModel(get()) }
-    viewModel { CadastroViewModel(get(), get()) }
+    viewModel { CadastroViewModel(get(), get(), get()) }
     viewModel { AvaliacoesViewModel(get()) }
     viewModel { CarrosViewModel(get()) }
     viewModel { DetalhesViagemViewModel(get(), get(), get()) }
