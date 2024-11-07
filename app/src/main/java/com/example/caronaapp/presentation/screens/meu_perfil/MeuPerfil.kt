@@ -81,13 +81,6 @@ fun MeuPerfilScreen(
     navController: NavController,
     viewModel: MeuPerfilViewModel = koinViewModel()
 ) {
-
-//    val userId = 1
-//
-//    LaunchedEffect(key1 = userId) {
-//        viewModel.getDetalhesUsuario(userId)
-//    }
-
     val userData by viewModel.userData.collectAsState()
     val meuPerfilState by viewModel.meuPerfilState.collectAsState()
     val avaliacoesCriterioUser by viewModel.avaliacoesCriterioUser.collectAsState()

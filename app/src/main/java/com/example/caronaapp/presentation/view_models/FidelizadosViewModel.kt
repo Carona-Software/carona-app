@@ -9,12 +9,15 @@ import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
 import com.example.caronaapp.data.enums.StatusSolicitacao
 import com.example.caronaapp.data.repositories.FidelizacaoRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoFidelizacaoRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FidelizadosViewModel(
     private val fidelizacaoRepository: FidelizacaoRepositoryImpl,
-    private val solicitacaoFidelizacaoRepository: SolicitacaoFidelizacaoRepositoryImpl
+    private val solicitacaoFidelizacaoRepository: SolicitacaoFidelizacaoRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     var fidelizados = MutableStateFlow<List<FidelizadoListagemDto>?>(null)
@@ -83,14 +86,62 @@ class FidelizadosViewModel(
 
     private fun _getFidelizados() {
         viewModelScope.launch {
-            fidelizados.value = fidelizacaoRepository.findByUsuarioId(1).body()!!
+            try {
+                val idUser = dataStoreManager.getIdUser()
+                val response = fidelizacaoRepository.findByUsuarioId(idUser!!)
+
+                if (response.isSuccessful) {
+                    Log.i("fidelizados", "Sucesso ao buscar fidelizados do usuário")
+                    if (response.code() == 204) {
+                        fidelizados.update { null }
+                    } else {
+                        fidelizados.update { response.body() }
+                    }
+                } else {
+                    Log.e(
+                        "fidelizados",
+                        "Erro ao buscar fidelizados do usuário: ${response.errorBody()}"
+                    )
+                    fidelizados.update { null }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "fidelizados",
+                    "Exception -> erro ao buscar fidelizados do usuário: ${e.printStackTrace()}"
+                )
+            }
         }
     }
 
     private fun _getSolicitacoesFidelizacao() {
         viewModelScope.launch {
-            solicitacoes.value =
-                solicitacaoFidelizacaoRepository.findPendentesByUsuarioId(1).body()!!
+            try {
+                val idUser = dataStoreManager.getIdUser()
+                val response = solicitacaoFidelizacaoRepository.findPendentesByUsuarioId(idUser!!)
+
+                if (response.isSuccessful) {
+                    Log.i(
+                        "fidelizados",
+                        "Sucesso ao buscar solicitações de fidelização para o usuário"
+                    )
+                    if (response.code() == 204) {
+                        solicitacoes.update { null }
+                    } else {
+                        solicitacoes.update { response.body() }
+                    }
+                } else {
+                    Log.e(
+                        "fidelizados",
+                        "Erro ao buscar solicitações de fidelização para o usuário: ${response.errorBody()}"
+                    )
+                    solicitacoes.update { null }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "fidelizados",
+                    "Exception -> erro ao buscar solicitações de fidelização para o usuário: ${e.printStackTrace()}"
+                )
+            }
         }
     }
 

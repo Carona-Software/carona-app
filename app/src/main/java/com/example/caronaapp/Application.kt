@@ -2,6 +2,7 @@ package com.example.caronaapp
 
 import android.app.Application
 import com.example.caronaapp.di.apiModule
+import com.example.caronaapp.di.dataStoreModule
 import com.example.caronaapp.di.repositoryModule
 import com.example.caronaapp.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -17,7 +18,8 @@ class Application : Application() {
             modules(
                 apiModule,
                 repositoryModule,
-                viewModelModule
+                viewModelModule,
+                dataStoreModule
             )
         }
     }
