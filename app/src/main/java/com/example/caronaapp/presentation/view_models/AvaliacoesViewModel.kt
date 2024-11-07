@@ -1,16 +1,20 @@
 package com.example.caronaapp.presentation.view_models
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
 import com.example.caronaapp.data.dto.nota_criterio.NotaCriterioListagemDto
 import com.example.caronaapp.data.repositories.FeedbackRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class AvaliacoesViewModel(
-    val repository: FeedbackRepositoryImpl
+    private val repository: FeedbackRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     var avaliacoes = MutableStateFlow<List<FeedbackListagemDto>?>(null)
@@ -77,11 +81,36 @@ class AvaliacoesViewModel(
                     )
                 )
             )
-
-//        avaliacoes.value = novasAvaliacoes
     }
 
     private fun getAvaliacoes() {
-        viewModelScope.launch { avaliacoes.value = repository.findByUsuarioId(1).body()!! }
+        viewModelScope.launch {
+            val idUser = dataStoreManager.getIdUser()
+
+            try {
+                val response = repository.findByUsuarioId(idUser!!)
+
+                if (response.isSuccessful) {
+                    Log.i("avaliacoes", "Sucesso ao buscar avaliações do usuário")
+                    if (response.code() == 204) {
+                        avaliacoes.update { null }
+                    } else {
+                        avaliacoes.update { response.body() }
+                    }
+                } else {
+                    Log.e(
+                        "avaliacoes",
+                        "Erro ao buscar avaliações do usuário: ${response.errorBody()}"
+                    )
+                    avaliacoes.update { null }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "avaliacoes",
+                    "Exception -> erro ao buscar avaliações do usuário: ${e.printStackTrace()}"
+                )
+                avaliacoes.update { null }
+            }
+        }
     }
 }

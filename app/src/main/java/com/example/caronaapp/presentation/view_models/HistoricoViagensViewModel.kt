@@ -10,6 +10,7 @@ import com.example.caronaapp.data.dto.viagem.TrajetoDto
 import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,7 +18,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class HistoricoViagensViewModel(
-    private val repository: ViagemRepositoryImpl
+    private val repository: ViagemRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     var viagens = MutableStateFlow<List<ViagemListagemDto>?>(
@@ -214,17 +216,31 @@ class HistoricoViagensViewModel(
     private fun _getViagens() {
         viewModelScope.launch {
             try {
-                val response = repository.findAllByUsuarioId(1)
+                val idUser = dataStoreManager.getIdUser()
+                val response = repository.findAllByUsuarioId(idUser!!)
                 if (response.isSuccessful) {
-                    viagens.value = response.body()
+                    Log.i(
+                        "historicoViagens",
+                        "Sucesso ao buscar viagens do usuário: ${response.errorBody()}"
+                    )
+                    if (response.code() == 204) {
+                        viagens.update { null }
+                    } else {
+                        viagens.update { response.body() }
+                    }
                 } else {
                     Log.e(
                         "historicoViagens",
                         "Erro ao buscar viagens do usuário: ${response.errorBody()}"
                     )
+                    viagens.update { null }
                 }
             } catch (e: Exception) {
-                Log.e("historicoViagens", "Erro ao buscar viagens do usuário: ${e.message}")
+                Log.e(
+                    "historicoViagens",
+                    "Erro ao buscar viagens do usuário: ${e.message}"
+                )
+                viagens.update { null }
             }
         }
     }

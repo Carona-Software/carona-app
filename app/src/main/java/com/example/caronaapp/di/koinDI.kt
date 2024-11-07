@@ -131,17 +131,21 @@ val repositoryModule = module {
 }
 
 val viewModelModule = module {
-    viewModel { LoginViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
     viewModel { CadastroViewModel(get(), get(), get()) }
-    viewModel { AvaliacoesViewModel(get()) }
-    viewModel { CarrosViewModel(get()) }
-    viewModel { DetalhesViagemViewModel(get(), get(), get()) }
-    viewModel { FeedbackViewModel(get(), get()) }
-    viewModel { FidelizadosViewModel(get(), get()) }
-    viewModel { HistoricoViagensViewModel(get()) }
-    viewModel { MeuPerfilViewModel(get(), get()) }
-    viewModel { OferecerViagemViewModel(get()) }
+    viewModel { AvaliacoesViewModel(get(), get()) }
+    viewModel { CarrosViewModel(get(), get()) }
+    viewModel { DetalhesViagemViewModel(get(), get(), get(), get()) }
+    viewModel { FeedbackViewModel(get(), get(), get()) }
+    viewModel { FidelizadosViewModel(get(), get(), get()) }
+    viewModel { HistoricoViagensViewModel(get(), get()) }
+    viewModel { MeuPerfilViewModel(get(), get(), get()) }
+    viewModel { OferecerViagemViewModel(get(), get()) }
     viewModel { ProcurarViagemViewModel(get(), get()) }
-    viewModel { SolicitacaoFidelizacaoViewModel(get()) }
-    viewModel { SolicitacaoViagemViewModel(get()) }
+    viewModel { SolicitacaoFidelizacaoViewModel(get(), get()) }
+    viewModel { SolicitacaoViagemViewModel(get(), get()) }
+}
+
+val dataStoreModule = module {
+    single { DataStoreManager(get()) }
 }

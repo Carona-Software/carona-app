@@ -7,11 +7,14 @@ import com.example.caronaapp.data.dto.carro.CarroCriacaoDto
 import com.example.caronaapp.data.dto.carro.CarroListagemDto
 import com.example.caronaapp.data.entity.Carro
 import com.example.caronaapp.data.repositories.CarroRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CarrosViewModel(
-    private val repository: CarroRepositoryImpl
+    private val repository: CarroRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     // carros do Usuário
@@ -87,7 +90,32 @@ class CarrosViewModel(
     }
 
     private fun getCarrosUser() {
-        viewModelScope.launch { carros.value = repository.findByUsuarioId(1).body()!! }
+        viewModelScope.launch {
+            try {
+                val idUser = dataStoreManager.getIdUser()
+                val response = repository.findByUsuarioId(idUser!!)
+
+                if (response.isSuccessful) {
+                    Log.i("carros", "Sucesso ao buscar carros do usuário")
+                    if (response.code() == 204) {
+                        carros.update { null }
+                    } else {
+                        carros.update { response.body() }
+                    }
+                } else {
+                    Log.e(
+                        "carros",
+                        "Erro ao buscar carros do usuário: ${response.errorBody()}"
+                    )
+                    carros.update { null }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "carros",
+                    "Exception -> erro ao buscar carros do usuário: ${e.printStackTrace()}"
+                )
+            }
+        }
     }
 
     fun onDismissDeleteDialog() {

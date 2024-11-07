@@ -16,6 +16,7 @@ import com.example.caronaapp.data.entity.CriterioFeedback
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.FeedbackRepositoryImpl
 import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.feedback.FeedbackField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -25,7 +26,8 @@ import java.time.LocalTime
 
 class FeedbackViewModel(
     private val feedbackRepository: FeedbackRepositoryImpl,
-    private val usuarioRepository: UsuarioRepositoryImpl
+    private val usuarioRepository: UsuarioRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     val criteriosFeedback = MutableStateFlow<List<CriterioFeedback>?>(

@@ -15,6 +15,7 @@ import com.example.caronaapp.data.dto.viagem.ViagemSimplesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.data.repositories.ViaCepRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.meu_perfil.AvaliacoesCriterioUser
 import com.example.caronaapp.presentation.screens.meu_perfil.CriterioFeedbackCalculo
 import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilField
@@ -33,6 +34,7 @@ import java.time.LocalTime
 class MeuPerfilViewModel(
     private val usuarioRepository: UsuarioRepositoryImpl,
     private val viaCepRepository: ViaCepRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     val userData = MutableStateFlow<UsuarioDetalhesListagemDto?>(
@@ -195,24 +197,28 @@ class MeuPerfilViewModel(
     var isEnderecoDialogEnabled = MutableStateFlow(false)
         private set
 
-    fun getDetalhesUsuario(id: Int) {
+    fun getDetalhesUsuario() {
         viewModelScope.launch {
             try {
-                val response = usuarioRepository.findById(id)
+                val idUser = dataStoreManager.getIdUser()
+                val response = usuarioRepository.findById(idUser!!)
 
                 if (response.isSuccessful) {
-                    userData.value = response.body()!!
+                    userData.update { response.body()!! }
                     calculateAndRenderCriteriosFeedback()
                 } else {
-                    userData.value = null
+                    userData.update { null }
                     Log.e(
                         "meu perfil",
-                        "Erro ao buscar informações do usuário: ${response.errorBody()?.toString()}"
+                        "Erro ao buscar informações do usuário: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
-                userData.value = null
-                Log.e("meu perfil", "Erro ao buscar informações do usuário: ${e.message}")
+                userData.update { null }
+                Log.e(
+                    "meu perfil",
+                    "Exception -> erro ao buscar informações do usuário: ${e.message}"
+                )
             }
         }
     }

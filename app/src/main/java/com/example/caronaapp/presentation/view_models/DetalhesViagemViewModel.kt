@@ -16,6 +16,7 @@ import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.CaronaRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoViagemRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,9 +24,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class DetalhesViagemViewModel(
-    val viagemRepository: ViagemRepositoryImpl,
-    val solicitacaoViagemRepository: SolicitacaoViagemRepositoryImpl,
-    val caronaRepository: CaronaRepositoryImpl
+    private val viagemRepository: ViagemRepositoryImpl,
+    private val solicitacaoViagemRepository: SolicitacaoViagemRepositoryImpl,
+    private val caronaRepository: CaronaRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
     var viagem = MutableStateFlow<ViagemDetalhesListagemDto?>(
