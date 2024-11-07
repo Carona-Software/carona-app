@@ -16,6 +16,7 @@ data class UsuarioDetalhesListagemDto(
     val dataNascimento: LocalDate,
     val fotoUrl: String,
     val notaMedia: Double,
+    val viagensRealizadas: Int,
     val endereco: EnderecoListagemDto,
     val avaliacoes: List<FeedbackListagemDto>,
     val viagens: List<ViagemSimplesListagemDto>,

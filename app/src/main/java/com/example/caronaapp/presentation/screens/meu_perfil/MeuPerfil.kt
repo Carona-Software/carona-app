@@ -113,7 +113,7 @@ fun MeuPerfilScreen(
                     .background(Color.White)
             ) {
                 if (userData == null) {
-                    NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_meu_perfil))
+                    NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_perfil))
                 } else {
                     Row(
                         modifier = Modifier
