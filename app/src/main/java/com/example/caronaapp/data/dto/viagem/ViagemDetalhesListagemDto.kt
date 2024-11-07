@@ -1,5 +1,6 @@
 package com.example.caronaapp.data.dto.viagem
 
+import com.example.caronaapp.data.dto.solicitacao.SolicitacaoViagemListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioSimplesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
 import java.time.LocalDate
@@ -17,7 +18,8 @@ data class ViagemDetalhesListagemDto(
     val motorista: UsuarioSimplesListagemDto,
     val carro: CarroDto,
     var passageiros: List<UsuarioSimplesListagemDto>?,
-    val trajeto: TrajetoDto
+    val trajeto: TrajetoDto,
+    val solicitacoes: List<SolicitacaoViagemListagemDto>
 ) {
     data class CarroDto(
         val cor: String,

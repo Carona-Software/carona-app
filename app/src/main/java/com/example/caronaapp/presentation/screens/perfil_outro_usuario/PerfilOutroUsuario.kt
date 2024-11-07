@@ -8,9 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,9 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.utils.layout.ButtonAction
-import com.example.caronaapp.utils.layout.CriterioFeedback
-import com.example.caronaapp.utils.layout.TopBarUser
+import com.example.caronaapp.presentation.view_models.PerfilOutroUsuarioViewModel
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -45,190 +49,230 @@ import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.Viagem
+import com.example.caronaapp.utils.formatDate
+import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.CriterioFeedback
+import com.example.caronaapp.utils.layout.NoResultsComponent
+import com.example.caronaapp.utils.layout.TopBarUser
+import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 
 @Composable
-fun PerfilOutroUsuarioScreen(navController: NavController) {
+fun PerfilOutroUsuarioScreen(
+    navController: NavController,
+    idUser: Int,
+    viewModel: PerfilOutroUsuarioViewModel = koinViewModel()
+) {
+
+//    LaunchedEffect(key1 = idUser) {
+//        viewModel.getDetalhesUsuario(idUser)
+//    }
+
+    val userData by viewModel.userData.collectAsState()
+    val avaliacoesCriterioUser by viewModel.avaliacoesCriterioUser.collectAsState()
+
     val scrollState = rememberScrollState()
 
     CaronaAppTheme {
-        Scaffold(
-            topBar = {
-                TopBarUser(navController = navController, fotoUser = null, nome = "Lucas Arantes")
-            },
-        ) { innerPadding ->
+        Scaffold { innerPadding ->
             Column(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .background(Color.White)
             ) {
-                Column(
-                    // column com scroll
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .verticalScroll(scrollState),
-                ) {
-                    Column( // column de avaliação geral
+                if (userData == null) {
+                    NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_perfil))
+                } else {
+                    TopBarUser(
+                        navController = navController,
+                        fotoUser = null,
+                        nome = userData!!.nome
+                    )
+                    Column(
+                        // column com scroll
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp)
+                            .weight(1f)
+                            .padding(horizontal = 20.dp)
+                            .verticalScroll(scrollState),
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.avaliacao_geral),
-                            color = Azul,
-                            style = MaterialTheme.typography.labelLarge
+                        Column( // column de avaliação geral
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.avaliacao_geral),
+                                color = Azul,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = EstrelaPreenchida,
+                                    contentDescription = "Estrela",
+                                    tint = Amarelo,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(
+                                        id = R.string.nota_media_usuario,
+                                        userData!!.notaMedia
+                                    ),
+                                    color = Azul,
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) { // column de critérios de feedback
+                            if (userData!!.perfil.uppercase() == "MOTORISTA") {
+                                CriterioFeedback(
+                                    label = stringResource(id = R.string.dirigibilidade),
+                                    notaMedia = avaliacoesCriterioUser.dirigibilidade.notaMedia,
+                                    percentualNotaMedia = avaliacoesCriterioUser.dirigibilidade.percentual
+                                )
+                            } else {
+                                CriterioFeedback(
+                                    label = stringResource(id = R.string.comportamento),
+                                    notaMedia = avaliacoesCriterioUser.comportamento.notaMedia,
+                                    percentualNotaMedia = avaliacoesCriterioUser.comportamento.percentual
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(20.dp))
+                            CriterioFeedback(
+                                label = stringResource(id = R.string.seguranca),
+                                notaMedia = avaliacoesCriterioUser.seguranca.notaMedia,
+                                percentualNotaMedia = avaliacoesCriterioUser.seguranca.percentual
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            CriterioFeedback(
+                                label = stringResource(id = R.string.comunicacao),
+                                notaMedia = avaliacoesCriterioUser.comunicacao.notaMedia,
+                                percentualNotaMedia = avaliacoesCriterioUser.comunicacao.percentual
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            CriterioFeedback(
+                                label = stringResource(id = R.string.pontualidade),
+                                notaMedia = avaliacoesCriterioUser.pontualidade.notaMedia,
+                                percentualNotaMedia = avaliacoesCriterioUser.pontualidade.percentual
+                            )
+                        }
+
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .padding(vertical = 24.dp)
+                                .scale(1.2f),
+                            color = CinzaE8,
+                            thickness = 8.dp
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = EstrelaPreenchida,
-                                contentDescription = "Estrela",
-                                tint = Amarelo,
-                                modifier = Modifier.size(48.dp)
+                                imageVector = Viagem,
+                                contentDescription = "Viagens",
+                                tint = Azul,
+                                modifier = Modifier.size(28.dp)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = "4.3",
+                                text = stringResource(
+                                    id = R.string.total_viagens_realizadas,
+                                    userData!!.viagensRealizadas
+                                ),
                                 color = Azul,
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.fillMaxWidth(0.92f)
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) { // column de critérios de feedback
-                        CriterioFeedback(
-                            label = stringResource(id = R.string.dirigibilidade),
-                            notaMedia = 4.0,
-                            percentualNotaMedia = 0.75f
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        CriterioFeedback(
-                            label = stringResource(id = R.string.seguranca),
-                            notaMedia = 4.3,
-                            percentualNotaMedia = 0.84f
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        CriterioFeedback(
-                            label = stringResource(id = R.string.comunicacao),
-                            notaMedia = 3.2,
-                            percentualNotaMedia = 0.66f
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        CriterioFeedback(
-                            label = stringResource(id = R.string.pontualidade),
-                            notaMedia = 4.9,
-                            percentualNotaMedia = 0.91f
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .padding(vertical = 24.dp)
-                            .scale(1.2f),
-                        color = CinzaE8,
-                        thickness = 8.dp
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Viagem,
-                            contentDescription = "",
-                            tint = Azul,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(id = R.string.total_viagens_realizadas, 13),
-                            color = Azul,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.fillMaxWidth(0.92f)
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .padding(vertical = 24.dp)
-                            .scale(1.2f),
-                        color = CinzaE8,
-                        thickness = 8.dp
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Localizacao,
-                            contentDescription = "",
-                            tint = Azul,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "São Paulo, SP",
-                            color = Azul,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.fillMaxWidth(0.92f)
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .padding(vertical = 24.dp)
-                            .scale(1.2f),
-                        color = CinzaE8,
-                        thickness = 8.dp
-                    )
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.comentarios),
-                            color = Azul,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Avaliacao(
-                            fotoUser = null,
-                            nome = "Gustavo Medeiros",
-                            data = "18/09/2024",
-                            comentario = "Dirige bem, pontual e respeitoso! Com certeza recomendo!"
-                        )
 
                         HorizontalDivider(
-//                            modifier = Modifier
-//                                .padding(vertical = 4.dp),
+                            modifier = Modifier
+                                .padding(vertical = 24.dp)
+                                .scale(1.2f),
                             color = CinzaE8,
-                            thickness = 1.dp
+                            thickness = 8.dp
                         )
 
-                        Avaliacao(
-                            fotoUser = null,
-                            nome = "Gustavo Medeiros",
-                            data = "18/09/2024",
-                            comentario = "Dirige bem, pontual e respeitoso! Com certeza recomendo!"
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Localizacao,
+                                contentDescription = "Localização",
+                                tint = Azul,
+                                modifier = Modifier.size(28.dp)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(
+                                    id = R.string.viagem_cidade_uf,
+                                    userData!!.endereco.cidade,
+                                    userData!!.endereco.uf
+                                ),
+                                color = Azul,
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.fillMaxWidth(0.92f)
+                            )
+                        }
+
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .padding(vertical = 24.dp)
+                                .scale(1.2f),
+                            color = CinzaE8,
+                            thickness = 8.dp
                         )
-                    }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
-                    ) {
-                        ButtonAction(label = stringResource(id = R.string.label_button_conversar)) {}
-                    }
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.comentarios),
+                                color = Azul,
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 0.dp, max = 300.dp)
+                            ) {
+                                items(items = userData!!.avaliacoes) { avaliacao ->
+                                    AvaliacaoItem(
+                                        fotoUser = null,
+                                        nome = avaliacao.avaliador.nome,
+                                        data = avaliacao.data,
+                                        comentario = avaliacao.comentario,
+                                        isLast = userData!!.avaliacoes.last() == avaliacao
+                                    )
+                                }
+                            }
+                        }
 
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp)
+                        ) {
+                            ButtonAction(label = stringResource(id = R.string.label_button_conversar)) {}
+                        }
+
+                    }
                 }
             }
         }
@@ -236,11 +280,12 @@ fun PerfilOutroUsuarioScreen(navController: NavController) {
 }
 
 @Composable
-fun Avaliacao(
+fun AvaliacaoItem(
     fotoUser: Painter?,
     nome: String,
-    data: String,
-    comentario: String
+    data: LocalDate,
+    comentario: String,
+    isLast: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -272,7 +317,7 @@ fun Avaliacao(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = data,
+                    text = formatDate(data),
                     color = Cinza90,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -285,11 +330,19 @@ fun Avaliacao(
             style = MaterialTheme.typography.labelMedium,
         )
     }
+
+    if (!isLast) {
+        HorizontalDivider(
+//           modifier = Modifier
+//           .padding(vertical = 4.dp),
+            color = CinzaE8,
+            thickness = 1.dp
+        )
+    }
 }
 
 @Preview
 @Composable
 fun PerfilOutroUsuarioScreenPreview() {
-    val navController = rememberNavController()
-    PerfilOutroUsuarioScreen(navController = navController)
+    PerfilOutroUsuarioScreen(navController = rememberNavController(), 1)
 }

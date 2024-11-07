@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -72,18 +71,17 @@ fun DetalhesViagemScreen(
     viagemId: Int,
     viewModel: DetalhesViagemViewModel = koinViewModel()
 ) {
-    LaunchedEffect(key1 = viagemId) {
-        viewModel.getDetalhesViagem(viagemId)
-        viewModel.getSolicitacoesViagem(viagemId)
-    }
+//    LaunchedEffect(key1 = viagemId) {
+//        viewModel.getDetalhesViagem(viagemId)
+//    }
 
     // pegar do DataStore (PERFIL, ID)
     val perfilUser = "MOTORISTA"
-//    val perfilUser = "PASSAGEIRO"
+//    val perfilUser by viewModel.perfilUser.collectAsState()
     val idUser = 1
+//    val idUser by viewModel.idUser.collectAsState()
 
     val viagem by viewModel.viagem.collectAsState()
-    val solicitacoes by viewModel.solicitacoes.collectAsState()
 
     val isViagemDeleted by viewModel.isViagemDeleted.collectAsState()
 
@@ -194,7 +192,8 @@ fun DetalhesViagemScreen(
                             UserRow(
                                 nome = "Gustavo Medeiros",
                                 notaMedia = "--",
-                                isNavegable = true
+                                isNavegable = true,
+                                onClick = { navController.navigate("usuarios/perfil/${1}") }
                             )
                         }
 
@@ -298,7 +297,7 @@ fun DetalhesViagemScreen(
                         }
 
                         if (
-                            solicitacoes != null &&
+                            viagem!!.solicitacoes.isNotEmpty() &&
                             perfilUser == "MOTORISTA" &&
                             viagem!!.status == StatusViagem.PENDENTE
                         ) {
@@ -325,11 +324,11 @@ fun DetalhesViagemScreen(
                                         .fillMaxWidth()
                                         .heightIn(min = 0.dp, max = 200.dp)
                                 ) {
-                                    items(items = solicitacoes!!.toList()) { solicitacao ->
+                                    items(items = viagem!!.solicitacoes.toList()) { solicitacao ->
                                         SolicitacaoUserRow(
                                             nome = solicitacao.usuario.nome,
                                             notaMedia = solicitacao.usuario.notaGeral.toString(),
-                                            isLast = solicitacao == solicitacoes!!.last(),
+                                            isLast = solicitacao == viagem!!.solicitacoes.last(),
                                             onRefuseButton = { viewModel.onRefuseClick(solicitacao) },
                                             onAcceptButton = { viewModel.onAcceptClick(solicitacao) }
                                         )

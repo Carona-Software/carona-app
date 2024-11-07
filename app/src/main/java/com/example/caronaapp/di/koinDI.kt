@@ -21,6 +21,7 @@ import com.example.caronaapp.presentation.view_models.HistoricoViagensViewModel
 import com.example.caronaapp.presentation.view_models.LoginViewModel
 import com.example.caronaapp.presentation.view_models.MeuPerfilViewModel
 import com.example.caronaapp.presentation.view_models.OferecerViagemViewModel
+import com.example.caronaapp.presentation.view_models.PerfilOutroUsuarioViewModel
 import com.example.caronaapp.presentation.view_models.ProcurarViagemViewModel
 import com.example.caronaapp.presentation.view_models.SolicitacaoFidelizacaoViewModel
 import com.example.caronaapp.presentation.view_models.SolicitacaoViagemViewModel
@@ -83,8 +84,7 @@ val apiModule = module {
     }
 
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(CaronaApi::class.java)
+        get<Retrofit>().create(CaronaApi::class.java)
     }
     single {
         val retrofit: Retrofit = get()
@@ -141,6 +141,7 @@ val viewModelModule = module {
     viewModel { HistoricoViagensViewModel(get(), get()) }
     viewModel { MeuPerfilViewModel(get(), get(), get()) }
     viewModel { OferecerViagemViewModel(get(), get()) }
+    viewModel { PerfilOutroUsuarioViewModel(get()) }
     viewModel { ProcurarViagemViewModel(get(), get()) }
     viewModel { SolicitacaoFidelizacaoViewModel(get(), get()) }
     viewModel { SolicitacaoViagemViewModel(get(), get()) }

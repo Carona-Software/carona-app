@@ -30,7 +30,10 @@ class DetalhesViagemViewModel(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    var viagem = MutableStateFlow<ViagemDetalhesListagemDto?>(
+    val idUser = MutableStateFlow<Int?>(null)
+    val perfilUser = MutableStateFlow<String?>(null)
+
+    val viagem = MutableStateFlow<ViagemDetalhesListagemDto?>(
 //        null
         ViagemDetalhesListagemDto(
             id = 1,
@@ -97,53 +100,47 @@ class DetalhesViagemViewModel(
                     "Avenida Independência",
                     680
                 )
-            )
-        )
-    )
-        private set
-
-    var solicitacoes = MutableStateFlow<List<SolicitacaoViagemListagemDto>?>(
-//        null
-        listOf(
-            SolicitacaoViagemListagemDto(
-                id = 1,
-                status = StatusSolicitacao.PENDENTE,
-                usuario = UsuarioSimplesListagemDto(
-                    id = 1,
-                    nome = "Ewerton Lima",
-                    notaGeral = 4.0,
-                    fotoUrl = "foto",
-                    perfil = "PASSAGEIRO"
-                ),
-                ViagemSimplesListagemDto(
-                    id = 1,
-                    data = LocalDate.now(),
-                    hora = LocalTime.now(),
-                    preco = 30.0,
-                    status = StatusViagem.PENDENTE
-                )
             ),
-            SolicitacaoViagemListagemDto(
-                id = 1,
-                status = StatusSolicitacao.PENDENTE,
-                usuario = UsuarioSimplesListagemDto(
-                    id = 3,
-                    nome = "Lucas Arantes",
-                    notaGeral = 4.3,
-                    fotoUrl = "foto",
-                    perfil = "PASSAGEIRO"
-                ),
-                ViagemSimplesListagemDto(
+            solicitacoes = listOf(
+                SolicitacaoViagemListagemDto(
                     id = 1,
-                    data = LocalDate.now(),
-                    hora = LocalTime.now(),
-                    preco = 30.0,
-                    status = StatusViagem.PENDENTE
+                    status = StatusSolicitacao.PENDENTE,
+                    usuario = UsuarioSimplesListagemDto(
+                        id = 1,
+                        nome = "Ewerton Lima",
+                        notaGeral = 4.0,
+                        fotoUrl = "foto",
+                        perfil = "PASSAGEIRO"
+                    ),
+                    ViagemSimplesListagemDto(
+                        id = 1,
+                        data = LocalDate.now(),
+                        hora = LocalTime.now(),
+                        preco = 30.0,
+                        status = StatusViagem.PENDENTE
+                    )
+                ),
+                SolicitacaoViagemListagemDto(
+                    id = 1,
+                    status = StatusSolicitacao.PENDENTE,
+                    usuario = UsuarioSimplesListagemDto(
+                        id = 3,
+                        nome = "Lucas Arantes",
+                        notaGeral = 4.3,
+                        fotoUrl = "foto",
+                        perfil = "PASSAGEIRO"
+                    ),
+                    ViagemSimplesListagemDto(
+                        id = 1,
+                        data = LocalDate.now(),
+                        hora = LocalTime.now(),
+                        preco = 30.0,
+                        status = StatusViagem.PENDENTE
+                    )
                 )
             )
         )
     )
-        private set
 
     var isViagemDeleted = MutableStateFlow(false)
         private set
@@ -151,44 +148,29 @@ class DetalhesViagemViewModel(
     fun getDetalhesViagem(viagemId: Int) {
         viewModelScope.launch {
             try {
+                idUser.update { dataStoreManager.getIdUser() }
+                perfilUser.update { dataStoreManager.getPerfilUser() }
+
                 val response = viagemRepository.findById(viagemId)
+
                 if (response.isSuccessful) {
-                    viagem.value = response.body()
+                    viagem.update { response.body() }
+                    Log.i(
+                        "detalhesViagem",
+                        "Sucesso ao buscar detalhes da viagem: ${response.body()}"
+                    )
                 } else {
-                    viagem.value = null
+                    viagem.update { null }
                     Log.e(
                         "detalhesViagem",
                         "Erro ao buscar detalhes da viagem: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
-                viagem.value = null
+                viagem.update { null }
                 Log.e(
                     "detalhesViagem",
                     "Erro ao buscar detalhes da viagem: ${e.message}"
-                )
-            }
-        }
-    }
-
-    fun getSolicitacoesViagem(viagemId: Int) {
-        viewModelScope.launch {
-            try {
-                val response = solicitacaoViagemRepository.findPendentesByViagemId(viagemId)
-                if (response.isSuccessful) {
-                    solicitacoes.value = response.body()
-                } else {
-                    solicitacoes.value = null
-                    Log.e(
-                        "detalhesViagem",
-                        "Erro ao buscar solicitações para a viagem: ${response.errorBody()}"
-                    )
-                }
-            } catch (e: Exception) {
-                solicitacoes.value = null
-                Log.e(
-                    "detalhesViagem",
-                    "Erro ao buscar solicitações para a viagem: ${e.message}"
                 )
             }
         }
@@ -200,8 +182,12 @@ class DetalhesViagemViewModel(
                 // aceitar solicitação
                 val responseSolicitacao = solicitacaoViagemRepository.refuse(solicitacao.id)
                 if (responseSolicitacao.isSuccessful) {
-                    solicitacoes.update { currentList ->
-                        currentList?.filter { it.id != solicitacao.id }
+                    viagem.update { currentViagem ->
+                        currentViagem!!.copy(
+                            solicitacoes = currentViagem.solicitacoes.filter { solicitacaoViagem ->
+                                solicitacaoViagem.id != solicitacao.id
+                            }
+                        )
                     }
                     Log.i(
                         "detalhesViagem",
@@ -228,8 +214,12 @@ class DetalhesViagemViewModel(
                 // aceitar solicitação
                 val responseSolicitacao = solicitacaoViagemRepository.approve(solicitacao.id)
                 if (responseSolicitacao.isSuccessful) {
-                    solicitacoes.update { currentList ->
-                        currentList?.filter { it.id != solicitacao.id }
+                    viagem.update { currentViagem ->
+                        currentViagem!!.copy(
+                            solicitacoes = currentViagem.solicitacoes.filter { solicitacaoViagem ->
+                                solicitacaoViagem.id != solicitacao.id
+                            }
+                        )
                     }
                     Log.i(
                         "detalhesViagem",

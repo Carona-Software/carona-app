@@ -8,22 +8,23 @@ import androidx.annotation.RequiresApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.caronaapp.screens.avaliacoes.AvaliacoesScreen
-import com.example.caronaapp.screens.cadastro.CadastroScreen
-import com.example.caronaapp.screens.carros.CarrosScreen
-import com.example.caronaapp.screens.chat.ChatScreen
-import com.example.caronaapp.screens.chat.ConversaScreen
-import com.example.caronaapp.screens.detalhes_viagem.DetalhesViagemScreen
-import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaCodigoScreen
-import com.example.caronaapp.screens.esqueci_senha.EsqueciSenhaEmailScreen
-import com.example.caronaapp.screens.esqueci_senha.RedefinirSenhaScreen
-import com.example.caronaapp.screens.feedback.FeedbackScreen
-import com.example.caronaapp.screens.fidelizados.FidelizadosScreen
-import com.example.caronaapp.screens.historico_viagens.HistoricoViagensScreen
-import com.example.caronaapp.screens.login.LoginScreen
-import com.example.caronaapp.screens.meu_perfil.MeuPerfilScreen
-import com.example.caronaapp.screens.notificacoes.NotificacoesScreen
-import com.example.caronaapp.screens.procurar_viagem.ProcurarViagemScreen
+import com.example.caronaapp.presentation.screens.avaliacoes.AvaliacoesScreen
+import com.example.caronaapp.presentation.screens.cadastro.CadastroScreen
+import com.example.caronaapp.presentation.screens.carros.CarrosScreen
+import com.example.caronaapp.presentation.screens.chat.ChatScreen
+import com.example.caronaapp.presentation.screens.chat.ConversaScreen
+import com.example.caronaapp.presentation.screens.detalhes_viagem.DetalhesViagemScreen
+import com.example.caronaapp.presentation.screens.esqueci_senha.EsqueciSenhaCodigoScreen
+import com.example.caronaapp.presentation.screens.esqueci_senha.EsqueciSenhaEmailScreen
+import com.example.caronaapp.presentation.screens.esqueci_senha.RedefinirSenhaScreen
+import com.example.caronaapp.presentation.screens.feedback.FeedbackScreen
+import com.example.caronaapp.presentation.screens.fidelizados.FidelizadosScreen
+import com.example.caronaapp.presentation.screens.historico_viagens.HistoricoViagensScreen
+import com.example.caronaapp.presentation.screens.login.LoginScreen
+import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilScreen
+import com.example.caronaapp.presentation.screens.notificacoes.NotificacoesScreen
+import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioScreen
+import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemScreen
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -76,6 +77,10 @@ class MainActivity : ComponentActivity() {
                     composable("viagens/detalhes/{id}") { entry ->
                         val viagemId = entry.arguments?.getInt("id")
                         DetalhesViagemScreen(navController, viagemId!!)
+                    }
+                    composable("usuarios/perfil/{id}") { entry ->
+                        val userId = entry.arguments?.getInt("id")
+                        PerfilOutroUsuarioScreen(navController, userId!!)
                     }
                     composable("chat") {
                         ChatScreen(navController)

@@ -68,6 +68,7 @@ class FeedbackViewModel(
             dataNascimento = LocalDate.now(),
             fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729863605/ph8npbut9xtt2vhg2i0z.png",
             notaMedia = 4.1,
+            viagensRealizadas = 1,
             endereco = EnderecoListagemDto(
                 id = 1,
                 cep = "04244000",
