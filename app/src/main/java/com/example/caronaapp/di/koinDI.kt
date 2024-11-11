@@ -87,32 +87,25 @@ val apiModule = module {
         get<Retrofit>().create(CaronaApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(CarroApi::class.java)
+        get<Retrofit>().create(CarroApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(FeedbackApi::class.java)
+        get<Retrofit>().create(FeedbackApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(FidelizacaoApi::class.java)
+        get<Retrofit>().create(FidelizacaoApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(SolicitacaoFidelizacaoApi::class.java)
+        get<Retrofit>().create(SolicitacaoFidelizacaoApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(SolicitacaoViagemApi::class.java)
+        get<Retrofit>().create(SolicitacaoViagemApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(UsuarioApi::class.java)
+        get<Retrofit>().create(UsuarioApi::class.java)
     }
     single {
-        val retrofit: Retrofit = get()
-        retrofit.create(ViagemApi::class.java)
+        get<Retrofit>().create(ViagemApi::class.java)
     }
 }
 

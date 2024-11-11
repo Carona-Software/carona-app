@@ -3,10 +3,10 @@ package com.example.caronaapp.data.dto.google_maps
 import com.google.gson.annotations.SerializedName
 
 data class GeocodeResponse(
-    val results: List<Results>,
+    val results: List<Result>,
     val status: String
 ) {
-    data class Results(
+    data class Result(
         val geometry: Geometry,
         val formatted_address: String,
         val address_components: List<AddressComponent>

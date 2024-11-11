@@ -42,6 +42,7 @@ fun InputField(
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     enabled: Boolean = true,
+    singleLine: Boolean = true,
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
     buttonIconEnabled: Boolean = true,
@@ -119,7 +120,8 @@ fun InputField(
                     maxLines = maxLines,
                     keyboardOptions = keyboardOptions,
                     visualTransformation = visualTransformation,
-                    enabled = enabled
+                    enabled = enabled,
+                    singleLine = singleLine
                 )
                 if (endIcon != null) {
                     IconButton(onClick = {
