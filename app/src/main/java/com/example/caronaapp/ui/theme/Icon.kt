@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -54,3 +56,5 @@ val Editar = Icons.Default.Edit
 val Filtro = Icons.Default.FilterAlt
 val CoracaoPreenchido = Icons.Default.Favorite
 val CoracaoVazado = Icons.Default.FavoriteBorder
+val Mais = Icons.Default.Add
+val Menos = Icons.Default.Remove

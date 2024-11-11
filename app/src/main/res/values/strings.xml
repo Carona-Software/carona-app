@@ -16,7 +16,10 @@
     <string name="label_ponto_de_partida">Ponto de partida</string>
     <string name="label_ponto_de_chegada">Ponto de chegada</string>
     <string name="label_ordenar_por">Ordenar por</string>
-    <string name="label_preco_maximo">Preço máximo</string>
+    <string name="label_preco_minimo">De</string>
+    <string name="label_preco_maximo">Até</string>
+    <string name="label_capacidade_passageiros">Capacidade de passageiros</string>
+    <string name="label_quantidade_passageiros">Qtd passageiros</string>
     <string name="label_marca">Marca</string>
     <string name="label_modelo">Modelo</string>
     <string name="label_placa">Placa</string>
@@ -59,6 +62,8 @@
     <string name="label_button_aceitar">Aceitar</string>
     <string name="label_button_recusar">Recusar</string>
     <string name="label_button_iniciar">Iniciar</string>
+    <string name="label_button_aplicar">Aplicar</string>
+    <string name="label_button_limpar">Limpar</string>
 
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>

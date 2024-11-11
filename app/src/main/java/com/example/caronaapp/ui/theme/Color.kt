@@ -20,8 +20,8 @@ val CinzaCB = Color(0xFFCBCBCB)
 
 val VermelhoErro = Color(0xFFE04444)
 
-val CinzaToggleButton = Color(0xFFDFDFDF)
-val VerdeToggleButton = Color(0xFF529F63)
+val CinzaSwitchButton = Color(0xFFDFDFDF)
+val VerdeSwitchButton = Color(0xFF529F63)
 
 val VerdePerto = Color(0xFF51B35C)
 val AmareloMedio = Color(0xFFF2DA21)

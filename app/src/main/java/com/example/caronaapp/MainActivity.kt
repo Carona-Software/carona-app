@@ -25,6 +25,7 @@ import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilScreen
 import com.example.caronaapp.presentation.screens.notificacoes.NotificacoesScreen
 import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioScreen
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemScreen
+import com.example.caronaapp.presentation.screens.viagens.ViagensScreen
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -67,6 +68,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("meu-perfil/carros") {
                         CarrosScreen(navController)
+                    }
+                    composable("viagens") {
+                        ViagensScreen(navController)
                     }
                     composable("viagens/procurar") {
                         ProcurarViagemScreen(navController)
