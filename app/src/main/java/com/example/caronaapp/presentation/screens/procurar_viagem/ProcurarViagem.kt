@@ -50,6 +50,7 @@ import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CustomCard
 import com.example.caronaapp.utils.layout.CustomDatePickerDialog
+import com.example.caronaapp.utils.layout.DropdownEnderecoResult
 import com.example.caronaapp.utils.layout.InputField
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import org.koin.androidx.compose.koinViewModel
@@ -62,6 +63,8 @@ fun ProcurarViagemScreen(
 ) {
     val context = LocalContext.current
 
+    val perfilUser by viewModel.perfilUser.collectAsState()
+
     val dateDialogState = rememberMaterialDialogState()
 
     val state by viewModel.procurarViagemState.collectAsState()
@@ -71,7 +74,7 @@ fun ProcurarViagemScreen(
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar(navController) }
+            bottomBar = { BottomNavBar(navController, perfilUser) }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -158,63 +161,6 @@ fun ProcurarViagemScreen(
                                 navController.navigate("viagens")
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DropdownEnderecoResult(
-    inputLabel: String,
-    inputValue: String,
-    startIcon: ImageVector,
-    onChangeEvent: (String) -> Unit,
-    isDropdownExpanded: Boolean,
-    results: List<GeocodeResponse.Result>,
-    onDismissDropdown: () -> Unit,
-    onDropdownItemClick: (GeocodeResponse.Result) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        InputField(
-            label = inputLabel,
-            value = inputValue,
-            startIcon = startIcon,
-            buttonIconEnabled = false
-        ) {
-            onChangeEvent(it)
-        }
-        Spacer(modifier = Modifier.height(2.dp))
-
-        if (results.isNotEmpty()) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                DropdownMenu(
-                    expanded = isDropdownExpanded,
-                    onDismissRequest = { onDismissDropdown() },
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(
-                            border = BorderStroke(1.dp, Cinza90),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .background(Color.White)
-                ) {
-                    results.forEach { result ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = result.formatted_address,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = Azul,
-                                    textAlign = TextAlign.Start
-                                )
-                            },
-                            onClick = { onDropdownItemClick(result) }
-                        )
                     }
                 }
             }

@@ -69,6 +69,8 @@ fun HistoricoViagensScreen(
     navController: NavController,
     viewModel: HistoricoViagensViewModel = koinViewModel()
 ) {
+    val perfilUser by viewModel.perfilUser.collectAsState()
+
     val viagens by viewModel.viagens.collectAsState()
     val viagensFiltradas by viewModel.viagensFiltradas.collectAsState()
 
@@ -97,7 +99,7 @@ fun HistoricoViagensScreen(
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar(navController) }
+            bottomBar = { BottomNavBar(navController, perfilUser) }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -131,8 +133,7 @@ fun HistoricoViagensScreen(
                                         spotColor = Cinza90
                                     )
                                     .clip(RoundedCornerShape(8.dp))
-                                    .height(40.dp)
-                                    .background(Color.White),
+                                    .height(40.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.White
                                 ),
@@ -271,8 +272,8 @@ fun ViagemCard(
                 Text(
                     text = stringResource(
                         id = R.string.viagem_data_hora,
-                        formatDate(viagemData.data),
-                        formatTime(viagemData.horarioSaida)
+                        formatDate(viagemData.dataInDate),
+                        formatTime(viagemData.horarioPartidaInTime)
                     ),
                     color = Cinza90,
                     style = MaterialTheme.typography.labelMedium,

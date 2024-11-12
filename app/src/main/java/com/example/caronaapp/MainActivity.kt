@@ -23,6 +23,7 @@ import com.example.caronaapp.presentation.screens.historico_viagens.HistoricoVia
 import com.example.caronaapp.presentation.screens.login.LoginScreen
 import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilScreen
 import com.example.caronaapp.presentation.screens.notificacoes.NotificacoesScreen
+import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemScreen
 import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioScreen
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemScreen
 import com.example.caronaapp.presentation.screens.viagens.ViagensScreen
@@ -75,12 +76,15 @@ class MainActivity : ComponentActivity() {
                     composable("viagens/procurar") {
                         ProcurarViagemScreen(navController)
                     }
+                    composable("viagens/oferecer") {
+                        OferecerViagemScreen(navController)
+                    }
                     composable("viagens/historico") {
                         HistoricoViagensScreen(navController)
                     }
                     composable("viagens/detalhes/{id}") { entry ->
                         val viagemId = entry.arguments?.getInt("id")
-                        DetalhesViagemScreen(navController, viagemId!!)
+                        DetalhesViagemScreen(navController, viagemId!!.toInt())
                     }
                     composable("usuarios/perfil/{id}") { entry ->
                         val userId = entry.arguments?.getInt("id")

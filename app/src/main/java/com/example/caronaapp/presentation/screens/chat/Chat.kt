@@ -74,7 +74,7 @@ fun ChatScreen(navController: NavController) {
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar(navController) }
+            bottomBar = { BottomNavBar(navController, "") }
         ) { innerPadding ->
             Column(
                 Modifier

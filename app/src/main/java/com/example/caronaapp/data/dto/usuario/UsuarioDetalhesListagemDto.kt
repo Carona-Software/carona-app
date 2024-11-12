@@ -13,7 +13,7 @@ data class UsuarioDetalhesListagemDto(
     val cpf: String,
     val perfil: String,
     val genero: String,
-    val dataNascimento: LocalDate,
+    val dataNascimento: String,
     val fotoUrl: String,
     val notaMedia: Double,
     val viagensRealizadas: Int,
@@ -24,6 +24,10 @@ data class UsuarioDetalhesListagemDto(
     val carros: List<CarroDto>?,
     val principalTrajeto: PrincipalTrajeto
 ) {
+    // Propriedade derivada para converter para LocalDate
+    val dataNascimentoDate: LocalDate
+        get() = dataNascimento.let { LocalDate.parse(it) }
+
     data class CarroDto(
         val cor: String,
         val marca: String,

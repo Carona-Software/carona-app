@@ -1,6 +1,7 @@
 package com.example.caronaapp.presentation.screens.cadastro
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,6 +42,7 @@ import com.example.caronaapp.ui.theme.BrancoF1
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaD9
 import com.example.caronaapp.utils.layout.CustomCard
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 class CadastroStepClass(
@@ -88,12 +91,24 @@ fun CadastroScreen(
         )
     )
 
-    if (isBackToLogin) {
-        navController.popBackStack()
-    }
-
     if (isSignUpSuccessful) {
         navController.navigate("login")
+    }
+
+    LaunchedEffect(key1 = isSignUpSuccessful, key2 = isBackToLogin) {
+        if (isSignUpSuccessful) {
+            Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+
+            delay(800)
+
+            viewModel.setSignUpSuccessfulToFalse()
+            navController.navigate("login")
+        }
+
+        if (isBackToLogin) {
+            viewModel.setBackToLoginToFalse()
+            navController.popBackStack()
+        }
     }
 
     CaronaAppTheme {

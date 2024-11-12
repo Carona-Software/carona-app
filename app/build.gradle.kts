@@ -60,6 +60,7 @@ dependencies {
 
     // GSON Converter
     implementation(libs.converter.gson)
+    implementation(libs.gson)
 
     // OkHttp3
     implementation(libs.okhttp)

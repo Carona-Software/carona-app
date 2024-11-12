@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.fidelizacao.FidelizacaoCriacaoDto
 import com.example.caronaapp.data.dto.solicitacao.SolicitacaoFidelizacaoListagemDto
 import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
-import com.example.caronaapp.data.enums.StatusSolicitacao
 import com.example.caronaapp.data.repositories.FidelizacaoRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoFidelizacaoRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
@@ -20,68 +19,64 @@ class FidelizadosViewModel(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    var fidelizados = MutableStateFlow<List<FidelizadoListagemDto>?>(null)
-        private set
+    val fidelizados = MutableStateFlow<List<FidelizadoListagemDto>?>(null)
 
-    var solicitacoes = MutableStateFlow<List<SolicitacaoFidelizacaoListagemDto>?>(null)
-        private set
+    val solicitacoes = MutableStateFlow<List<SolicitacaoFidelizacaoListagemDto>?>(null)
 
-    var isRemoveFidelizadoDialogOpened = MutableStateFlow(false)
-        private set
+    val isRemoveFidelizadoDialogOpened = MutableStateFlow(false)
 
-    var fidelizadoToDelete = MutableStateFlow<FidelizadoListagemDto?>(null)
-        private set
+    val fidelizadoToDelete = MutableStateFlow<FidelizadoListagemDto?>(null)
 
     init {
-//        _getFidelizados()
-//        _getSolicitacoesFidelizacao()
-        val fidelizadosLista = listOf(
-            FidelizadoListagemDto(
-                id = 1,
-                fotoUrl = "foto",
-                nome = "Matheus Alves",
-                notaGeral = 4.1,
-                cidadeLocalidade = "São Paulo",
-                ufLocalidade = "SP",
-                qtdViagensJuntos = 3
-            ),
-            FidelizadoListagemDto(
-                id = 1,
-                fotoUrl = "foto",
-                nome = "Lucas Arantes",
-                notaGeral = 4.4,
-                cidadeLocalidade = "Campinas",
-                ufLocalidade = "SP",
-                qtdViagensJuntos = 5
-            ),
-        )
-        fidelizados.value = fidelizadosLista
+        _getFidelizados()
+        _getSolicitacoesFidelizacao()
+//        val fidelizadosLista = listOf(
+//            FidelizadoListagemDto(
+//                id = 1,
+//                fotoUrl = "foto",
+//                nome = "Matheus Alves",
+//                notaGeral = 4.1,
+//                cidadeLocalidade = "São Paulo",
+//                ufLocalidade = "SP",
+//                qtdViagensJuntos = 3
+//            ),
+//            FidelizadoListagemDto(
+//                id = 1,
+//                fotoUrl = "foto",
+//                nome = "Lucas Arantes",
+//                notaGeral = 4.4,
+//                cidadeLocalidade = "Campinas",
+//                ufLocalidade = "SP",
+//                qtdViagensJuntos = 5
+//            ),
+//        )
+//        fidelizados.value = fidelizadosLista
 
-        val solicitacoesFidelizacao = listOf(
-            SolicitacaoFidelizacaoListagemDto(
-                id = 1,
-                status = StatusSolicitacao.PENDENTE,
-                motorista = FidelizadoListagemDto(
-                    id = 1,
-                    fotoUrl = "foto",
-                    nome = "Matheus Alves",
-                    notaGeral = 4.1,
-                    cidadeLocalidade = "São Paulo",
-                    ufLocalidade = "SP",
-                    qtdViagensJuntos = 5
-                ),
-                passageiro = FidelizadoListagemDto(
-                    id = 1,
-                    fotoUrl = "foto",
-                    nome = "Lucas Arantes",
-                    notaGeral = 4.4,
-                    cidadeLocalidade = "Campinas",
-                    ufLocalidade = "SP",
-                    qtdViagensJuntos = 5
-                )
-            )
-        )
-        solicitacoes.value = solicitacoesFidelizacao
+//        val solicitacoesFidelizacao = listOf(
+//            SolicitacaoFidelizacaoListagemDto(
+//                id = 1,
+//                status = StatusSolicitacao.PENDENTE,
+//                motorista = FidelizadoListagemDto(
+//                    id = 1,
+//                    fotoUrl = "foto",
+//                    nome = "Matheus Alves",
+//                    notaGeral = 4.1,
+//                    cidadeLocalidade = "São Paulo",
+//                    ufLocalidade = "SP",
+//                    qtdViagensJuntos = 5
+//                ),
+//                passageiro = FidelizadoListagemDto(
+//                    id = 1,
+//                    fotoUrl = "foto",
+//                    nome = "Lucas Arantes",
+//                    notaGeral = 4.4,
+//                    cidadeLocalidade = "Campinas",
+//                    ufLocalidade = "SP",
+//                    qtdViagensJuntos = 5
+//                )
+//            )
+//        )
+//        solicitacoes.value = solicitacoesFidelizacao
     }
 
     private fun _getFidelizados() {
@@ -92,9 +87,8 @@ class FidelizadosViewModel(
 
                 if (response.isSuccessful) {
                     Log.i("fidelizados", "Sucesso ao buscar fidelizados do usuário")
-                    if (response.code() == 204) {
-                        fidelizados.update { null }
-                    } else {
+                    Log.i("fidelizados", "Status: ${response.code()}")
+                    if (response.code() == 200) {
                         fidelizados.update { response.body() }
                     }
                 } else {
@@ -102,7 +96,6 @@ class FidelizadosViewModel(
                         "fidelizados",
                         "Erro ao buscar fidelizados do usuário: ${response.errorBody()}"
                     )
-                    fidelizados.update { null }
                 }
             } catch (e: Exception) {
                 Log.e(
@@ -124,9 +117,11 @@ class FidelizadosViewModel(
                         "fidelizados",
                         "Sucesso ao buscar solicitações de fidelização para o usuário"
                     )
-                    if (response.code() == 204) {
-                        solicitacoes.update { null }
-                    } else {
+                    Log.i(
+                        "fidelizados",
+                        "Status: ${response.code()}"
+                    )
+                    if (response.code() == 200) {
                         solicitacoes.update { response.body() }
                     }
                 } else {

@@ -18,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,26 +28,32 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.dataStore
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
+import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulInativo
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Chat
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.MeuPerfil
+import com.example.caronaapp.ui.theme.Oferecer
 import com.example.caronaapp.ui.theme.Procurar
 import com.example.caronaapp.ui.theme.Viagem
+import kotlinx.coroutines.launch
 
 class BottomBarItem(
     val label: String,
     val icon: ImageVector,
     val isCurrent: Boolean,
+    val allowedProfile: String,
     val navigate: () -> Unit
 )
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavController, perfilUser: String) {
     val currentScreen = navController.currentBackStackEntry?.destination?.route
 
     val bottomBarItens = listOf(
@@ -53,24 +61,35 @@ fun BottomNavBar(navController: NavController) {
             label = stringResource(id = R.string.procurar),
             icon = Procurar,
             isCurrent = currentScreen == "viagens/procurar",
+            allowedProfile = "PASSAGEIRO",
             navigate = { navController.navigate("viagens/procurar") }
+        ),
+        BottomBarItem(
+            label = stringResource(id = R.string.oferecer),
+            icon = Oferecer,
+            isCurrent = currentScreen == "viagens/oferecer",
+            allowedProfile = "MOTORISTA",
+            navigate = { navController.navigate("viagens/oferecer") }
         ),
         BottomBarItem(
             label = stringResource(id = R.string.chat),
             icon = Chat,
             isCurrent = currentScreen == "chat",
+            allowedProfile = "PASSAGEIRO/MOTORISTA",
             navigate = { navController.navigate("chat") }
         ),
         BottomBarItem(
             label = stringResource(id = R.string.viagens),
             icon = Viagem,
             isCurrent = currentScreen == "viagens/historico",
+            allowedProfile = "PASSAGEIRO/MOTORISTA",
             navigate = { navController.navigate("viagens/historico") }
         ),
         BottomBarItem(
             label = stringResource(id = R.string.perfil),
             icon = MeuPerfil,
             isCurrent = currentScreen == "meu-perfil",
+            allowedProfile = "PASSAGEIRO/MOTORISTA",
             navigate = { navController.navigate("meu-perfil") }
         ),
     )
@@ -93,28 +112,30 @@ fun BottomNavBar(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 bottomBarItens.map { item ->
-                    Column(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .fillMaxHeight()
-                            .weight(1f)
-                            .padding(8.dp)
-                            .clickable { item.navigate() },
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.label,
-                            tint = if (item.isCurrent) Azul else AzulInativo,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = item.label,
-                            color = if (item.isCurrent) Azul else AzulInativo,
-                            style = MaterialTheme.typography.displayMedium
-                        )
+                    if (item.allowedProfile.uppercase().contains(perfilUser.uppercase())) {
+                        Column(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .fillMaxHeight()
+                                .weight(1f)
+                                .padding(8.dp)
+                                .clickable { item.navigate() },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.label,
+                                tint = if (item.isCurrent) Azul else AzulInativo,
+                                modifier = Modifier.size(28.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = item.label,
+                                color = if (item.isCurrent) Azul else AzulInativo,
+                                style = MaterialTheme.typography.displayMedium
+                            )
+                        }
                     }
                 }
             }
@@ -122,10 +143,10 @@ fun BottomNavBar(navController: NavController) {
     }
 }
 
-@Preview(showSystemUi = true)
-@Composable
-fun PreviewBottomNavBar() {
-    CaronaAppTheme {
-//        BottomNavBar()
-    }
-}
+//@Preview
+//@Composable
+//fun PreviewBottomNavBar() {
+//    CaronaAppTheme {
+//        BottomNavBar(rememberNavController(), dataStoreManager = dataStore())
+//    }
+//}

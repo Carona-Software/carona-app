@@ -81,6 +81,8 @@ fun MeuPerfilScreen(
     navController: NavController,
     viewModel: MeuPerfilViewModel = koinViewModel()
 ) {
+    val perfilUser by viewModel.perfilUser.collectAsState()
+
     val userData by viewModel.userData.collectAsState()
     val meuPerfilState by viewModel.meuPerfilState.collectAsState()
     val avaliacoesCriterioUser by viewModel.avaliacoesCriterioUser.collectAsState()
@@ -104,7 +106,7 @@ fun MeuPerfilScreen(
 
     CaronaAppTheme {
         Scaffold(
-            bottomBar = { BottomNavBar(navController) }
+            bottomBar = { BottomNavBar(navController, perfilUser) }
         ) { innerPadding ->
             Column(
                 Modifier
@@ -269,12 +271,14 @@ fun MeuPerfilScreen(
                             ) {
                                 navController.navigate("meu-perfil/fidelizados")
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            MeuPerfilTopic(
-                                icon = Carro,
-                                label = stringResource(id = R.string.carros)
-                            ) {
-                                navController.navigate("meu-perfil/carros")
+                            if (userData!!.perfil.uppercase() == "MOTORISTA") {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                MeuPerfilTopic(
+                                    icon = Carro,
+                                    label = stringResource(id = R.string.carros)
+                                ) {
+                                    navController.navigate("meu-perfil/carros")
+                                }
                             }
                         }
 
@@ -315,7 +319,7 @@ fun MeuPerfilScreen(
                             }
                             ItemDadosPessoais(
                                 label = stringResource(id = R.string.label_data_nascimento),
-                                valor = formatDate(userData!!.dataNascimento),
+                                valor = userData!!.dataNascimento,
                                 editavel = true
                             ) {
                                 viewModel.onOpenModalClick("data de nascimento")

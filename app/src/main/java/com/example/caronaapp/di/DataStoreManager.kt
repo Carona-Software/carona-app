@@ -16,6 +16,7 @@ class DataStoreManager(private val context: Context) {
     val ID_USER = intPreferencesKey("idUser")
     val FOTO_USER = stringPreferencesKey("fotoUser")
     val PERFIL_USER = stringPreferencesKey("perfilUser")
+    val GENERO_USER = stringPreferencesKey("generoUser")
 
     // Gravação
     suspend fun setIdUser(id: Int) {
@@ -36,6 +37,12 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    suspend fun setGeneroUser(genero: String) {
+        context.dataStore.edit { preferences ->
+            preferences[GENERO_USER] = genero
+        }
+    }
+
     // Leitura
     private val idUserFlow: Flow<Int?> = context.dataStore.data.map { preferences ->
         preferences[ID_USER]
@@ -49,6 +56,10 @@ class DataStoreManager(private val context: Context) {
         preferences[PERFIL_USER]
     }
 
+    private val generoUserFlow: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[GENERO_USER]
+    }
+
     suspend fun getIdUser(): Int? {
         return idUserFlow.first()
     }
@@ -59,5 +70,16 @@ class DataStoreManager(private val context: Context) {
 
     suspend fun getPerfilUser(): String? {
         return perfilUserFlow.first()
+    }
+
+    suspend fun getGeneroUser(): String? {
+        return generoUserFlow.first()
+    }
+
+    // Limpar
+    suspend fun clear() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
     }
 }

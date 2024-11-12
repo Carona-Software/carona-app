@@ -23,7 +23,7 @@ interface ViagemApi {
         @Query("pontoPartida.longitude") longitudePontoPartida: Double,
         @Query("pontoChegada.longitude") latitudePontoChegada: Double,
         @Query("pontoChegada.longitude") longitudePontoChegada: Double,
-        @Query("data") data: LocalDate,
+        @Query("data") data: String,
         @Query("capacidadePassageiros") capacidadePassageiros: Int,
         @Query("precoMinimo") precoMinimo: Double,
         @Query("precoMaximo") precoMaximo: Double,

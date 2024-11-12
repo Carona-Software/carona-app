@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -71,15 +72,12 @@ fun DetalhesViagemScreen(
     viagemId: Int,
     viewModel: DetalhesViagemViewModel = koinViewModel()
 ) {
-//    LaunchedEffect(key1 = viagemId) {
-//        viewModel.getDetalhesViagem(viagemId)
-//    }
+    LaunchedEffect(key1 = viagemId) {
+        viewModel.getDetalhesViagem(viagemId)
+    }
 
-    // pegar do DataStore (PERFIL, ID)
-    val perfilUser = "MOTORISTA"
-//    val perfilUser by viewModel.perfilUser.collectAsState()
-    val idUser = 1
-//    val idUser by viewModel.idUser.collectAsState()
+    val perfilUser by viewModel.perfilUser.collectAsState()
+    val idUser by viewModel.idUser.collectAsState()
 
     val viagem by viewModel.viagem.collectAsState()
 
@@ -131,8 +129,8 @@ fun DetalhesViagemScreen(
                                 Text(
                                     text = stringResource(
                                         id = R.string.viagem_data_hora,
-                                        formatDate(viagem!!.data),
-                                        formatTime(viagem!!.horarioSaida)
+                                        formatDate(viagem!!.dataInDate),
+                                        formatTime(viagem!!.horarioPartidaInTime)
                                     ),
                                     color = Azul,
                                     style = MaterialTheme.typography.labelLarge
@@ -271,17 +269,17 @@ fun DetalhesViagemScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            if (viagem!!.passageiros != null) {
+                            if (viagem!!.passageiros.isNotEmpty()) {
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .heightIn(min = 0.dp, max = 200.dp)
                                 ) {
-                                    items(items = viagem!!.passageiros!!.toList()) { passageiro ->
+                                    items(items = viagem!!.passageiros.toList()) { passageiro ->
                                         UserRow(
                                             nome = passageiro.nome,
                                             notaMedia = passageiro.notaGeral.toString(),
-                                            isLast = passageiro == viagem!!.passageiros!!.last(),
+                                            isLast = passageiro == viagem!!.passageiros.last(),
                                             isClickable = false
                                         )
                                     }
@@ -299,7 +297,7 @@ fun DetalhesViagemScreen(
                         if (
                             viagem!!.solicitacoes.isNotEmpty() &&
                             perfilUser == "MOTORISTA" &&
-                            viagem!!.status == StatusViagem.PENDENTE
+                            viagem!!.status == "PENDENTE"
                         ) {
                             HorizontalDivider(
                                 modifier = Modifier
@@ -338,8 +336,8 @@ fun DetalhesViagemScreen(
                         }
 
                         if (
-                            viagem!!.status == StatusViagem.PENDENTE ||
-                            (viagem!!.status == StatusViagem.ANDAMENTO && perfilUser == "MOTORISTA")
+                            viagem!!.status == "PENDENTE" ||
+                            (viagem!!.status == "ANDAMENTO" && perfilUser == "MOTORISTA")
                         ) {
                             HorizontalDivider(
                                 modifier = Modifier
@@ -355,7 +353,7 @@ fun DetalhesViagemScreen(
                                 .padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
                         ) {
                             when (viagem!!.status) {
-                                StatusViagem.PENDENTE -> {
+                                "PENDENTE" -> {
                                     if (perfilUser == "MOTORISTA") {
                                         ButtonAction(label = stringResource(id = R.string.label_button_iniciar)) {}
                                         Spacer(modifier = Modifier.height(16.dp))
@@ -369,18 +367,18 @@ fun DetalhesViagemScreen(
                                         if (perfilUser == "MOTORISTA") {
                                             viewModel.handleCancelViagem(viagemId)
                                         } else {
-                                            viewModel.handleCancelReserva(idUser)
+                                            viewModel.handleCancelReserva(idUser!!)
                                         }
                                     }
                                 }
 
-                                StatusViagem.ANDAMENTO -> {
+                                "ANDAMENTO" -> {
                                     if (perfilUser == "MOTORISTA") {
                                         ButtonAction(label = stringResource(id = R.string.label_button_finalizar)) {}
                                     }
                                 }
 
-                                StatusViagem.FINALIZADA -> {}
+                                "FINALIZADA" -> {}
                             }
                         }
                     }

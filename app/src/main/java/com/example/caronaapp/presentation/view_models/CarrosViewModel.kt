@@ -18,74 +18,64 @@ class CarrosViewModel(
 ) : ViewModel() {
 
     // carros do Usuário
-    var carros = MutableStateFlow<List<CarroListagemDto>?>(null)
-        private set
+    val carros = MutableStateFlow<List<CarroListagemDto>?>(null)
 
     // controle do modal de Cadastrar Carro
-    var isCreateDialogOpened = MutableStateFlow(false)
-        private set
+    val isCreateDialogOpened = MutableStateFlow(false)
 
     // controle do modal de Editar Carro
-    var isEditDialogOpened = MutableStateFlow(false)
-        private set
+    val isEditDialogOpened = MutableStateFlow(false)
 
     // controle do modal de Excluir Carro
-    var isDeleteDialogOpened = MutableStateFlow(false)
-        private set
+    val isDeleteDialogOpened = MutableStateFlow(false)
 
     val novoCarro = CarroCriacaoDto()
-    var editCarro = MutableStateFlow<CarroCriacaoDto?>(null)
-        private set
-    var deleteCarro = MutableStateFlow<Carro?>(null)
-        private set
+    val editCarro = MutableStateFlow<CarroCriacaoDto?>(null)
+    val deleteCarro = MutableStateFlow<Carro?>(null)
 
-    var isError = MutableStateFlow(false)
-        private set
-    var isSuccess = MutableStateFlow(false)
-        private set
+    val isError = MutableStateFlow(false)
+    val isSuccess = MutableStateFlow(false)
 
-    var errorMessage = MutableStateFlow("")
-        private set
-    var successMessage = MutableStateFlow("")
-        private set
+    val errorMessage = MutableStateFlow("")
+    val successMessage = MutableStateFlow("")
 
     init {
-//        getCarrosUser()
-        val carrosNovos = listOf(
-            CarroListagemDto(
-                id = 1,
-                marca = "Fiat",
-                modelo = "Mobi",
-                placa = "GJB5A12",
-                cor = "Preto",
-                motorista = CarroListagemDto.MotoristaListagemDto(
-                    id = 1,
-                    nome = "Gustavo Medeiros"
-                )
-            ),
-            CarroListagemDto(
-                id = 2,
-                marca = "Chevrolet",
-                modelo = "Onix",
-                placa = "YAB7L04",
-                cor = "Vinho",
-                motorista = CarroListagemDto.MotoristaListagemDto(
-                    id = 1,
-                    nome = "Gustavo Medeiros"
-                )
-            ),
-            CarroListagemDto(
-                id = 3,
-                marca = "Honda",
-                modelo = "Fit",
-                placa = "AOC3G83",
-                cor = "Prata",
-                motorista = CarroListagemDto.MotoristaListagemDto(
-                    id = 1,
-                    nome = "Gustavo Medeiros"
-                )
-            ),
-        )
+        getCarrosUser()
+//        val carrosNovos = listOf(
+//            CarroListagemDto(
+//                id = 1,
+//                marca = "Fiat",
+//                modelo = "Mobi",
+//                placa = "GJB5A12",
+//                cor = "Preto",
+//                motorista = CarroListagemDto.MotoristaListagemDto(
+//                    id = 1,
+//                    nome = "Gustavo Medeiros"
+//                )
+//            ),
+//            CarroListagemDto(
+//                id = 2,
+//                marca = "Chevrolet",
+//                modelo = "Onix",
+//                placa = "YAB7L04",
+//                cor = "Vinho",
+//                motorista = CarroListagemDto.MotoristaListagemDto(
+//                    id = 1,
+//                    nome = "Gustavo Medeiros"
+//                )
+//            ),
+//            CarroListagemDto(
+//                id = 3,
+//                marca = "Honda",
+//                modelo = "Fit",
+//                placa = "AOC3G83",
+//                cor = "Prata",
+//                motorista = CarroListagemDto.MotoristaListagemDto(
+//                    id = 1,
+//                    nome = "Gustavo Medeiros"
+//                )
+//            ),
+//        )
 //        carros.value = carrosNovos
     }
 
@@ -97,9 +87,7 @@ class CarrosViewModel(
 
                 if (response.isSuccessful) {
                     Log.i("carros", "Sucesso ao buscar carros do usuário")
-                    if (response.code() == 204) {
-                        carros.update { null }
-                    } else {
+                    if (response.code() == 200) {
                         carros.update { response.body() }
                     }
                 } else {
@@ -107,7 +95,6 @@ class CarrosViewModel(
                         "carros",
                         "Erro ao buscar carros do usuário: ${response.errorBody()}"
                     )
-                    carros.update { null }
                 }
             } catch (e: Exception) {
                 Log.e(

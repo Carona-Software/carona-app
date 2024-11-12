@@ -10,17 +10,27 @@ data class ViagemDetalhesListagemDto(
     val id: Int,
     val capacidadePassageiros: Int,
     val apenasMulheres: Boolean,
-    val data: LocalDate,
-    val horarioSaida: LocalTime,
-    val horarioChegada: LocalTime,
+    val data: String,
+    val horarioPartida: String,
+    val horarioChegada: String,
     val preco: Double,
-    val status: StatusViagem,
+    val status: String,
     val motorista: UsuarioSimplesListagemDto,
     val carro: CarroDto,
-    var passageiros: List<UsuarioSimplesListagemDto>?,
+    var passageiros: List<UsuarioSimplesListagemDto>,
     val trajeto: TrajetoDto,
     val solicitacoes: List<SolicitacaoViagemListagemDto>
 ) {
+    // Propriedade derivada para converter para LocalDate
+    val dataInDate: LocalDate
+        get() = data.let { LocalDate.parse(it) }
+
+    val horarioPartidaInTime: LocalTime
+        get() = horarioPartida.let { LocalTime.parse(it) }
+
+    val horarioChegadaInTime: LocalTime
+        get() = horarioChegada.let { LocalTime.parse(it) }
+
     data class CarroDto(
         val cor: String,
         val marca: String,
