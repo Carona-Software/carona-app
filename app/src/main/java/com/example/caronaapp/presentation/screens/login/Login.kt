@@ -1,5 +1,6 @@
 package com.example.caronaapp.presentation.screens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,7 +17,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,7 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.InputField
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -42,7 +46,26 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
     val context = LocalContext.current
 
     val userLoginDto = viewModel.userLoginDto.collectAsState()
-    val isLogged = viewModel.isLogged.collectAsState()
+    val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState()
+    val isError by viewModel.isError.collectAsState()
+
+    LaunchedEffect(key1 = isLoginSuccessful, key2 = isError) {
+        if (isLoginSuccessful) {
+            Toast.makeText(context, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
+
+            delay(300)
+
+            viewModel.setLoginSuccessfulToFalse()
+            navController.navigate("meu-perfil")
+        }
+
+        if (isError) {
+            Toast.makeText(context, "Erro ao realizar login", Toast.LENGTH_SHORT).show()
+
+            delay(300)
+            viewModel.setIsErrorToFalse()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -98,7 +121,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
                 }
                 Spacer(modifier = Modifier.height(40.dp))
                 ButtonAction(label = stringResource(id = R.string.label_button_entrar)) {
-                    navController.navigate("meu-perfil")
+//                    navController.navigate("meu-perfil")
+                    viewModel.onLoginClick()
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

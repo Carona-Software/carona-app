@@ -1,9 +1,7 @@
 package com.example.caronaapp.presentation.screens.viagens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,8 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -51,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
+import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -67,17 +62,17 @@ import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaCB
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
-import com.example.caronaapp.ui.theme.CinzaSwitchButton
 import com.example.caronaapp.ui.theme.CoracaoPreenchido
 import com.example.caronaapp.ui.theme.Filtro
 import com.example.caronaapp.ui.theme.LaranjaLonge
 import com.example.caronaapp.ui.theme.Localizacao
-import com.example.caronaapp.ui.theme.Mais
-import com.example.caronaapp.ui.theme.Menos
 import com.example.caronaapp.ui.theme.PontoPartida
 import com.example.caronaapp.ui.theme.VerdePerto
-import com.example.caronaapp.ui.theme.VerdeSwitchButton
 import com.example.caronaapp.ui.theme.VermelhoErro
+import com.example.caronaapp.utils.formatTime
+import com.example.caronaapp.utils.layout.ApenasMulheresSwitch
+import com.example.caronaapp.utils.layout.PrecoFieldComponent
+import com.example.caronaapp.utils.layout.QtdPassageirosField
 import com.example.caronaapp.utils.layout.TopBarTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -274,16 +269,9 @@ fun ViagensScreen(navController: NavController) {
                         HorizontalDivider(color = CinzaE8, thickness = 2.dp)
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    ViagemCard(
-                        horarioSaida = "14:00",
-                        horarioChegada = "16:00",
-                        origem = pontoPartida,
-                        destino = pontoChegada,
-                        preco = "R$ 37",
-                        motorista = "Gustavo Medeiros",
-                        avaliacao = 4.3f
-                    )
-
+//                    ViagemCard(
+//                        viagemData =
+//                    )
                 }
             }
 
@@ -315,13 +303,13 @@ fun ViagensScreen(navController: NavController) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Start
                         ) {
-                            PrecoFiltroComponent(
+                            PrecoFieldComponent(
                                 label = stringResource(id = R.string.label_preco_minimo),
                                 value = precoMinimo,
                                 handleOnChange = { precoMinimo = it }
                             )
                             Spacer(modifier = Modifier.width(24.dp))
-                            PrecoFiltroComponent(
+                            PrecoFieldComponent(
                                 label = stringResource(id = R.string.label_preco_maximo),
                                 value = precoMaximo,
                                 handleOnChange = { precoMaximo = it }
@@ -330,78 +318,20 @@ fun ViagensScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.label_quantidade_passageiros),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Azul,
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Row(
-                                modifier = Modifier
-                                    .height(52.dp)
-                                    .border(
-                                        border = BorderStroke(2.dp, Azul),
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(Color.White)
-                                    .padding(horizontal = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(
-                                        imageVector = Menos,
-                                        contentDescription = "Menos",
-                                        tint = Azul,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                                Text(
-                                    text = capacidadePassageiros,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = Azul,
-                                    modifier = Modifier.padding(horizontal = 4.dp)
-                                )
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(
-                                        imageVector = Mais,
-                                        contentDescription = "Mais",
-                                        tint = Azul,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            }
-                        }
+                        // Capacidade de passageiros
+                        QtdPassageirosField(
+                            value = capacidadePassageiros,
+                            handleAddQnt = { },
+                            handleRemoveQnt = { }
+                        )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // Apenas Mulheres
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.apenas_mulheres),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Azul,
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Switch(
-                                checked = apenasMulheres,
-                                onCheckedChange = { apenasMulheres = it },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    uncheckedThumbColor = Color.White,
-                                    checkedTrackColor = VerdeSwitchButton,
-                                    uncheckedTrackColor = CinzaSwitchButton,
-                                    checkedBorderColor = VerdeSwitchButton,
-                                    uncheckedBorderColor = CinzaSwitchButton
-                                )
-                            )
-                        }
+                        ApenasMulheresSwitch(
+                            checked = apenasMulheres,
+                            onCheckedChange = { apenasMulheres = it }
+                        )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
@@ -481,13 +411,7 @@ fun InputField(
 
 @Composable
 fun ViagemCard(
-    horarioSaida: String,
-    horarioChegada: String,
-    origem: String,
-    destino: String,
-    preco: String,
-    motorista: String,
-    avaliacao: Float
+    viagemData: ViagemListagemDto
 ) {
     var isFavorito by remember { mutableStateOf(false) }
 
@@ -515,8 +439,9 @@ fun ViagemCard(
                 Column {
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
-                            text = horarioSaida, fontSize = 16.sp,
-                            color = Azul, fontWeight = FontWeight.SemiBold
+                            text = formatTime(viagemData.horarioPartidaInTime),
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Azul,
                         )
                         Icon(
                             modifier = Modifier.padding(horizontal = 8.dp),
@@ -526,7 +451,11 @@ fun ViagemCard(
                         )
                         Column {
                             Text(
-                                text = origem,
+                                text = stringResource(
+                                    id = R.string.viagem_cidade_uf,
+                                    viagemData.trajeto.pontoPartida.cidade,
+                                    viagemData.trajeto.pontoPartida.uf
+                                ),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = Azul
                             )
@@ -592,8 +521,9 @@ fun ViagemCard(
 
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
-                            text = horarioChegada, fontSize = 16.sp,
-                            color = Azul, fontWeight = FontWeight.SemiBold
+                            text = formatTime(viagemData.horarioChegadaInTime),
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Azul,
                         )
                         Icon(
                             modifier = Modifier.padding(horizontal = 8.dp),
@@ -603,7 +533,11 @@ fun ViagemCard(
                         )
                         Column {
                             Text(
-                                text = destino,
+                                text = stringResource(
+                                    id = R.string.viagem_cidade_uf,
+                                    viagemData.trajeto.pontoChegada.cidade,
+                                    viagemData.trajeto.pontoChegada.uf
+                                ),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = Azul
                             )
@@ -667,7 +601,7 @@ fun ViagemCard(
                     }
                 }
                 Text(
-                    text = preco,
+                    text = viagemData.preco.toString(),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Azul
@@ -703,7 +637,7 @@ fun ViagemCard(
                     )
                     Column(modifier = Modifier.padding(start = 8.dp)) {
                         Text(
-                            text = motorista,
+                            text = viagemData.motorista.nome,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Azul
@@ -711,7 +645,8 @@ fun ViagemCard(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(text = "★", color = Color(0xFFFFC107))
                             Text(
-                                text = "$avaliacao",
+                                text = if (viagemData.motorista.notaGeral == 0.0) "--"
+                                else "${viagemData.motorista.notaGeral}",
                                 fontSize = 16.sp,
                                 color = Cinza90,
                                 modifier = Modifier.padding(start = 5.dp)
@@ -743,58 +678,6 @@ fun ViagemCard(
     }
 }
 
-@Composable
-fun PrecoFiltroComponent(
-    label: String,
-    value: String,
-    handleOnChange: (String) -> Unit
-) {
-    Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = Azul,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Row(
-            modifier = Modifier
-                .width(140.dp)
-                .height(52.dp)
-                .border(
-                    border = BorderStroke(2.dp, Azul),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color.White)
-                .padding(horizontal = 12.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(id = R.string.cifrao_rs),
-                style = MaterialTheme.typography.labelMedium,
-                color = Azul,
-            )
-            TextField(
-                value = value,
-                onValueChange = { handleOnChange(it) },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Azul,
-                    unfocusedTextColor = Azul,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    disabledPlaceholderColor = Cinza90,
-                    disabledTextColor = Azul
-                ),
-                textStyle = MaterialTheme.typography.headlineMedium,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        }
-    }
-}
 
 @Preview(showSystemUi = true)
 @Composable

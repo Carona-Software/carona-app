@@ -34,112 +34,112 @@ class DetalhesViagemViewModel(
     val perfilUser = MutableStateFlow<String?>(null)
 
     val viagem = MutableStateFlow<ViagemDetalhesListagemDto?>(
-//        null
-        ViagemDetalhesListagemDto(
-            id = 1,
-            data = LocalDate.now(),
-            horarioSaida = LocalTime.now(),
-            horarioChegada = LocalTime.now(),
-            preco = 30.0,
-            status = StatusViagem.ANDAMENTO,
-            apenasMulheres = false,
-            capacidadePassageiros = 4,
-            motorista = UsuarioSimplesListagemDto(
-                id = 1,
-                nome = "Matheus Alves",
-                notaGeral = 4.2,
-                fotoUrl = "foto",
-                perfil = "MOTORISTA"
-            ),
-            passageiros =
-//            null
-            listOf(
-                UsuarioSimplesListagemDto(
-                    id = 1,
-                    nome = "Ewerton Lima",
-                    notaGeral = 4.0,
-                    fotoUrl = "foto",
-                    perfil = "PASSAGEIRO"
-                ),
-                UsuarioSimplesListagemDto(
-                    id = 2,
-                    nome = "Kauã Queiroz",
-                    notaGeral = 4.2,
-                    fotoUrl = "foto",
-                    perfil = "PASSAGEIRO"
-                )
-            ),
-            carro = ViagemDetalhesListagemDto.CarroDto(
-                marca = "Honda",
-                modelo = "Fit",
-                placa = "ABC1D03",
-                cor = "Preto"
-            ),
-            trajeto = TrajetoDto(
-                pontoPartida = LocalidadeDto(
-                    Coordenadas(
-                        latitude = 0.0,
-                        longitude = 0.0
-                    ),
-                    "04244000",
-                    "SP",
-                    "São Paulo",
-                    "São João Clímaco",
-                    "Estrada das Lágrimas",
-                    300
-                ),
-                pontoChegada = LocalidadeDto(
-                    Coordenadas(
-                        latitude = 0.0,
-                        longitude = 0.0
-                    ),
-                    "12045000",
-                    "SP",
-                    "Taubaté",
-                    "Centro",
-                    "Avenida Independência",
-                    680
-                )
-            ),
-            solicitacoes = listOf(
-                SolicitacaoViagemListagemDto(
-                    id = 1,
-                    status = StatusSolicitacao.PENDENTE,
-                    usuario = UsuarioSimplesListagemDto(
-                        id = 1,
-                        nome = "Ewerton Lima",
-                        notaGeral = 4.0,
-                        fotoUrl = "foto",
-                        perfil = "PASSAGEIRO"
-                    ),
-                    ViagemSimplesListagemDto(
-                        id = 1,
-                        data = LocalDate.now(),
-                        hora = LocalTime.now(),
-                        preco = 30.0,
-                        status = StatusViagem.PENDENTE
-                    )
-                ),
-                SolicitacaoViagemListagemDto(
-                    id = 1,
-                    status = StatusSolicitacao.PENDENTE,
-                    usuario = UsuarioSimplesListagemDto(
-                        id = 3,
-                        nome = "Lucas Arantes",
-                        notaGeral = 4.3,
-                        fotoUrl = "foto",
-                        perfil = "PASSAGEIRO"
-                    ),
-                    ViagemSimplesListagemDto(
-                        id = 1,
-                        data = LocalDate.now(),
-                        hora = LocalTime.now(),
-                        preco = 30.0,
-                        status = StatusViagem.PENDENTE
-                    )
-                )
-            )
-        )
+        null
+//        ViagemDetalhesListagemDto(
+//            id = 1,
+//            data = LocalDate.now(),
+//            horarioSaida = LocalTime.now(),
+//            horarioChegada = LocalTime.now(),
+//            preco = 30.0,
+//            status = StatusViagem.ANDAMENTO,
+//            apenasMulheres = false,
+//            capacidadePassageiros = 4,
+//            motorista = UsuarioSimplesListagemDto(
+//                id = 1,
+//                nome = "Matheus Alves",
+//                notaGeral = 4.2,
+//                fotoUrl = "foto",
+//                perfil = "MOTORISTA"
+//            ),
+//            passageiros =
+////            null
+//            listOf(
+//                UsuarioSimplesListagemDto(
+//                    id = 1,
+//                    nome = "Ewerton Lima",
+//                    notaGeral = 4.0,
+//                    fotoUrl = "foto",
+//                    perfil = "PASSAGEIRO"
+//                ),
+//                UsuarioSimplesListagemDto(
+//                    id = 2,
+//                    nome = "Kauã Queiroz",
+//                    notaGeral = 4.2,
+//                    fotoUrl = "foto",
+//                    perfil = "PASSAGEIRO"
+//                )
+//            ),
+//            carro = ViagemDetalhesListagemDto.CarroDto(
+//                marca = "Honda",
+//                modelo = "Fit",
+//                placa = "ABC1D03",
+//                cor = "Preto"
+//            ),
+//            trajeto = TrajetoDto(
+//                pontoPartida = LocalidadeDto(
+//                    Coordenadas(
+//                        latitude = 0.0,
+//                        longitude = 0.0
+//                    ),
+//                    "04244000",
+//                    "SP",
+//                    "São Paulo",
+//                    "São João Clímaco",
+//                    "Estrada das Lágrimas",
+//                    300
+//                ),
+//                pontoChegada = LocalidadeDto(
+//                    Coordenadas(
+//                        latitude = 0.0,
+//                        longitude = 0.0
+//                    ),
+//                    "12045000",
+//                    "SP",
+//                    "Taubaté",
+//                    "Centro",
+//                    "Avenida Independência",
+//                    680
+//                )
+//            ),
+//            solicitacoes = listOf(
+//                SolicitacaoViagemListagemDto(
+//                    id = 1,
+//                    status = StatusSolicitacao.PENDENTE,
+//                    usuario = UsuarioSimplesListagemDto(
+//                        id = 1,
+//                        nome = "Ewerton Lima",
+//                        notaGeral = 4.0,
+//                        fotoUrl = "foto",
+//                        perfil = "PASSAGEIRO"
+//                    ),
+//                    ViagemSimplesListagemDto(
+//                        id = 1,
+//                        data = LocalDate.now(),
+//                        hora = LocalTime.now(),
+//                        preco = 30.0,
+//                        status = StatusViagem.PENDENTE
+//                    )
+//                ),
+//                SolicitacaoViagemListagemDto(
+//                    id = 1,
+//                    status = StatusSolicitacao.PENDENTE,
+//                    usuario = UsuarioSimplesListagemDto(
+//                        id = 3,
+//                        nome = "Lucas Arantes",
+//                        notaGeral = 4.3,
+//                        fotoUrl = "foto",
+//                        perfil = "PASSAGEIRO"
+//                    ),
+//                    ViagemSimplesListagemDto(
+//                        id = 1,
+//                        data = LocalDate.now(),
+//                        hora = LocalTime.now(),
+//                        preco = 30.0,
+//                        status = StatusViagem.PENDENTE
+//                    )
+//                )
+//            )
+//        )
     )
 
     var isViagemDeleted = MutableStateFlow(false)

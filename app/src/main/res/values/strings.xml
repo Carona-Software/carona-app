@@ -16,6 +16,7 @@
     <string name="label_ponto_de_partida">Ponto de partida</string>
     <string name="label_ponto_de_chegada">Ponto de chegada</string>
     <string name="label_ordenar_por">Ordenar por</string>
+    <string name="label_preco_passageiro">Preço (unitário)</string>
     <string name="label_preco_minimo">De</string>
     <string name="label_preco_maximo">Até</string>
     <string name="label_capacidade_passageiros">Capacidade de passageiros</string>
@@ -94,6 +95,7 @@
     <string name="caracter_especial">Caracter especial</string>
     <string name="redefinir_senha">Redefinir senha</string>
     <string name="procurar">Procurar</string>
+    <string name="oferecer">Oferecer</string>
     <string name="chat">Chat</string>
     <string name="pessoais">Pessoais</string>
     <string name="perfil">Perfil</string>
@@ -144,6 +146,8 @@
     <string name="title_activity_redefinir_senha">RedefinirSenha</string>
     <string name="title_activity_esqueci_senha_codigo">EsqueciSenhaCodigo</string>
     <string name="solicitacoes_pendentes">Solicitações pendentes</string>
+    <string name="title_date_picker_dialog">SELECIONE UMA DATA</string>
+    <string name="title_time_picker_dialog">SELECIONE UM HORÁRIO</string>
 
     <!--  INPUT ERROR MESSAGES  -->
     <string name="input_message_error_nome">Digite 5 ou mais letras</string>
@@ -196,6 +200,7 @@
     <string name="fidelizado_qtd_viagens_juntos">%1$d viagens juntos</string>
     <string name="fidelizado_localidade">%1$s, %2$s</string>
     <string name="viagem_endereco">%1$s, %2$d - %3$s, %4$s, %5$s</string>
+    <string name="carro_marca_modelo">%1$s %2$s</string>
 
     <!--  TEXTOS FILTROS  -->
     <string name="todos">Todos</string>

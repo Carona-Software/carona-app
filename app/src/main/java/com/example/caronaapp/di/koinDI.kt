@@ -44,7 +44,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 const val BASE_URL_VIACEP = "https://viacep.com.br/ws/"
 const val BASE_URL_CLOUDINARY = "https://api.cloudinary.com/v1_1/"
 const val BASE_URL_GOOGLE_MAPS = "https://maps.googleapis.com/maps/api/"
-const val BASE_URL_CARONA = "https://viacep.com.br/ws/" // ALTERAR
+const val BASE_URL_CARONA = "http://34.200.104.1:80/api/"
 
 val apiModule = module {
 
@@ -83,30 +83,14 @@ val apiModule = module {
             .build()
     }
 
-    single {
-        get<Retrofit>().create(CaronaApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(CarroApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(FeedbackApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(FidelizacaoApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(SolicitacaoFidelizacaoApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(SolicitacaoViagemApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(UsuarioApi::class.java)
-    }
-    single {
-        get<Retrofit>().create(ViagemApi::class.java)
-    }
+    single { get<Retrofit>().create(CaronaApi::class.java) }
+    single { get<Retrofit>().create(CarroApi::class.java) }
+    single { get<Retrofit>().create(FeedbackApi::class.java) }
+    single { get<Retrofit>().create(FidelizacaoApi::class.java) }
+    single { get<Retrofit>().create(SolicitacaoFidelizacaoApi::class.java) }
+    single { get<Retrofit>().create(SolicitacaoViagemApi::class.java) }
+    single { get<Retrofit>().create(UsuarioApi::class.java) }
+    single { get<Retrofit>().create(ViagemApi::class.java) }
 }
 
 val repositoryModule = module {
@@ -133,9 +117,9 @@ val viewModelModule = module {
     viewModel { FidelizadosViewModel(get(), get(), get()) }
     viewModel { HistoricoViagensViewModel(get(), get()) }
     viewModel { MeuPerfilViewModel(get(), get(), get()) }
-    viewModel { OferecerViagemViewModel(get(), get()) }
+    viewModel { OferecerViagemViewModel(get(), get(), get(), get()) }
     viewModel { PerfilOutroUsuarioViewModel(get()) }
-    viewModel { ProcurarViagemViewModel(get(), get()) }
+    viewModel { ProcurarViagemViewModel(get(), get(), get()) }
     viewModel { SolicitacaoFidelizacaoViewModel(get(), get()) }
     viewModel { SolicitacaoViagemViewModel(get(), get()) }
 }

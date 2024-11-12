@@ -6,8 +6,19 @@ import java.time.LocalTime
 
 data class ViagemSimplesListagemDto(
     val id: Int,
-    val data: LocalDate,
-    val hora: LocalTime,
+    val data: String,
+    val horarioPartida: String,
+    val horarioChegada: String,
     val preco: Double,
     val status: StatusViagem
-)
+) {
+    // Propriedade derivada para converter para LocalDate
+    val dataInDate: LocalDate
+        get() = data.let { LocalDate.parse(it) }
+
+    val horarioPartidaInTime: LocalTime
+        get() = horarioPartida.let { LocalTime.parse(it) }
+
+    val horarioChegadaInTime: LocalTime
+        get() = horarioChegada.let { LocalTime.parse(it) }
+}

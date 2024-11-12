@@ -18,26 +18,47 @@ class LoginViewModel(
     var userLoginDto = MutableStateFlow(UsuarioLoginDto())
         private set
 
-    var isLogged = MutableStateFlow(false)
-        private set
+    val isLoginSuccessful = MutableStateFlow(false)
+    val isError = MutableStateFlow(false)
 
     fun onLoginClick() {
         viewModelScope.launch {
             try {
+                Log.i("login", "Login Dto: ${userLoginDto.value}")
                 val response = repository.login(userLoginDto.value)
                 if (response.isSuccessful) {
                     Log.i("login", "Login realizado com sucesso: ${response.body()}")
-                    isLogged.value = true
+                    isLoginSuccessful.update { true }
+
+                    dataStoreManager.clear()
+
                     dataStoreManager.setIdUser(response.body()!!.id)
                     dataStoreManager.setFotoUser(response.body()!!.fotoUrl)
                     dataStoreManager.setPerfilUser(response.body()!!.perfil)
+                    dataStoreManager.setGeneroUser(response.body()!!.genero.uppercase())
+
+                    Log.i("dataStore", "----------------------------------- ")
+                    Log.i("dataStore", "DataStore: ")
+                    Log.i("dataStore", "IdUser: ${dataStoreManager.getIdUser()}")
+                    Log.i("dataStore", "FotoUser: ${dataStoreManager.getFotoUser()}")
+                    Log.i("dataStore", "PerfilUser: ${dataStoreManager.getPerfilUser()}")
+                    Log.i("dataStore", "GeneroUser: ${dataStoreManager.getGeneroUser()}")
                 } else {
                     Log.e("login", "Erro ao realizar login: ${response.errorBody()}")
+                    isError.update { true }
                 }
             } catch (e: Exception) {
                 Log.e("login", "Erro ao realizar login: ${e.message}")
             }
         }
+    }
+
+    fun setLoginSuccessfulToFalse() {
+        isLoginSuccessful.update { false }
+    }
+
+    fun setIsErrorToFalse() {
+        isError.update { false }
     }
 
     fun onEmailChange(email: String) {

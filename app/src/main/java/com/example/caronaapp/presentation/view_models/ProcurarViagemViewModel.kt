@@ -8,6 +8,7 @@ import com.example.caronaapp.data.dto.viagem.Coordenadas
 import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
 import com.example.caronaapp.data.repositories.GoogleMapsRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
+import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemField
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,15 +16,26 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProcurarViagemViewModel(
-    val viagemRepository: ViagemRepositoryImpl,
-    val googleMapsRepository: GoogleMapsRepositoryImpl
+    private val viagemRepository: ViagemRepositoryImpl,
+    private val googleMapsRepository: GoogleMapsRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
+    val perfilUser = MutableStateFlow("")
 
-    val viagemProcuraDto = MutableStateFlow(ViagemProcuraDto())
+    init {
+        viewModelScope.launch {
+            perfilUser.update { dataStoreManager.getPerfilUser() ?: "" }
+        }
+    }
+
+    private val viagemProcuraDto = MutableStateFlow(ViagemProcuraDto())
     val procurarViagemState = MutableStateFlow(ProcurarViagemState())
 
     val isDropdownPartidaOpened = MutableStateFlow(false)
     val isDropdownChegadaOpened = MutableStateFlow(false)
+
+    val viagensForamEncontradas = MutableStateFlow(false)
+    val viagensNaoForamEncontradas = MutableStateFlow(false)
 
     fun onChangeEvent(field: ProcurarViagemField) {
         when (field) {
@@ -128,5 +140,30 @@ class ProcurarViagemViewModel(
         isDropdownChegadaOpened.update { false }
     }
 
-    fun procurarViagens() {}
+    fun procurarViagens() {
+        viewModelScope.launch {
+            try {
+                val response = viagemRepository.findAll(viagemProcuraDto.value)
+
+                if (response.isSuccessful) {
+                    Log.i(
+                        "procurarViagem",
+                        "Sucesso ao buscar viagens: ${response.body()}"
+                    )
+                    viagensForamEncontradas.update { true }
+                } else {
+                    Log.e(
+                        "procurarViagem",
+                        "Erro ao buscar viagens: ${response.errorBody()}"
+                    )
+                    viagensNaoForamEncontradas.update { true }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "procurarViagem",
+                    "Exception -> erro ao buscar viagens: ${e.printStackTrace()}"
+                )
+            }
+        }
+    }
 }

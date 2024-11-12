@@ -25,6 +25,7 @@ import com.example.caronaapp.utils.senhaContainsNumero
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 class CadastroViewModel(
     private val usuarioRepository: UsuarioRepositoryImpl,
@@ -39,14 +40,11 @@ class CadastroViewModel(
     var etapaAtual = MutableStateFlow(1)
         private set
 
-    var isSignUpSuccessful = MutableStateFlow(false)
-        private set
+    val isSignUpSuccessful = MutableStateFlow(false)
 
-    var isBackToLogin = MutableStateFlow(false)
-        private set
+    val isBackToLogin = MutableStateFlow(false)
 
-    var isCadastroLoading = MutableStateFlow(false)
-        private set
+    val isCadastroLoading = MutableStateFlow(false)
 
     fun onChangeEvent(field: CadastroField) {
         when (field) {
@@ -69,7 +67,11 @@ class CadastroViewModel(
             }
 
             is CadastroField.DataNascimento -> {
-                userCadastroData.update { it.copy(dataNascimento = field.value) }
+                userCadastroData.update {
+                    it.copy(
+                        dataNascimento = field.value.format(DateTimeFormatter.ISO_LOCAL_DATE)
+                    )
+                }
                 userCadastroState.update { it.copy(dataNascimento = formatDate(field.value)) }
             }
 
@@ -106,43 +108,15 @@ class CadastroViewModel(
 
             is CadastroField.EnderecoCep -> {
                 userCadastroData.update {
-                    it.copy(endereco = userCadastroData.value.endereco?.copy(cep = field.value))
+                    it.copy(endereco = it.endereco.copy(cep = field.value))
                 }
                 userCadastroState.update { it.copy(enderecoCep = field.value) }
                 userCadastroValidations.update { it.copy(isCepInvalido = isCepValido(field.value)) }
             }
 
-            is CadastroField.EnderecoUf -> {
-                userCadastroData.update {
-                    it.copy(endereco = userCadastroData.value.endereco?.copy(uf = field.value))
-                }
-                userCadastroState.update { it.copy(enderecoUf = field.value) }
-            }
-
-            is CadastroField.EnderecoCidade -> {
-                userCadastroData.update {
-                    it.copy(endereco = userCadastroData.value.endereco?.copy(cidade = field.value))
-                }
-                userCadastroState.update { it.copy(enderecoCidade = field.value) }
-            }
-
-            is CadastroField.EnderecoBairro -> {
-                userCadastroData.update {
-                    it.copy(endereco = userCadastroData.value.endereco?.copy(bairro = field.value))
-                }
-                userCadastroState.update { it.copy(enderecoBairro = field.value) }
-            }
-
-            is CadastroField.EnderecoLogradouro -> {
-                userCadastroData.update {
-                    it.copy(endereco = userCadastroData.value.endereco?.copy(logradouro = field.value))
-                }
-                userCadastroState.update { it.copy(enderecoLogradouro = field.value) }
-            }
-
             is CadastroField.EnderecoNumero -> {
                 userCadastroData.update {
-                    it.copy(endereco = userCadastroData.value.endereco?.copy(numero = field.value))
+                    it.copy(endereco = it.endereco.copy(numero = field.value))
                 }
                 userCadastroState.update { it.copy(enderecoNumero = field.value) }
                 userCadastroValidations.update { it.copy(isNumeroInvalido = isNumeroValido(field.value)) }
@@ -171,19 +145,23 @@ class CadastroViewModel(
 
     fun onSignUpClick(context: Context) {
         viewModelScope.launch {
+            Log.i("cadastro", "Cadastro Dto: ${userCadastroData.value}")
             isCadastroLoading.update { true }
             uploadFotoUser(context)
             try {
                 val response = usuarioRepository.post(userCadastroData.value)
 
                 if (response.isSuccessful) {
-                    isSignUpSuccessful.value = true
-                    Log.i("cadastro", "Sucesso ao cadastrar usuário: ${response.errorBody()}")
+                    isSignUpSuccessful.update { true }
+                    Log.i("cadastro", "Sucesso ao cadastrar usuário: ${response.body()}")
                 } else {
-                    Log.e("cadastro", "Erro ao cadastrar usuário: ${response.errorBody()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("cadastro", "Erro ao cadastrar usuário: ${response.code()}")
+                    Log.e("cadastro", "Erro ao cadastrar usuário: ${errorBody}")
+                    Log.e("cadastro", "Erro ao cadastrar usuário: ${response.message()}")
                 }
             } catch (e: Exception) {
-                Log.e("cadastro", "Erro ao cadastrar usuário: ${e.message}")
+                Log.e("cadastro", "Erro ao cadastrar usuário: ${e.printStackTrace()}")
             } finally {
                 isCadastroLoading.update { false }
             }
@@ -234,7 +212,7 @@ class CadastroViewModel(
                     if (getEndereco.body()?.uf != null) {
                         userCadastroData.update {
                             it.copy(
-                                endereco = it.endereco?.copy(
+                                endereco = it.endereco.copy(
                                     uf = getEndereco.body()?.uf.toString(),
                                     cidade = getEndereco.body()?.cidade.toString(),
                                     bairro = getEndereco.body()?.bairro.toString(),
@@ -255,7 +233,7 @@ class CadastroViewModel(
                         userCadastroValidations.update { it.copy(isCepInvalido = true) }
                         userCadastroData.update {
                             it.copy(
-                                endereco = it.endereco?.copy(
+                                endereco = it.endereco.copy(
                                     uf = "",
                                     cidade = "",
                                     bairro = "",
@@ -289,5 +267,13 @@ class CadastroViewModel(
 
             }
         }
+    }
+
+    fun setSignUpSuccessfulToFalse() {
+        isSignUpSuccessful.update { false }
+    }
+
+    fun setBackToLoginToFalse() {
+        isBackToLogin.update { false }
     }
 }

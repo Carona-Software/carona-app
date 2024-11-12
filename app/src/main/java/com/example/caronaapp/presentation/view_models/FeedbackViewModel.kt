@@ -31,147 +31,147 @@ class FeedbackViewModel(
 ) : ViewModel() {
 
     val criteriosFeedback = MutableStateFlow<List<CriterioFeedback>?>(
-//        null
-        listOf(
-            CriterioFeedback(
-                id = 1,
-                nome = "Comunicação"
-            ),
-            CriterioFeedback(
-                id = 2,
-                nome = "Segurança"
-            ),
-            CriterioFeedback(
-                id = 3,
-                nome = "Pontualidade"
-            ),
-            CriterioFeedback(
-                id = 4,
-                nome = "Comportamento"
-            ),
-            CriterioFeedback(
-                id = 5,
-                nome = "Dirigibilidade"
-            ),
-        )
+        null
+//        listOf(
+//            CriterioFeedback(
+//                id = 1,
+//                nome = "Comunicação"
+//            ),
+//            CriterioFeedback(
+//                id = 2,
+//                nome = "Segurança"
+//            ),
+//            CriterioFeedback(
+//                id = 3,
+//                nome = "Pontualidade"
+//            ),
+//            CriterioFeedback(
+//                id = 4,
+//                nome = "Comportamento"
+//            ),
+//            CriterioFeedback(
+//                id = 5,
+//                nome = "Dirigibilidade"
+//            ),
+//        )
     )
 
     val usuarioAvaliado = MutableStateFlow<UsuarioDetalhesListagemDto?>(
-//        null
-        UsuarioDetalhesListagemDto(
-            id = 1,
-            nome = "Gustavo Medeiros",
-            email = "gustavo@email.com",
-            cpf = "50378814800",
-            genero = "MASCULINO",
-            perfil = "MOTORISTA",
-            dataNascimento = LocalDate.now(),
-            fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729863605/ph8npbut9xtt2vhg2i0z.png",
-            notaMedia = 4.1,
-            viagensRealizadas = 1,
-            endereco = EnderecoListagemDto(
-                id = 1,
-                cep = "04244000",
-                uf = "SP",
-                cidade = "São Paulo",
-                logradouro = "Estrada das Lágrimas",
-                bairro = "São João CLímaco",
-                numero = 3621
-            ),
-            avaliacoes = listOf(
-                FeedbackListagemDto(
-                    data = LocalDate.now(),
-                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-                    avaliador = FeedbackListagemDto.AvaliadorDto(
-                        id = 1,
-                        nome = "Kaiky Cruz",
-                        fotoUrl = "foto_kaiky"
-                    ),
-                    notaMedia = 4.3,
-                    notasCriterios = listOf(
-                        NotaCriterioListagemDto(
-                            criterio = "Comunicação",
-                            nota = 2.0
-                        ),
-                        NotaCriterioListagemDto(
-                            criterio = "Pontualidade",
-                            nota = 5.0
-                        ),
-                        NotaCriterioListagemDto(
-                            criterio = "Dirigibilidade",
-                            nota = 3.5
-                        ),
-                        NotaCriterioListagemDto(
-                            criterio = "Segurança",
-                            nota = 4.0
-                        )
-                    )
-                ),
-                FeedbackListagemDto(
-                    data = LocalDate.now(),
-                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-                    avaliador = FeedbackListagemDto
-                        .AvaliadorDto(
-                            id = 1,
-                            nome = "Kaiky Cruz",
-                            fotoUrl = "foto_kaiky"
-                        ),
-                    notaMedia = 3.2,
-                    notasCriterios = listOf(
-                        NotaCriterioListagemDto(
-                            criterio = "Comunicação",
-                            nota = 4.0
-                        ),
-                        NotaCriterioListagemDto(
-                            criterio = "Pontualidade",
-                            nota = 2.0
-                        ),
-                        NotaCriterioListagemDto(
-                            criterio = "Dirigibilidade",
-                            nota = 5.0
-                        ),
-                        NotaCriterioListagemDto(
-                            criterio = "Segurança",
-                            nota = 1.0
-                        )
-                    )
-                )
-            ),
-            carros = listOf(
-                UsuarioDetalhesListagemDto.CarroDto(
-                    marca = "Honda",
-                    modelo = "Fit",
-                    cor = "Preto",
-                    placa = "ABC1D06"
-                )
-            ),
-            fidelizados = listOf(
-                FidelizadoListagemDto(
-                    id = 2,
-                    nome = "Kaiky Cruz",
-                    fotoUrl = "foto_kaiky",
-                    notaGeral = 3.5,
-                    ufLocalidade = "SP",
-                    cidadeLocalidade = "São Paulo",
-                    qtdViagensJuntos = 1
-                )
-            ),
-            viagens = listOf(
-                ViagemSimplesListagemDto(
-                    id = 1,
-                    data = LocalDate.now(),
-                    hora = LocalTime.now(),
-                    preco = 30.0,
-                    status = StatusViagem.FINALIZADA
-                )
-            ),
-            principalTrajeto = PrincipalTrajeto(
-                ufChegada = "SP",
-                cidadeChegada = "Campinas",
-                ufPartida = "SP",
-                cidadePartida = "São Paulo"
-            )
-        )
+        null
+//        UsuarioDetalhesListagemDto(
+//            id = 1,
+//            nome = "Gustavo Medeiros",
+//            email = "gustavo@email.com",
+//            cpf = "50378814800",
+//            genero = "MASCULINO",
+//            perfil = "MOTORISTA",
+//            dataNascimento = "",
+//            fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729863605/ph8npbut9xtt2vhg2i0z.png",
+//            notaMedia = 4.1,
+//            viagensRealizadas = 1,
+//            endereco = EnderecoListagemDto(
+//                id = 1,
+//                cep = "04244000",
+//                uf = "SP",
+//                cidade = "São Paulo",
+//                logradouro = "Estrada das Lágrimas",
+//                bairro = "São João CLímaco",
+//                numero = 3621
+//            ),
+//            avaliacoes = listOf(
+//                FeedbackListagemDto(
+//                    data = LocalDate.now(),
+//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
+//                    avaliador = FeedbackListagemDto.AvaliadorDto(
+//                        id = 1,
+//                        nome = "Kaiky Cruz",
+//                        fotoUrl = "foto_kaiky"
+//                    ),
+//                    notaMedia = 4.3,
+//                    notasCriterios = listOf(
+//                        NotaCriterioListagemDto(
+//                            criterio = "Comunicação",
+//                            nota = 2.0
+//                        ),
+//                        NotaCriterioListagemDto(
+//                            criterio = "Pontualidade",
+//                            nota = 5.0
+//                        ),
+//                        NotaCriterioListagemDto(
+//                            criterio = "Dirigibilidade",
+//                            nota = 3.5
+//                        ),
+//                        NotaCriterioListagemDto(
+//                            criterio = "Segurança",
+//                            nota = 4.0
+//                        )
+//                    )
+//                ),
+//                FeedbackListagemDto(
+//                    data = LocalDate.now(),
+//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
+//                    avaliador = FeedbackListagemDto
+//                        .AvaliadorDto(
+//                            id = 1,
+//                            nome = "Kaiky Cruz",
+//                            fotoUrl = "foto_kaiky"
+//                        ),
+//                    notaMedia = 3.2,
+//                    notasCriterios = listOf(
+//                        NotaCriterioListagemDto(
+//                            criterio = "Comunicação",
+//                            nota = 4.0
+//                        ),
+//                        NotaCriterioListagemDto(
+//                            criterio = "Pontualidade",
+//                            nota = 2.0
+//                        ),
+//                        NotaCriterioListagemDto(
+//                            criterio = "Dirigibilidade",
+//                            nota = 5.0
+//                        ),
+//                        NotaCriterioListagemDto(
+//                            criterio = "Segurança",
+//                            nota = 1.0
+//                        )
+//                    )
+//                )
+//            ),
+//            carros = listOf(
+//                UsuarioDetalhesListagemDto.CarroDto(
+//                    marca = "Honda",
+//                    modelo = "Fit",
+//                    cor = "Preto",
+//                    placa = "ABC1D06"
+//                )
+//            ),
+//            fidelizados = listOf(
+//                FidelizadoListagemDto(
+//                    id = 2,
+//                    nome = "Kaiky Cruz",
+//                    fotoUrl = "foto_kaiky",
+//                    notaGeral = 3.5,
+//                    ufLocalidade = "SP",
+//                    cidadeLocalidade = "São Paulo",
+//                    qtdViagensJuntos = 1
+//                )
+//            ),
+//            viagens = listOf(
+//                ViagemSimplesListagemDto(
+//                    id = 1,
+//                    data = LocalDate.now(),
+//                    hora = LocalTime.now(),
+//                    preco = 30.0,
+//                    status = StatusViagem.FINALIZADA
+//                )
+//            ),
+//            principalTrajeto = PrincipalTrajeto(
+//                ufChegada = "SP",
+//                cidadeChegada = "Campinas",
+//                ufPartida = "SP",
+//                cidadePartida = "São Paulo"
+//            )
+//        )
     )
 
     val feedbackState = MutableStateFlow(FeedbackCriterioCriacaoDto())

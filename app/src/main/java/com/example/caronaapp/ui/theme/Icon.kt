@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material.icons.filled.Map
@@ -46,6 +47,7 @@ val Fidelizacao = Icons.Default.Loyalty
 val Carro = Icons.Default.DirectionsCar
 val SetaDireita = Icons.AutoMirrored.Filled.ArrowForwardIos
 val SetaEsquerda = Icons.Default.ArrowBackIosNew
+val Chevron = Icons.Default.KeyboardArrowDown
 val EstrelaPreenchida = Icons.Default.Star
 val EstrelaVazada = Icons.Default.StarBorder
 val Cancelamento = Icons.Default.Block

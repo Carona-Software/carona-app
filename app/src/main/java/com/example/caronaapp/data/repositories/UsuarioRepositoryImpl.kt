@@ -1,5 +1,6 @@
 package com.example.caronaapp.data.repositories
 
+import android.util.Log
 import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioListagemDto

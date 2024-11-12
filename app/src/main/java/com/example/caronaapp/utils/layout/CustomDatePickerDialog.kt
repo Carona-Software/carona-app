@@ -3,10 +3,13 @@ package com.example.caronaapp.utils.layout
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
+import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Cinza90
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -41,11 +44,12 @@ fun CustomDatePickerDialog(
                 )
             )
         },
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        properties = DialogProperties(dismissOnBackPress = true)
     ) {
         this.datepicker(
             initialDate = LocalDate.now(),
-            title = "SELECIONE UMA DATA",
+            title = stringResource(id = R.string.title_date_picker_dialog),
             allowedDateValidator = { allowedDateValidator(it) },
             colors = DatePickerDefaults.colors(
                 calendarHeaderTextColor = Azul,
@@ -54,6 +58,7 @@ fun CustomDatePickerDialog(
                 dateInactiveTextColor = Azul,
                 headerTextColor = Color.White,
                 dateActiveBackgroundColor = Azul,
+                
             )
         ) {
             onDateChange(it)

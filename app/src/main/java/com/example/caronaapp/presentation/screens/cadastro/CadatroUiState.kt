@@ -16,10 +16,6 @@ sealed class CadastroField {
     data class ConfirmacaoSenha(val value: String) : CadastroField()
     data class Foto(val value: Uri) : CadastroField()
     data class EnderecoCep(val value: String) : CadastroField()
-    data class EnderecoUf(val value: String) : CadastroField()
-    data class EnderecoCidade(val value: String) : CadastroField()
-    data class EnderecoBairro(val value: String) : CadastroField()
-    data class EnderecoLogradouro(val value: String) : CadastroField()
     data class EnderecoNumero(val value: Int) : CadastroField()
 }
 
