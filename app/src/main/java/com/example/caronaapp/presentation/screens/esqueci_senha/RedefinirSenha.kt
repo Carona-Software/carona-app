@@ -44,7 +44,7 @@ import com.example.caronaapp.utils.layout.InputField
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
-import com.example.caronaapp.ui.theme.Olho
+import com.example.caronaapp.ui.theme.Visibility
 
 @Composable
 fun RedefinirSenhaScreen(navController: NavController) {
@@ -220,7 +220,7 @@ fun RedefinirSenhaScreen(navController: NavController) {
                             value = senha,
                             handleChange = { onSenhaChange(it) },
                             visualTransformation = PasswordVisualTransformation(),
-                            endIcon = Olho
+                            endIcon = Visibility
                         )
 
                         Spacer(modifier = Modifier.height(40.dp))
@@ -230,7 +230,7 @@ fun RedefinirSenhaScreen(navController: NavController) {
                             value = confirmacaoSenha,
                             handleChange = { confirmacaoSenha = it },
                             visualTransformation = PasswordVisualTransformation(),
-                            endIcon = Olho
+                            endIcon = Visibility
                         )
                     }
 

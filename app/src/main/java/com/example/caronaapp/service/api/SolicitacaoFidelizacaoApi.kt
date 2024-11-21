@@ -4,6 +4,7 @@ import com.example.caronaapp.data.dto.solicitacao.SolicitacaoFidelizacaoCriacaoD
 import com.example.caronaapp.data.dto.solicitacao.SolicitacaoFidelizacaoListagemDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -22,4 +23,7 @@ interface SolicitacaoFidelizacaoApi {
 
     @PUT("solicitacoes-fidelizacao/{id}/recusa")
     suspend fun refuse(@Path("id") id: Int): Response<SolicitacaoFidelizacaoListagemDto>
+
+    @DELETE("solicitacoes-fidelizacao/{id}")
+    suspend fun delete(@Path("id") id: Int): Response<Void>
 }

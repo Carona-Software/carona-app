@@ -8,6 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface FeedbackApi {
 
@@ -23,4 +24,10 @@ interface FeedbackApi {
     @GET("feedbacks/usuario/{id}")
     suspend fun findByUsuarioId(@Path("id") id: Int): Response<List<FeedbackListagemDto>>
 
+    @GET("feedbacks")
+    suspend fun existsByDestinatarioAndRemetenteAndViagem(
+        @Query("destinatarioId") destinatarioId: Int,
+        @Query("remetenteId") remetenteId: Int,
+        @Query("viagemId") viagemId: Int
+    ): Response<Boolean>
 }

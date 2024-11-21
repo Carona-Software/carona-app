@@ -1,5 +1,6 @@
 package com.example.caronaapp.presentation.screens.perfil_outro_usuario
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,29 +51,35 @@ import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.Viagem
-import com.example.caronaapp.utils.formatDate
+import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CriterioFeedback
+import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarUser
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 
 @Composable
 fun PerfilOutroUsuarioScreen(
     navController: NavController,
-    idUser: Int,
+    id: Int,
     viewModel: PerfilOutroUsuarioViewModel = koinViewModel()
 ) {
-
-//    LaunchedEffect(key1 = idUser) {
-//        viewModel.getDetalhesUsuario(idUser)
-//    }
-
-    val userData by viewModel.userData.collectAsState()
-    val avaliacoesCriterioUser by viewModel.avaliacoesCriterioUser.collectAsState()
-
+    val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getDetalhesUsuario(id)
+
+        if (state.isSuccessful || state.isError) {
+            Toast.makeText(context, state.messageToDisplay, Toast.LENGTH_SHORT).show()
+            delay(200)
+            viewModel.setControlVariablesToFalse()
+        }
+    }
 
     CaronaAppTheme {
         Scaffold { innerPadding ->
@@ -81,197 +89,221 @@ fun PerfilOutroUsuarioScreen(
                     .padding(innerPadding)
                     .background(Color.White)
             ) {
-                if (userData == null) {
-                    NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_perfil))
+                if (state.isLoadingScreen) {
+                    LoadingScreen()
                 } else {
-                    TopBarUser(
-                        navController = navController,
-                        fotoUser = null,
-                        nome = userData!!.nome
-                    )
-                    Column(
-                        // column com scroll
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(horizontal = 20.dp)
-                            .verticalScroll(scrollState),
-                    ) {
-                        Column( // column de avaliação geral
+                    if (state.userData == null) {
+                        NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_perfil))
+                    } else {
+                        TopBarUser(
+                            navController = navController,
+                            fotoUrl = state.userData!!.fotoUrl,
+                            isUrlFotoValida = state.isFotoValida,
+                            nome = state.userData!!.nome
+                        )
+                        Column(
+                            // column com scroll
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 16.dp)
+                                .weight(1f)
+                                .padding(horizontal = 20.dp)
+                                .verticalScroll(scrollState),
                         ) {
-                            Text(
-                                text = stringResource(id = R.string.avaliacao_geral),
-                                color = Azul,
-                                style = MaterialTheme.typography.labelLarge
+                            Column( // column de avaliação geral
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.avaliacao_geral),
+                                    color = Azul,
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = EstrelaPreenchida,
+                                        contentDescription = "Estrela",
+                                        tint = Amarelo,
+                                        modifier = Modifier.size(48.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = if (state.userData!!.notaMedia == 0.0) "--" else state.userData!!.notaMedia.toString(),
+                                        color = Azul,
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                            ) { // column de critérios de feedback
+                                if (state.userData!!.perfil.uppercase() == "MOTORISTA") {
+                                    CriterioFeedback(
+                                        label = stringResource(id = R.string.dirigibilidade),
+                                        notaMedia = state.avaliacoesCriterioUser.dirigibilidade.notaMedia,
+                                        percentualNotaMedia = state.avaliacoesCriterioUser.dirigibilidade.percentual
+                                    )
+                                } else {
+                                    CriterioFeedback(
+                                        label = stringResource(id = R.string.comportamento),
+                                        notaMedia = state.avaliacoesCriterioUser.comportamento.notaMedia,
+                                        percentualNotaMedia = state.avaliacoesCriterioUser.comportamento.percentual
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                                CriterioFeedback(
+                                    label = stringResource(id = R.string.seguranca),
+                                    notaMedia = state.avaliacoesCriterioUser.seguranca.notaMedia,
+                                    percentualNotaMedia = state.avaliacoesCriterioUser.seguranca.percentual
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                CriterioFeedback(
+                                    label = stringResource(id = R.string.comunicacao),
+                                    notaMedia = state.avaliacoesCriterioUser.comunicacao.notaMedia,
+                                    percentualNotaMedia = state.avaliacoesCriterioUser.comunicacao.percentual
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                CriterioFeedback(
+                                    label = stringResource(id = R.string.pontualidade),
+                                    notaMedia = state.avaliacoesCriterioUser.pontualidade.notaMedia,
+                                    percentualNotaMedia = state.avaliacoesCriterioUser.pontualidade.percentual
+                                )
+                            }
+
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .padding(vertical = 24.dp)
+                                    .scale(1.2f),
+                                color = CinzaE8,
+                                thickness = 8.dp
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    imageVector = EstrelaPreenchida,
-                                    contentDescription = "Estrela",
-                                    tint = Amarelo,
-                                    modifier = Modifier.size(48.dp)
+                                    imageVector = Viagem,
+                                    contentDescription = "Viagens",
+                                    tint = Azul,
+                                    modifier = Modifier.size(28.dp)
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(16.dp))
                                 Text(
                                     text = stringResource(
-                                        id = R.string.nota_media_usuario,
-                                        userData!!.notaMedia
+                                        id = R.string.total_viagens_realizadas,
+                                        state.userData!!.viagensRealizadas
                                     ),
                                     color = Azul,
-                                    style = MaterialTheme.typography.titleLarge
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.fillMaxWidth(0.92f)
                                 )
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) { // column de critérios de feedback
-                            if (userData!!.perfil.uppercase() == "MOTORISTA") {
-                                CriterioFeedback(
-                                    label = stringResource(id = R.string.dirigibilidade),
-                                    notaMedia = avaliacoesCriterioUser.dirigibilidade.notaMedia,
-                                    percentualNotaMedia = avaliacoesCriterioUser.dirigibilidade.percentual
-                                )
-                            } else {
-                                CriterioFeedback(
-                                    label = stringResource(id = R.string.comportamento),
-                                    notaMedia = avaliacoesCriterioUser.comportamento.notaMedia,
-                                    percentualNotaMedia = avaliacoesCriterioUser.comportamento.percentual
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(20.dp))
-                            CriterioFeedback(
-                                label = stringResource(id = R.string.seguranca),
-                                notaMedia = avaliacoesCriterioUser.seguranca.notaMedia,
-                                percentualNotaMedia = avaliacoesCriterioUser.seguranca.percentual
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
-                            CriterioFeedback(
-                                label = stringResource(id = R.string.comunicacao),
-                                notaMedia = avaliacoesCriterioUser.comunicacao.notaMedia,
-                                percentualNotaMedia = avaliacoesCriterioUser.comunicacao.percentual
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
-                            CriterioFeedback(
-                                label = stringResource(id = R.string.pontualidade),
-                                notaMedia = avaliacoesCriterioUser.pontualidade.notaMedia,
-                                percentualNotaMedia = avaliacoesCriterioUser.pontualidade.percentual
-                            )
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .padding(vertical = 24.dp)
-                                .scale(1.2f),
-                            color = CinzaE8,
-                            thickness = 8.dp
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Viagem,
-                                contentDescription = "Viagens",
-                                tint = Azul,
-                                modifier = Modifier.size(28.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = stringResource(
-                                    id = R.string.total_viagens_realizadas,
-                                    userData!!.viagensRealizadas
-                                ),
-                                color = Azul,
-                                style = MaterialTheme.typography.labelLarge,
-                                modifier = Modifier.fillMaxWidth(0.92f)
-                            )
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .padding(vertical = 24.dp)
-                                .scale(1.2f),
-                            color = CinzaE8,
-                            thickness = 8.dp
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Localizacao,
-                                contentDescription = "Localização",
-                                tint = Azul,
-                                modifier = Modifier.size(28.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = stringResource(
-                                    id = R.string.viagem_cidade_uf,
-                                    userData!!.endereco.cidade,
-                                    userData!!.endereco.uf
-                                ),
-                                color = Azul,
-                                style = MaterialTheme.typography.labelLarge,
-                                modifier = Modifier.fillMaxWidth(0.92f)
-                            )
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .padding(vertical = 24.dp)
-                                .scale(1.2f),
-                            color = CinzaE8,
-                            thickness = 8.dp
-                        )
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.comentarios),
-                                color = Azul,
-                                style = MaterialTheme.typography.labelLarge,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            LazyColumn(
+                            HorizontalDivider(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(min = 0.dp, max = 300.dp)
+                                    .padding(vertical = 24.dp)
+                                    .scale(1.2f),
+                                color = CinzaE8,
+                                thickness = 8.dp
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                items(items = userData!!.avaliacoes) { avaliacao ->
-                                    AvaliacaoItem(
-                                        fotoUser = null,
-                                        nome = avaliacao.avaliador.nome,
-                                        data = avaliacao.data,
-                                        comentario = avaliacao.comentario,
-                                        isLast = userData!!.avaliacoes.last() == avaliacao
+                                Icon(
+                                    imageVector = Localizacao,
+                                    contentDescription = "Localização",
+                                    tint = Azul,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text(
+                                    text = stringResource(
+                                        id = R.string.viagem_cidade_uf,
+                                        state.userData!!.endereco.cidade,
+                                        state.userData!!.endereco.uf
+                                    ),
+                                    color = Azul,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.fillMaxWidth(0.92f)
+                                )
+                            }
+
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .padding(vertical = 24.dp)
+                                    .scale(1.2f),
+                                color = CinzaE8,
+                                thickness = 8.dp
+                            )
+
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.avaliacoes),
+                                    color = Azul,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                if (state.userData!!.avaliacoes.isNotEmpty()) {
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .heightIn(min = 0.dp, max = 300.dp)
+                                    ) {
+                                        items(items = state.userData!!.avaliacoes) { avaliacao ->
+                                            AvaliacaoItem(
+                                                fotoUser = null,
+                                                nome = avaliacao.avaliador.nome,
+                                                data = avaliacao.data,
+                                                comentario = avaliacao.comentario,
+                                                isLast = state.userData!!.avaliacoes.last() == avaliacao
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    Text(
+                                        text = stringResource(id = R.string.sem_conteudo_avaliacoes),
+                                        style = MaterialTheme.typography.displayLarge,
+                                        color = Cinza90,
+                                        modifier = Modifier.fillMaxWidth()
                                     )
                                 }
                             }
-                        }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp)
-                        ) {
-                            ButtonAction(label = stringResource(id = R.string.label_button_conversar)) {}
-                        }
+                            if (state.userData!!.perfil != state.perfilUser) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 16.dp)
+                                ) {
+                                    if (state.totalViagensJuntos > 2 && !state.isPassageiroFidelizado) {
+                                        ButtonAction(
+                                            label = stringResource(id = R.string.label_button_solicitar_fidelizacao),
+                                            background = Azul
+                                        ) {
+                                            viewModel.handleSolicitarFidelizacao()
+                                        }
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }
 
+                                    ButtonAction(label = stringResource(id = R.string.label_button_conversar)) {}
+                                }
+                            }
+
+                        }
                     }
                 }
             }

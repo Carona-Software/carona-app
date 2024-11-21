@@ -5,90 +5,39 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.carro.CarroCriacaoDto
 import com.example.caronaapp.data.dto.carro.CarroListagemDto
-import com.example.caronaapp.data.entity.Carro
+import com.example.caronaapp.data.dto.vpic_carros.VpicCarrosMarcaResponse
 import com.example.caronaapp.data.repositories.CarroRepositoryImpl
+import com.example.caronaapp.data.repositories.VpicCarrosRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
+import com.example.caronaapp.presentation.screens.carros.CarroField
+import com.example.caronaapp.presentation.screens.carros.CarrosUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CarrosViewModel(
-    private val repository: CarroRepositoryImpl,
-    private val dataStoreManager: DataStoreManager
+    private val carrosRepository: CarroRepositoryImpl,
+    private val dataStoreManager: DataStoreManager,
+    private val vpicCarrosRepository: VpicCarrosRepositoryImpl
 ) : ViewModel() {
 
-    // carros do Usuário
-    val carros = MutableStateFlow<List<CarroListagemDto>?>(null)
-
-    // controle do modal de Cadastrar Carro
-    val isCreateDialogOpened = MutableStateFlow(false)
-
-    // controle do modal de Editar Carro
-    val isEditDialogOpened = MutableStateFlow(false)
-
-    // controle do modal de Excluir Carro
-    val isDeleteDialogOpened = MutableStateFlow(false)
-
-    val novoCarro = CarroCriacaoDto()
-    val editCarro = MutableStateFlow<CarroCriacaoDto?>(null)
-    val deleteCarro = MutableStateFlow<Carro?>(null)
-
-    val isError = MutableStateFlow(false)
-    val isSuccess = MutableStateFlow(false)
-
-    val errorMessage = MutableStateFlow("")
-    val successMessage = MutableStateFlow("")
+    val isLoadingScreen = MutableStateFlow(true)
+    val state = MutableStateFlow(CarrosUiState())
 
     init {
         getCarrosUser()
-//        val carrosNovos = listOf(
-//            CarroListagemDto(
-//                id = 1,
-//                marca = "Fiat",
-//                modelo = "Mobi",
-//                placa = "GJB5A12",
-//                cor = "Preto",
-//                motorista = CarroListagemDto.MotoristaListagemDto(
-//                    id = 1,
-//                    nome = "Gustavo Medeiros"
-//                )
-//            ),
-//            CarroListagemDto(
-//                id = 2,
-//                marca = "Chevrolet",
-//                modelo = "Onix",
-//                placa = "YAB7L04",
-//                cor = "Vinho",
-//                motorista = CarroListagemDto.MotoristaListagemDto(
-//                    id = 1,
-//                    nome = "Gustavo Medeiros"
-//                )
-//            ),
-//            CarroListagemDto(
-//                id = 3,
-//                marca = "Honda",
-//                modelo = "Fit",
-//                placa = "AOC3G83",
-//                cor = "Prata",
-//                motorista = CarroListagemDto.MotoristaListagemDto(
-//                    id = 1,
-//                    nome = "Gustavo Medeiros"
-//                )
-//            ),
-//        )
-//        carros.value = carrosNovos
     }
 
     private fun getCarrosUser() {
         viewModelScope.launch {
             try {
                 val idUser = dataStoreManager.getIdUser()
-                val response = repository.findByUsuarioId(idUser!!)
+                val response = carrosRepository.findByUsuarioId(idUser!!)
 
                 if (response.isSuccessful) {
-                    Log.i("carros", "Sucesso ao buscar carros do usuário")
+                    Log.i("carros", "Sucesso ao buscar carros do usuário: ${response.body()}")
                     if (response.code() == 200) {
-                        carros.update { response.body() }
+                        state.update { it.copy(carros = response.body()) }
                     }
                 } else {
                     Log.e(
@@ -101,72 +50,197 @@ class CarrosViewModel(
                     "carros",
                     "Exception -> erro ao buscar carros do usuário: ${e.printStackTrace()}"
                 )
+            } finally {
+                isLoadingScreen.update { false }
             }
         }
     }
 
-    fun onDismissDeleteDialog() {
-        isDeleteDialogOpened.value = false
-        deleteCarro.value = null
+    fun onDeleteClick(carro: CarroListagemDto) {
+        state.update {
+            it.copy(
+                isDeleteDialogOpened = true,
+                deleteCarroData = carro
+            )
+        }
     }
 
-    fun onDismissCreateDialog() {
-        isCreateDialogOpened.value = false
+    fun onEditClick(carro: CarroListagemDto) {
+        state.update {
+            it.copy(
+                isEditDialogOpened = true,
+                editCarroData = CarroCriacaoDto(
+                    id = carro.id,
+                    marca = carro.marca,
+                    modelo = carro.modelo,
+                    placa = carro.placa,
+                    cor = carro.cor
+                )
+            )
+        }
     }
 
-    fun onDismissEditDialog() {
-        isEditDialogOpened.value = false
-        editCarro.value = null
+    fun onCreateClick() {
+        viewModelScope.launch {
+            try {
+                state.update { it.copy(isCreateDialogOpened = true) }
+
+                val response = vpicCarrosRepository.getMarcasCarro()
+
+                if (response.isSuccessful) {
+                    Log.i("carros", "Sucesso ao buscar marcas de carro: ${response.body()}")
+                    state.update {
+                        it.copy(
+                            marcasCarroData = organizeAndCapitalizeList(
+                                response.body()?.results ?: emptyList()
+                            )
+                        )
+                    }
+                } else {
+                    Log.e("carros", "Erro ao buscar marcas de carro: ${response.errorBody()}")
+                }
+
+            } catch (e: Exception) {
+                Log.e("carros", "Exception -> erro ao buscar marcas de carro: ${e.message}")
+            }
+        }
     }
 
-    fun onDeleteCLick(carro: CarroListagemDto) {
-        isDeleteDialogOpened.value = true
-        deleteCarro.value = Carro(
-            id = carro.id,
-            marca = carro.marca,
-            modelo = carro.modelo,
-            placa = carro.placa,
-            cor = carro.cor
-        )
-    }
+    fun onChangeEvent(field: CarroField, isEditCarro: Boolean) {
+        if (isEditCarro) {
+            when (field) {
+                is CarroField.Marca -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            editCarroData = currentState.editCarroData.copy(
+                                marca = field.value,
+                                modelo = ""
+                            ),
+                            isMarcasDropdownExpanded = false
+                        )
+                    }
+                    getModelosCarroByMarca(field.value)
+                }
 
-    fun onEditCLick(carro: CarroListagemDto) {
-        isEditDialogOpened.value = true
-        editCarro.value = CarroCriacaoDto(
-            id = carro.id,
-            marca = carro.marca,
-            modelo = carro.modelo,
-            placa = carro.placa,
-            cor = carro.cor
-        )
-    }
+                is CarroField.Modelo -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            editCarroData = currentState.editCarroData.copy(
+                                modelo = field.value
+                            ),
+                            isModelosDropdownExpanded = false
+                        )
+                    }
+                }
 
-    fun onCreateCLick() {
-        isCreateDialogOpened.value = true
+                is CarroField.Placa -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            editCarroData = currentState.editCarroData.copy(
+                                placa = field.value
+                            )
+                        )
+                    }
+                }
+
+                is CarroField.Cor -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            editCarroData = currentState.editCarroData.copy(
+                                cor = field.value
+                            ),
+                            isCoresDropdownExpanded = false
+                        )
+                    }
+                }
+            }
+        } else {
+            when (field) {
+                is CarroField.Marca -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            createCarroData = currentState.createCarroData.copy(
+                                marca = field.value,
+                                modelo = ""
+                            ),
+                            isMarcasDropdownExpanded = false
+                        )
+                    }
+                    getModelosCarroByMarca(field.value)
+                }
+
+                is CarroField.Modelo -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            createCarroData = currentState.createCarroData.copy(
+                                modelo = field.value
+                            ),
+                            isModelosDropdownExpanded = false
+                        )
+                    }
+                }
+
+                is CarroField.Placa -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            createCarroData = currentState.createCarroData.copy(
+                                placa = field.value
+                            )
+                        )
+                    }
+                }
+
+                is CarroField.Cor -> {
+                    state.update { currentState ->
+                        currentState.copy(
+                            createCarroData = currentState.createCarroData.copy(
+                                cor = field.value
+                            ),
+                            isCoresDropdownExpanded = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun handleDeleteCarro() {
         viewModelScope.launch {
             try {
-                val response = repository.delete(deleteCarro.value!!.id)
+                val response = carrosRepository.delete(state.value.deleteCarroData!!.id)
 
                 if (response.isSuccessful) {
+                    Log.i("carros", "Sucesso ao deletar carro")
+
                     // atualizando lista de carros
                     val updatedCarrosList =
-                        carros.value!!.filter { carro -> carro.id != deleteCarro.value!!.id }
-                    carros.value = updatedCarrosList
-                    deleteCarro.value = null
+                        state.value.carros!!.filter { carro -> carro.id != state.value.deleteCarroData!!.id }
 
-                    isSuccess.value = true
-                    successMessage.value = "Carro excluído com sucesso"
+                    state.update {
+                        it.copy(
+                            carros = updatedCarrosList.ifEmpty { null },
+                            deleteCarroData = null,
+                            isDeleteDialogOpened = false,
+                            isSuccess = true,
+                            successMessage = "Carro excluído com sucesso"
+                        )
+                    }
                 } else {
-                    isError.value = true
-                    errorMessage.value = "Não foi possível excluir o carro"
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Não foi possível excluir o carro"
+                        )
+                    }
                     Log.e("carros", "Erro ao deletar carro: ${response.errorBody()}")
                 }
             } catch (e: Exception) {
-                isError.value = true
-                errorMessage.value = "Não foi possível excluir o carro"
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Não foi possível excluir o carro"
+                    )
+                }
                 Log.e("carros", "Erro ao deletar carro: ${e.message}")
             }
         }
@@ -175,22 +249,44 @@ class CarrosViewModel(
     fun handleCreateCarro() {
         viewModelScope.launch {
             try {
-                val response = repository.save(novoCarro)
+                state.update {
+                    it.copy(
+                        createCarroData = it.createCarroData.copy(
+                            fkUsuario = dataStoreManager.getIdUser() ?: 0
+                        )
+                    )
+                }
+                val response = carrosRepository.save(state.value.createCarroData)
 
                 if (response.isSuccessful) {
                     // atualizando lista de carros
                     getCarrosUser()
+                    Log.i("carros", "Sucesso ao cadastrar carro: ${response.body()}")
 
-                    isSuccess.value = true
-                    successMessage.value = "Carro cadastrado com sucesso"
+                    state.update {
+                        it.copy(
+                            isCreateDialogOpened = false,
+                            isSuccess = true,
+                            successMessage = "Carro cadastrado com sucesso",
+                            createCarroData = CarroCriacaoDto()
+                        )
+                    }
                 } else {
-                    isError.value = true
-                    errorMessage.value = "Não foi possível cadastrar o carro"
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Não foi possível cadastrar o carro"
+                        )
+                    }
                     Log.e("carros", "Erro ao cadastrar carro: ${response.errorBody()}")
                 }
             } catch (e: Exception) {
-                isError.value = true
-                errorMessage.value = "Não foi possível cadastrar o carro"
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Não foi possível cadastrar o carro"
+                    )
+                }
                 Log.e("carros", "Erro ao cadastrar carro: ${e.message}")
             }
         }
@@ -199,25 +295,144 @@ class CarrosViewModel(
     fun handleEditCarro() {
         viewModelScope.launch {
             try {
-                val response = repository.edit(editCarro.value!!.id!!, editCarro.value!!)
+                state.update {
+                    it.copy(
+                        editCarroData = it.editCarroData.copy(
+                            fkUsuario = dataStoreManager.getIdUser() ?: 0
+                        )
+                    )
+                }
+
+                val response = carrosRepository.edit(
+                    state.value.editCarroData.id!!,
+                    state.value.editCarroData
+                )
 
                 if (response.isSuccessful) {
                     // atualizando lista de carros
                     getCarrosUser()
 
-                    isSuccess.value = true
-                    successMessage.value = "Carro editado com sucesso"
+                    Log.i("carros", "Sucesso ao editar carro: ${response.body()}")
+
+                    state.update {
+                        it.copy(
+                            isEditDialogOpened = false,
+                            isSuccess = true,
+                            successMessage = "Carro editado com sucesso",
+                            editCarroData = CarroCriacaoDto()
+                        )
+                    }
                 } else {
-                    isError.value = true
-                    errorMessage.value = "Não foi possível editar o carro"
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Não foi possível editar o carro"
+                        )
+                    }
                     Log.e("carros", "Erro ao editar carro: ${response.errorBody()}")
                 }
             } catch (e: Exception) {
-                isError.value = true
-                errorMessage.value = "Não foi possível editar o carro"
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Não foi possível editar o carro"
+                    )
+                }
                 Log.e("carros", "Erro ao cadastrar carro: ${e.message}")
             }
         }
     }
 
+    fun setIsSuccessToFalse() {
+        state.update {
+            it.copy(
+                isSuccess = false,
+                successMessage = ""
+            )
+        }
+    }
+
+    fun onMarcasDropdownClick() {
+        state.update { it.copy(isMarcasDropdownExpanded = true) }
+    }
+
+    fun onModelosDropdownClick() {
+        state.update { it.copy(isModelosDropdownExpanded = true) }
+    }
+
+    fun onCoresDropdownClick() {
+        state.update { it.copy(isCoresDropdownExpanded = true) }
+    }
+
+    fun onDismissDeleteDialog() {
+        state.update {
+            it.copy(
+                isDeleteDialogOpened = false,
+                deleteCarroData = null
+            )
+        }
+    }
+
+    fun onDismissCreateDialog() {
+        state.update {
+            it.copy(
+                isCreateDialogOpened = false,
+                createCarroData = CarroCriacaoDto()
+            )
+        }
+    }
+
+    fun onDismissEditDialog() {
+        state.update {
+            it.copy(
+                isEditDialogOpened = false,
+                editCarroData = CarroCriacaoDto()
+            )
+        }
+    }
+
+    fun onDismissMarcasDropdown() {
+        state.update { it.copy(isMarcasDropdownExpanded = false) }
+    }
+
+    fun onDismissModelosDropdown() {
+        state.update { it.copy(isModelosDropdownExpanded = false) }
+    }
+
+    fun onDismissCoresDropdown() {
+        state.update { it.copy(isCoresDropdownExpanded = false) }
+    }
+
+    private fun getModelosCarroByMarca(marca: String) {
+        viewModelScope.launch {
+            try {
+                val response = vpicCarrosRepository.getModelosCarroByMarca(marca)
+
+                if (response.isSuccessful) {
+                    Log.i("carros", "Sucesso ao buscar modelos de carro: ${response.body()}")
+                    state.update {
+                        it.copy(
+                            modelosCarroData = response.body()?.results?.map { modelo -> modelo.name }
+                                ?: emptyList()
+                        )
+                    }
+                } else {
+                    Log.e("carros", "Erro ao buscar modelos de carro: ${response.errorBody()}")
+                }
+            } catch (e: Exception) {
+                Log.e("carros", "Exception -> erro ao buscar modelos de carro: ${e.message}")
+
+            }
+        }
+    }
+
+    private fun organizeAndCapitalizeList(inputList: List<VpicCarrosMarcaResponse.Marca>): List<String> {
+        return inputList.map {
+            it.name.lowercase().split(" ").joinToString(" ") { word ->
+                word.replaceFirstChar { char ->
+                    char.uppercaseChar()
+                }
+            }
+        }.sorted()
+    }
 }

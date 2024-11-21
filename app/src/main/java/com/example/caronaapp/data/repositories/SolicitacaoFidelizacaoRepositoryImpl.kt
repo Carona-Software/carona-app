@@ -23,4 +23,8 @@ class SolicitacaoFidelizacaoRepositoryImpl(private val solicitacaoApi: Solicitac
     override suspend fun refuse(id: Int): Response<SolicitacaoFidelizacaoListagemDto> {
         return solicitacaoApi.refuse(id)
     }
+
+    override suspend fun delete(id: Int): Response<Void> {
+        return solicitacaoApi.delete(id)
+    }
 }

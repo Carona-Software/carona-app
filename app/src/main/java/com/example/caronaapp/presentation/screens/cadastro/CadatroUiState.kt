@@ -1,7 +1,7 @@
 package com.example.caronaapp.presentation.screens.cadastro
 
 import android.net.Uri
-import com.example.caronaapp.utils.formatDate
+import com.example.caronaapp.utils.functions.formatDate
 import java.time.LocalDate
 
 
@@ -44,6 +44,8 @@ data class UserCadastroValidations(
     val isDataNascimentoInvalida: Boolean = false,
     val isCepInvalido: Boolean = false,
     val isNumeroInvalido: Boolean = false,
+    val showPassword: Boolean = false,
+    val showConfirmationPassword: Boolean = false,
     val senhaContainsMaiuscula: Boolean = false,
     val senhaContainsMinuscula: Boolean = false,
     val senhaContainsNumero: Boolean = false,

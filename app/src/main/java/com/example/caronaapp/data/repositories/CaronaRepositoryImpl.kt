@@ -23,4 +23,11 @@ class CaronaRepositoryImpl(private val caronaApi: CaronaApi) : CaronaRepository 
     override suspend fun delete(viagemId: Int, usuarioId: Int): Response<Void> {
         return caronaApi.delete(viagemId, usuarioId)
     }
+
+    override suspend fun countViagensBetweenMotoristaAndPassageiro(
+        motoristaId: Int,
+        passageiroId: Int
+    ): Response<Int> {
+        return caronaApi.countViagensBetweenMotoristaAndPassageiro(motoristaId, passageiroId)
+    }
 }

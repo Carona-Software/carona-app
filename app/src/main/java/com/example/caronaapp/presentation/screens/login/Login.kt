@@ -3,6 +3,7 @@ package com.example.caronaapp.presentation.screens.login
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,27 +38,39 @@ import com.example.caronaapp.presentation.view_models.LoginViewModel
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaE8
+import com.example.caronaapp.ui.theme.VisibilityOff
+import com.example.caronaapp.ui.theme.Visibility
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.InputField
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinViewModel()) {
+fun LoginScreen(
+    navController: NavController,
+    viewModel: LoginViewModel = koinViewModel()
+) {
     val context = LocalContext.current
 
     val userLoginDto = viewModel.userLoginDto.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState()
     val isError by viewModel.isError.collectAsState()
+    val showPassword by viewModel.showPassword.collectAsState()
 
     LaunchedEffect(key1 = isLoginSuccessful, key2 = isError) {
         if (isLoginSuccessful) {
             Toast.makeText(context, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
 
-            delay(300)
+            delay(200)
+
+            navController.navigate("meu-perfil") {
+                popUpTo(navController.graph.startDestinationRoute!!) {
+                    inclusive = true
+                }
+            }
 
             viewModel.setLoginSuccessfulToFalse()
-            navController.navigate("meu-perfil")
         }
 
         if (isError) {
@@ -115,26 +129,39 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
                 InputField(
                     label = stringResource(id = R.string.senha),
                     value = userLoginDto.value.senha,
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    endIcon = if (showPassword) VisibilityOff else Visibility,
+                    onIconClick = { viewModel.setLoginPasswordVisibility() }
                 ) {
                     viewModel.onSenhaChange(it)
                 }
                 Spacer(modifier = Modifier.height(40.dp))
-                ButtonAction(label = stringResource(id = R.string.label_button_entrar)) {
+                ButtonAction(
+                    label = stringResource(id = R.string.label_button_entrar),
+                    isLoading = isLoading
+                ) {
 //                    navController.navigate("meu-perfil")
                     viewModel.onLoginClick()
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                TextButton(onClick = {
-                    navController.navigate("esqueci-senha")
-                }, modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Esqueceu a senha?",
-                        color = Azul,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextButton(onClick = {
+                        navController.navigate("esqueci-senha")
+                    }) {
+                        Text(
+                            text = stringResource(id = R.string.esqueceu_a_senha),
+                            color = Azul,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(26.dp))
@@ -148,7 +175,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Não possui conta?",
+                        text = stringResource(id = R.string.nao_possui_conta),
                         color = Azul,
                         style = MaterialTheme.typography.titleSmall
                     )
@@ -156,7 +183,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
                         navController.navigate("cadastro")
                     }) {
                         Text(
-                            text = "Cadastre-se",
+                            text = stringResource(id = R.string.cadastre_se),
                             color = Azul,
                             style = MaterialTheme.typography.labelLarge
                         )

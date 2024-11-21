@@ -1,5 +1,6 @@
 package com.example.caronaapp.data.repositories
 
+import com.example.caronaapp.data.dto.feedback.FeedbackConsultaDto
 import com.example.caronaapp.data.dto.feedback.FeedbackCriterioCriacaoDto
 import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
 import com.example.caronaapp.data.entity.CriterioFeedback
@@ -22,5 +23,13 @@ class FeedbackRepositoryImpl(private val feedbackApi: FeedbackApi) : FeedbackRep
 
     override suspend fun findByUsuarioId(id: Int): Response<List<FeedbackListagemDto>> {
         return feedbackApi.findByUsuarioId(id)
+    }
+
+    override suspend fun existsByDestinatarioAndRemetenteAndViagem(feedbackConsultaDto: FeedbackConsultaDto): Response<Boolean> {
+        return feedbackApi.existsByDestinatarioAndRemetenteAndViagem(
+            feedbackConsultaDto.destinatarioId,
+            feedbackConsultaDto.remetenteId,
+            feedbackConsultaDto.viagemId
+        )
     }
 }

@@ -14,4 +14,8 @@ interface CaronaRepository {
 
     suspend fun delete(viagemId: Int, usuarioId: Int): Response<Void>
 
+    suspend fun countViagensBetweenMotoristaAndPassageiro(
+        motoristaId: Int,
+        passageiroId: Int
+    ): Response<Int>
 }

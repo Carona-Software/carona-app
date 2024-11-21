@@ -8,29 +8,33 @@ import com.example.caronaapp.data.dto.viagem.Coordenadas
 import com.example.caronaapp.data.dto.viagem.ViagemCriacaoDto
 import com.example.caronaapp.data.repositories.CarroRepositoryImpl
 import com.example.caronaapp.data.repositories.GoogleMapsRepositoryImpl
+import com.example.caronaapp.data.repositories.MapboxRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemEnderecoField
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemField
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemState
-import com.example.caronaapp.utils.formatDate
-import com.example.caronaapp.utils.formatTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class OferecerViagemViewModel(
     private val viagemRepository: ViagemRepositoryImpl,
     private val carroRepository: CarroRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
-    private val googleMapsRepository: GoogleMapsRepositoryImpl
+    private val googleMapsRepository: GoogleMapsRepositoryImpl,
+    private val mapboxRepository: MapboxRepositoryImpl
 ) : ViewModel() {
     val perfilUser = MutableStateFlow("")
+    val generoUser = MutableStateFlow("")
 
     init {
         viewModelScope.launch {
             perfilUser.update { dataStoreManager.getPerfilUser() ?: "" }
+            generoUser.update { dataStoreManager.getGeneroUser() ?: "" }
         }
         getCarrosUser()
     }
@@ -40,45 +44,12 @@ class OferecerViagemViewModel(
 
     val etapaAtual = MutableStateFlow(1)
 
+    val carros = MutableStateFlow<List<CarroListagemDto>?>(null)
 
-    val carros = MutableStateFlow<List<CarroListagemDto>?>(
-        null
-//        listOf(
-//            CarroListagemDto(
-//                id = 1,
-//                marca = "Fiat",
-//                modelo = "Mobi",
-//                placa = "GJB5A12",
-//                cor = "Preto",
-//                motorista = CarroListagemDto.MotoristaListagemDto(
-//                    id = 1,
-//                    nome = "Gustavo Medeiros"
-//                )
-//            ),
-//            CarroListagemDto(
-//                id = 2,
-//                marca = "Chevrolet",
-//                modelo = "Onix",
-//                placa = "YAB7L04",
-//                cor = "Vinho",
-//                motorista = CarroListagemDto.MotoristaListagemDto(
-//                    id = 1,
-//                    nome = "Gustavo Medeiros"
-//                )
-//            ),
-//            CarroListagemDto(
-//                id = 3,
-//                marca = "Honda",
-//                modelo = "Fit",
-//                placa = "AOC3G83",
-//                cor = "Prata",
-//                motorista = CarroListagemDto.MotoristaListagemDto(
-//                    id = 1,
-//                    nome = "Gustavo Medeiros"
-//                )
-//            )
-//        )
-    )
+    val isLoading = MutableStateFlow(false)
+    val isSuccessful = MutableStateFlow(false)
+    val isError = MutableStateFlow(false)
+    val idCreatedViagem = MutableStateFlow(0)
 
     private fun getCarrosUser() {
         viewModelScope.launch {
@@ -87,9 +58,21 @@ class OferecerViagemViewModel(
                 val response = carroRepository.findByUsuarioId(idUser!!)
 
                 if (response.isSuccessful) {
-                    Log.i("oferecerCarona", "Sucesso ao buscar carros do usuário")
+                    Log.i(
+                        "oferecerCarona",
+                        "Sucesso ao buscar carros do usuário: ${response.body()}"
+                    )
                     if (response.code() == 200) {
                         carros.update { response.body() }
+                        viagemData.update {
+                            it.copy(carroId = response.body()?.get(0)?.id ?: 0)
+                        }
+                        state.update {
+                            it.copy(
+                                carro = "${response.body()?.get(0)?.marca} " +
+                                        "${response.body()?.get(0)?.modelo}"
+                            )
+                        }
                     }
                 } else {
                     Log.e(
@@ -128,17 +111,17 @@ class OferecerViagemViewModel(
                 }
 
                 state.update {
-                    it.copy(data = formatDate(field.value))
+                    it.copy(data = field.value)
                 }
             }
 
             is OferecerViagemField.HorarioPartida -> {
                 viagemData.update {
-                    it.copy(horarioPartida = field.value.format(DateTimeFormatter.ISO_LOCAL_TIME))
+                    it.copy(horarioPartida = field.value.format(DateTimeFormatter.ofPattern("HH:mm:ss")))
                 }
 
                 state.update {
-                    it.copy(hora = formatTime(field.value))
+                    it.copy(hora = field.value)
                 }
             }
 
@@ -190,8 +173,8 @@ class OferecerViagemViewModel(
     private fun searchAddress(address: String, isPartida: Boolean) {
         viewModelScope.launch {
             try {
-                val API_KEY = "AIzaSyBCgrMgCudI7Jcc3xd8DDZAlqb8_7lWvF4"
-                val response = googleMapsRepository.getGeocode(address, API_KEY)
+                val response = googleMapsRepository.getGeocode(address)
+
                 if (response.isSuccessful) {
                     Log.i("geocoder", "Sucesso no Geocode: ${response.body()}")
                     Log.i("geocoder", "Endereços retornados: ${response.body()!!.results.size}")
@@ -290,30 +273,106 @@ class OferecerViagemViewModel(
     }
 
     private fun saveViagem() {
-        Log.i("oferecerCarona", "ViagemCriacaoDto: ${viagemData.value}")
-//        viewModelScope.launch {
-//            try {
-//                viagemData.update { it.copy(motoristaId = dataStoreManager.getIdUser()!!) }
-//
-//                val response = viagemRepository.save(viagemData.value)
-//
-//                if (response.isSuccessful) {
-//                    Log.i(
-//                        "oferecerViagem",
-//                        "Sucesso ao salvar viagem: ${response.body()}"
-//                    )
-//                } else {
-//                    Log.e(
-//                        "oferecerViagem",
-//                        "Erro ao salvar viagem: ${response.errorBody()}"
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                Log.e(
-//                    "oferecerViagem",
-//                    "Exception -> erro ao salvar viagem: ${e.printStackTrace()}"
-//                )
-//            }
-//        }
+        viewModelScope.launch {
+            isLoading.update { true }
+            try {
+                calculateDurationAndSetHorarioChegada()
+                viagemData.update { it.copy(motoristaId = dataStoreManager.getIdUser()!!) }
+                Log.i("oferecerCarona", "ViagemCriacaoDto: ${viagemData.value}")
+
+                val response = viagemRepository.save(viagemData.value)
+
+                if (response.isSuccessful) {
+                    Log.i(
+                        "oferecerViagem",
+                        "Sucesso ao salvar viagem: ${response.body()}"
+                    )
+                    isSuccessful.update { true }
+                    idCreatedViagem.update { response.body()?.id ?: 0 }
+                } else {
+                    Log.e(
+                        "oferecerViagem",
+                        "Erro ao salvar viagem: ${response.errorBody()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "oferecerViagem",
+                    "Exception -> erro ao salvar viagem: ${e.message}"
+                )
+            } finally {
+                isLoading.update { false }
+            }
+        }
+    }
+
+    private suspend fun calculateDurationAndSetHorarioChegada() {
+        try {
+            val response = mapboxRepository.getDistanceBetweenPlaces(
+                viagemData.value.pontoPartida.latitude,
+                viagemData.value.pontoPartida.longitude,
+                viagemData.value.pontoDestino.latitude,
+                viagemData.value.pontoDestino.longitude,
+            )
+
+            if (response.isSuccessful) {
+                Log.i(
+                    "mapbox",
+                    "Sucesso ao consultar informações no Mapbox: ${response.body()}"
+                )
+                val horarioChegada =
+                    calculateHorarioChegada(
+                        state.value.hora,
+                        response.body()?.routes?.get(0)?.duration ?: 0.0
+                    )
+
+                viagemData.update {
+                    it.copy(horarioChegada = horarioChegada.format(DateTimeFormatter.ofPattern("HH:mm:ss")))
+                }
+            } else {
+                Log.e(
+                    "mapbox",
+                    "Erro ao consultar informações no Mapbox: ${response.errorBody()}"
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "mapbox",
+                "Exception -> erro ao consultar informações no Mapbox: ${e.message}"
+            )
+        }
+    }
+
+    private fun calculateHorarioChegada(
+        horarioPartida: LocalTime,
+        duration: Double
+    ): LocalTime {
+        // Converte a duração de segundos para um objeto Duration
+        val durationInSeconds = duration.toLong()
+        val durationAsDuration = Duration.ofSeconds(durationInSeconds)
+
+        // Calcula o horário de chegada
+        var horarioDeChegada = horarioPartida.plus(durationAsDuration)
+
+        // Arredonda os minutos para o próximo múltiplo de 10
+        val minutos = horarioDeChegada.minute
+        val minutosArredondados = if (minutos % 10 == 0) minutos else ((minutos / 10) + 1) * 10
+
+        // Ajusta o horário de chegada com o arredondamento
+        horarioDeChegada = horarioDeChegada.withMinute(0).plusMinutes(minutosArredondados.toLong())
+
+        Log.i(
+            "mapbox",
+            "horarioChegada: $horarioDeChegada"
+        )
+        return horarioDeChegada
+    }
+
+    fun setIsSuccessfulToFalse() {
+        isSuccessful.update { false }
+    }
+
+    fun setIsErrorToFalse() {
+        isError.update { false }
     }
 }

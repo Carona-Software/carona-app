@@ -1,6 +1,7 @@
 package com.example.caronaapp.presentation.view_models
 
 import android.util.Log
+import com.example.caronaapp.utils.functions.setPasswordVisibility
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.usuario.UsuarioLoginDto
@@ -15,14 +16,16 @@ class LoginViewModel(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    var userLoginDto = MutableStateFlow(UsuarioLoginDto())
-        private set
+    val userLoginDto = MutableStateFlow(UsuarioLoginDto())
 
+    val isLoading = MutableStateFlow(false)
     val isLoginSuccessful = MutableStateFlow(false)
     val isError = MutableStateFlow(false)
+    val showPassword = MutableStateFlow(false)
 
     fun onLoginClick() {
         viewModelScope.launch {
+            isLoading.update { true }
             try {
                 Log.i("login", "Login Dto: ${userLoginDto.value}")
                 val response = repository.login(userLoginDto.value)
@@ -33,14 +36,12 @@ class LoginViewModel(
                     dataStoreManager.clear()
 
                     dataStoreManager.setIdUser(response.body()!!.id)
-                    dataStoreManager.setFotoUser(response.body()!!.fotoUrl)
                     dataStoreManager.setPerfilUser(response.body()!!.perfil)
                     dataStoreManager.setGeneroUser(response.body()!!.genero.uppercase())
 
                     Log.i("dataStore", "----------------------------------- ")
                     Log.i("dataStore", "DataStore: ")
                     Log.i("dataStore", "IdUser: ${dataStoreManager.getIdUser()}")
-                    Log.i("dataStore", "FotoUser: ${dataStoreManager.getFotoUser()}")
                     Log.i("dataStore", "PerfilUser: ${dataStoreManager.getPerfilUser()}")
                     Log.i("dataStore", "GeneroUser: ${dataStoreManager.getGeneroUser()}")
                 } else {
@@ -49,6 +50,8 @@ class LoginViewModel(
                 }
             } catch (e: Exception) {
                 Log.e("login", "Erro ao realizar login: ${e.message}")
+            } finally {
+                isLoading.update { false }
             }
         }
     }
@@ -67,5 +70,9 @@ class LoginViewModel(
 
     fun onSenhaChange(senha: String) {
         userLoginDto.update { it.copy(senha = senha) }
+    }
+
+    fun setLoginPasswordVisibility() {
+        showPassword.update { setPasswordVisibility(showPassword.value) }
     }
 }

@@ -24,4 +24,10 @@ interface FidelizacaoApi {
         @Path("passageiroId") passageiroId: Int
     ): Response<Void>
 
+    @GET("fidelizacoes/{passageiroId}/{motoristaId}")
+    suspend fun existsFidelizacao(
+        @Path("passageiroId") passageiroId: Int,
+        @Path("motoristaId") motoristaId: Int
+    ): Response<Boolean>
+
 }

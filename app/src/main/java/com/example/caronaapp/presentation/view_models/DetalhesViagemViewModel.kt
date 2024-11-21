@@ -3,147 +3,43 @@ package com.example.caronaapp.presentation.view_models
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.caronaapp.data.dto.carona.CaronaCriacaoDto
+import com.example.caronaapp.data.dto.feedback.FeedbackConsultaDto
+import com.example.caronaapp.data.dto.solicitacao.SolicitacaoViagemCriacaoDto
 import com.example.caronaapp.data.dto.solicitacao.SolicitacaoViagemListagemDto
+import com.example.caronaapp.data.dto.usuario.PassageiroDto
 import com.example.caronaapp.data.dto.usuario.UsuarioSimplesListagemDto
-import com.example.caronaapp.data.dto.viagem.Coordenadas
-import com.example.caronaapp.data.dto.viagem.LocalidadeDto
-import com.example.caronaapp.data.dto.viagem.TrajetoDto
 import com.example.caronaapp.data.dto.viagem.ViagemDetalhesListagemDto
-import com.example.caronaapp.data.dto.viagem.ViagemSimplesListagemDto
-import com.example.caronaapp.data.enums.StatusSolicitacao
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.CaronaRepositoryImpl
+import com.example.caronaapp.data.repositories.FeedbackRepositoryImpl
+import com.example.caronaapp.data.repositories.MapboxRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoViagemRepositoryImpl
+import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
+import com.example.caronaapp.presentation.screens.detalhes_viagem.DetalhesViagemUiState
+import com.example.caronaapp.utils.functions.isUrlFotoUserValida
+import com.example.caronaapp.utils.functions.toPassageiroDto
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
+import kotlinx.coroutines.withContext
 
 class DetalhesViagemViewModel(
     private val viagemRepository: ViagemRepositoryImpl,
     private val solicitacaoViagemRepository: SolicitacaoViagemRepositoryImpl,
     private val caronaRepository: CaronaRepositoryImpl,
-    private val dataStoreManager: DataStoreManager
+    private val dataStoreManager: DataStoreManager,
+    private val usuarioRepository: UsuarioRepositoryImpl,
+    private val feedbackRepository: FeedbackRepositoryImpl,
+    private val mapboxRepository: MapboxRepositoryImpl,
 ) : ViewModel() {
-
+    val isLoadingScreen = MutableStateFlow(true)
     val idUser = MutableStateFlow<Int?>(null)
     val perfilUser = MutableStateFlow<String?>(null)
 
-    val viagem = MutableStateFlow<ViagemDetalhesListagemDto?>(
-        null
-//        ViagemDetalhesListagemDto(
-//            id = 1,
-//            data = LocalDate.now(),
-//            horarioSaida = LocalTime.now(),
-//            horarioChegada = LocalTime.now(),
-//            preco = 30.0,
-//            status = StatusViagem.ANDAMENTO,
-//            apenasMulheres = false,
-//            capacidadePassageiros = 4,
-//            motorista = UsuarioSimplesListagemDto(
-//                id = 1,
-//                nome = "Matheus Alves",
-//                notaGeral = 4.2,
-//                fotoUrl = "foto",
-//                perfil = "MOTORISTA"
-//            ),
-//            passageiros =
-////            null
-//            listOf(
-//                UsuarioSimplesListagemDto(
-//                    id = 1,
-//                    nome = "Ewerton Lima",
-//                    notaGeral = 4.0,
-//                    fotoUrl = "foto",
-//                    perfil = "PASSAGEIRO"
-//                ),
-//                UsuarioSimplesListagemDto(
-//                    id = 2,
-//                    nome = "Kauã Queiroz",
-//                    notaGeral = 4.2,
-//                    fotoUrl = "foto",
-//                    perfil = "PASSAGEIRO"
-//                )
-//            ),
-//            carro = ViagemDetalhesListagemDto.CarroDto(
-//                marca = "Honda",
-//                modelo = "Fit",
-//                placa = "ABC1D03",
-//                cor = "Preto"
-//            ),
-//            trajeto = TrajetoDto(
-//                pontoPartida = LocalidadeDto(
-//                    Coordenadas(
-//                        latitude = 0.0,
-//                        longitude = 0.0
-//                    ),
-//                    "04244000",
-//                    "SP",
-//                    "São Paulo",
-//                    "São João Clímaco",
-//                    "Estrada das Lágrimas",
-//                    300
-//                ),
-//                pontoChegada = LocalidadeDto(
-//                    Coordenadas(
-//                        latitude = 0.0,
-//                        longitude = 0.0
-//                    ),
-//                    "12045000",
-//                    "SP",
-//                    "Taubaté",
-//                    "Centro",
-//                    "Avenida Independência",
-//                    680
-//                )
-//            ),
-//            solicitacoes = listOf(
-//                SolicitacaoViagemListagemDto(
-//                    id = 1,
-//                    status = StatusSolicitacao.PENDENTE,
-//                    usuario = UsuarioSimplesListagemDto(
-//                        id = 1,
-//                        nome = "Ewerton Lima",
-//                        notaGeral = 4.0,
-//                        fotoUrl = "foto",
-//                        perfil = "PASSAGEIRO"
-//                    ),
-//                    ViagemSimplesListagemDto(
-//                        id = 1,
-//                        data = LocalDate.now(),
-//                        hora = LocalTime.now(),
-//                        preco = 30.0,
-//                        status = StatusViagem.PENDENTE
-//                    )
-//                ),
-//                SolicitacaoViagemListagemDto(
-//                    id = 1,
-//                    status = StatusSolicitacao.PENDENTE,
-//                    usuario = UsuarioSimplesListagemDto(
-//                        id = 3,
-//                        nome = "Lucas Arantes",
-//                        notaGeral = 4.3,
-//                        fotoUrl = "foto",
-//                        perfil = "PASSAGEIRO"
-//                    ),
-//                    ViagemSimplesListagemDto(
-//                        id = 1,
-//                        data = LocalDate.now(),
-//                        hora = LocalTime.now(),
-//                        preco = 30.0,
-//                        status = StatusViagem.PENDENTE
-//                    )
-//                )
-//            )
-//        )
-    )
-
-    var isViagemDeleted = MutableStateFlow(false)
-        private set
+    val state = MutableStateFlow(DetalhesViagemUiState())
 
     fun getDetalhesViagem(viagemId: Int) {
         viewModelScope.launch {
@@ -154,25 +50,85 @@ class DetalhesViagemViewModel(
                 val response = viagemRepository.findById(viagemId)
 
                 if (response.isSuccessful) {
-                    viagem.update { response.body() }
+                    state.update { it.copy(viagem = setDetalhesViagemComFotosVerificadas(response.body()!!)) }
                     Log.i(
                         "detalhesViagem",
                         "Sucesso ao buscar detalhes da viagem: ${response.body()}"
                     )
+                    if (response.body()!!.status == StatusViagem.PENDENTE) {
+                        if (perfilUser.value == "MOTORISTA") {
+                            // calcular distâncias
+//                            getEnderecoUsuario()
+                        }
+                    } else if (response.body()!!.status == StatusViagem.FINALIZADA) {
+                        if (perfilUser.value == "PASSAGEIRO") {
+                            verifyFeedbackFromPassageiroToMotorista(
+                                passageiroId = idUser.value!!,
+                                motoristaId = response.body()!!.motorista.id,
+                                viagemId = response.body()!!.id
+                            )
+                        }
+                    }
                 } else {
-                    viagem.update { null }
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Não foi possível buscar detalhes da viagem"
+                        )
+                    }
                     Log.e(
                         "detalhesViagem",
                         "Erro ao buscar detalhes da viagem: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
-                viagem.update { null }
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao buscar detalhes da viagem"
+                    )
+                }
                 Log.e(
                     "detalhesViagem",
                     "Erro ao buscar detalhes da viagem: ${e.message}"
                 )
+            } finally {
+                isLoadingScreen.update { false }
             }
+        }
+    }
+
+    private suspend fun verifyFeedbackFromPassageiroToMotorista(
+        passageiroId: Int,
+        motoristaId: Int,
+        viagemId: Int
+    ) {
+        try {
+            val response = feedbackRepository.existsByDestinatarioAndRemetenteAndViagem(
+                FeedbackConsultaDto(
+                    destinatarioId = passageiroId,
+                    remetenteId = motoristaId,
+                    viagemId = viagemId
+                )
+            )
+
+            if (response.isSuccessful) {
+                Log.i(
+                    "detalhesViagem",
+                    "Sucesso ao consultar se passageiro já avaliou motorista: ${response.body()}"
+                )
+                state.update { it.copy(motoristaFoiAvaliado = response.body()!!) }
+            } else {
+                Log.e(
+                    "detalhesViagem",
+                    "Erro ao consultar se passageiro já avaliou motorista: ${response.errorBody()}"
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "detalhesViagem",
+                "Exception -> erro ao consultar se passageiro já avaliou motorista: ${e.message}"
+            )
         }
     }
 
@@ -182,11 +138,13 @@ class DetalhesViagemViewModel(
                 // aceitar solicitação
                 val responseSolicitacao = solicitacaoViagemRepository.refuse(solicitacao.id)
                 if (responseSolicitacao.isSuccessful) {
-                    viagem.update { currentViagem ->
-                        currentViagem!!.copy(
-                            solicitacoes = currentViagem.solicitacoes.filter { solicitacaoViagem ->
-                                solicitacaoViagem.id != solicitacao.id
-                            }
+                    state.update {
+                        it.copy(
+                            viagem = it.viagem?.copy(
+                                solicitacoes = it.viagem.solicitacoes.filter { solicitacaoViagem ->
+                                    solicitacaoViagem.id != solicitacao.id
+                                }
+                            )
                         )
                     }
                     Log.i(
@@ -194,15 +152,27 @@ class DetalhesViagemViewModel(
                         "Sucesso ao recusar solicitação de viagem: ${responseSolicitacao.body()}"
                     )
                 } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao recusar solicitação"
+                        )
+                    }
                     Log.e(
                         "detalhesViagem",
                         "Erro ao recusar solicitação de viagem: ${responseSolicitacao.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao recusar solicitação"
+                    )
+                }
                 Log.e(
                     "detalhesViagem",
-                    "Erro ao recusar solicitação de viagem: ${e.message}"
+                    "Exception -> erro ao recusar solicitação de viagem: ${e.message}"
                 )
             }
         }
@@ -214,11 +184,14 @@ class DetalhesViagemViewModel(
                 // aceitar solicitação
                 val responseSolicitacao = solicitacaoViagemRepository.approve(solicitacao.id)
                 if (responseSolicitacao.isSuccessful) {
-                    viagem.update { currentViagem ->
-                        currentViagem!!.copy(
-                            solicitacoes = currentViagem.solicitacoes.filter { solicitacaoViagem ->
-                                solicitacaoViagem.id != solicitacao.id
-                            }
+                    state.update {
+                        it.copy(
+                            viagem = it.viagem?.copy(
+                                solicitacoes = it.viagem.solicitacoes.filter { solicitacaoViagem ->
+                                    solicitacaoViagem.id != solicitacao.id
+                                },
+                                passageiros = (it.viagem.passageiros) + toPassageiroDto(solicitacao.usuario)
+                            )
                         )
                     }
                     Log.i(
@@ -226,36 +199,24 @@ class DetalhesViagemViewModel(
                         "Sucesso ao aceitar solicitação de viagem: ${responseSolicitacao.body()}"
                     )
                 } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao aceitar solicitação"
+                        )
+                    }
                     Log.e(
                         "detalhesViagem",
                         "Erro ao aceitar solicitação de viagem: ${responseSolicitacao.errorBody()}"
                     )
                 }
-
-                // associar a viagem
-                val caronaCriacaoDto = CaronaCriacaoDto(
-                    viagemId = solicitacao.viagem.id,
-                    usuarioId = solicitacao.usuario.id
-                )
-                val responseCarona = caronaRepository.save(caronaCriacaoDto)
-                if (responseCarona.isSuccessful) {
-                    viagem.update { currentData ->
-                        currentData?.copy(
-                            passageiros = (currentData.passageiros
-                                ?: emptyList()) + solicitacao.usuario
-                        )
-                    }
-                    Log.i(
-                        "detalhesViagem",
-                        "Sucesso ao associar usuário à viagem: ${responseCarona.body()}"
-                    )
-                } else {
-                    Log.e(
-                        "detalhesViagem",
-                        "Erro ao associar usuário à viagem: ${responseCarona.errorBody()}"
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao aceitar solicitação"
                     )
                 }
-            } catch (e: Exception) {
                 Log.e(
                     "detalhesViagem",
                     "Erro ao aceitar solicitação de viagem e associar à viagem: ${e.message}"
@@ -264,19 +225,98 @@ class DetalhesViagemViewModel(
         }
     }
 
-    fun handleCancelViagem(viagemId: Int) {
+    fun onCancelViagemClick() {
+        state.update { it.copy(isCancelViagemModalOpened = true) }
+    }
+
+    fun onCancelReservaClick() {
+        state.update { it.copy(isCancelReservaModalOpened = true) }
+    }
+
+    fun onIniciarViagemClick() {
+        state.update { it.copy(isIniciarViagemModalOpened = true) }
+    }
+
+    fun onFinalizarViagemClick() {
+        state.update { it.copy(isFinalizarViagemModalOpened = true) }
+    }
+
+    fun onCancelSolicitacaoReservaClick(solicitacao: SolicitacaoViagemListagemDto) {
+        state.update {
+            it.copy(
+                isCancelSolicitacaoModalOpened = true,
+                solicitacaoToDelete = solicitacao
+            )
+        }
+    }
+
+    fun onDismissCancelViagemRequest() {
+        state.update { it.copy(isCancelViagemModalOpened = false) }
+    }
+
+    fun onDismissCancelReservaRequest() {
+        state.update { it.copy(isCancelReservaModalOpened = false) }
+    }
+
+    fun onDismissCancelSolicitacaoRequest() {
+        state.update {
+            it.copy(
+                isCancelSolicitacaoModalOpened = false,
+                solicitacaoToDelete = null
+            )
+        }
+    }
+
+    fun onDismissIniciarViagemRequest() {
+        state.update {
+            it.copy(
+                isIniciarViagemModalOpened = false,
+            )
+        }
+    }
+
+    fun onDismissFinalizarViagemRequest() {
+        state.update {
+            it.copy(
+                isFinalizarViagemModalOpened = false,
+            )
+        }
+    }
+
+    fun handleCancelViagem() {
         viewModelScope.launch {
             try {
-                val response = viagemRepository.delete(viagemId)
+                val response = viagemRepository.delete(state.value.viagem!!.id)
                 if (response.isSuccessful) {
-                    isViagemDeleted.value = true
+                    Log.i(
+                        "detalhesViagem",
+                        "Sucesso ao deletar viagem"
+                    )
+                    state.update {
+                        it.copy(
+                            isViagemDeleted = true,
+                            successMessage = "Viagem cancelada"
+                        )
+                    }
                 } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao cancelar a viagem"
+                        )
+                    }
                     Log.e(
                         "detalhesViagem",
                         "Erro ao deletar viagem: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao cancelar a viagem"
+                    )
+                }
                 Log.e(
                     "detalhesViagem",
                     "Erro ao deletar viagem: ${e.message}"
@@ -285,23 +325,41 @@ class DetalhesViagemViewModel(
         }
     }
 
-    fun handleCancelReserva(usuarioId: Int) {
+    fun handleCancelReserva() {
         viewModelScope.launch {
             try {
-                val response = caronaRepository.delete(viagem.value!!.id, usuarioId)
+                val response = caronaRepository.delete(state.value.viagem!!.id, idUser.value!!)
+
                 if (response.isSuccessful) {
-                    isViagemDeleted.value = true
+                    state.update {
+                        it.copy(
+                            isViagemDeleted = true,
+                            successMessage = "Carona cancelada"
+                        )
+                    }
                     Log.i(
                         "detalhesViagem",
-                        "Sucesso ao cancelar reserva na viagem: ${response.errorBody()}"
+                        "Sucesso ao cancelar reserva na viagem: ${response.body()}"
                     )
                 } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao cancelar reserva"
+                        )
+                    }
                     Log.e(
                         "detalhesViagem",
                         "Erro ao cancelar reserva na viagem: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao cancelar reserva"
+                    )
+                }
                 Log.e(
                     "detalhesViagem",
                     "Exception -> erro ao cancelar reserva na viagem: ${e.message}"
@@ -309,4 +367,276 @@ class DetalhesViagemViewModel(
             }
         }
     }
+
+    fun handleCancelSolicitacao() {
+        viewModelScope.launch {
+            try {
+                val response = solicitacaoViagemRepository.delete(state.value.viagem!!.id)
+
+                if (response.isSuccessful) {
+                    state.update {
+                        it.copy(
+                            isViagemDeleted = true,
+                            successMessage = "Solicitação de carona cancelada"
+                        )
+                    }
+                    Log.i(
+                        "detalhesViagem",
+                        "Sucesso ao cancelar reserva na viagem"
+                    )
+                } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao cancelar solicitação de reserva"
+                        )
+                    }
+                    Log.e(
+                        "detalhesViagem",
+                        "Erro ao cancelar reserva na viagem: ${response.errorBody()}"
+                    )
+                }
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao cancelar solicitação de reserva"
+                    )
+                }
+                Log.e(
+                    "detalhesViagem",
+                    "Exception -> erro ao cancelar reserva na viagem: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun handleSolicitarCarona() {
+        viewModelScope.launch {
+            try {
+                val solicitacaoViagemCriacao = SolicitacaoViagemCriacaoDto(
+                    usuarioId = idUser.value!!,
+                    viagemId = state.value.viagem!!.id
+                )
+                val response = solicitacaoViagemRepository.save(solicitacaoViagemCriacao)
+                if (response.isSuccessful) {
+                    state.update {
+                        it.copy(
+                            isSuccess = true,
+                            successMessage = "Solicitação de carona enviada",
+                            viagem = it.viagem?.copy(
+                                solicitacoes = (it.viagem.solicitacoes) + response.body()!!
+                            )
+                        )
+                    }
+                    Log.i(
+                        "detalhesViagem",
+                        "Sucesso ao solicitar reserva para a viagem: ${response.body()}"
+                    )
+                } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao solicitar reserva"
+                        )
+                    }
+                    Log.e(
+                        "detalhesViagem",
+                        "Erro ao solicitar reserva para a viagem: ${response.errorBody()}"
+                    )
+                }
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao solicitar reserva"
+                    )
+                }
+                Log.e(
+                    "detalhesViagem",
+                    "Exception -> erro ao solicitar reserva para a viagem: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun handleIniciarViagem() {
+        viewModelScope.launch {
+            try {
+                val response = viagemRepository.start(state.value.viagem!!.id)
+
+                if (response.isSuccessful) {
+                    state.update {
+                        it.copy(
+                            isSuccess = true,
+                            successMessage = "Viagem iniciada",
+                            viagem = it.viagem?.copy(
+                                status = StatusViagem.ANDAMENTO
+                            ),
+                            isIniciarViagemModalOpened = false
+                        )
+                    }
+                    Log.i(
+                        "detalhesViagem",
+                        "Sucesso ao iniciar viagem: ${response.body()}"
+                    )
+                } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao iniciar viagem"
+                        )
+                    }
+                    Log.e(
+                        "detalhesViagem",
+                        "Erro ao iniciar viagem: ${response.errorBody()}"
+                    )
+                }
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao iniciar viagem"
+                    )
+                }
+                Log.e(
+                    "detalhesViagem",
+                    "Exception -> erro ao iniciar viagem: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun handleFinalizarViagem() {
+        viewModelScope.launch {
+            try {
+                val response = viagemRepository.finish(state.value.viagem!!.id)
+
+                if (response.isSuccessful) {
+                    state.update {
+                        it.copy(
+                            isSuccess = true,
+                            successMessage = "Viagem finalizada",
+                            viagem = it.viagem?.copy(
+                                status = StatusViagem.FINALIZADA
+                            ),
+                            isFinalizarViagemModalOpened = false
+                        )
+                    }
+                    Log.i(
+                        "detalhesViagem",
+                        "Sucesso ao finalizar viagem: ${response.body()}"
+                    )
+                } else {
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = "Houve um erro ao finalizar viagem"
+                        )
+                    }
+                    Log.e(
+                        "detalhesViagem",
+                        "Erro ao finalizar viagem: ${response.errorBody()}"
+                    )
+                }
+            } catch (e: Exception) {
+                state.update {
+                    it.copy(
+                        isError = true,
+                        errorMessage = "Houve um erro ao finalizar viagem"
+                    )
+                }
+                Log.e(
+                    "detalhesViagem",
+                    "Exception -> erro ao finalizar viagem: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun setIsSuccessToFalse() {
+        state.update {
+            it.copy(
+                isSuccess = false,
+                successMessage = ""
+            )
+        }
+    }
+
+    fun setIsErrorToFalse() {
+        state.update {
+            it.copy(
+                isError = false,
+                errorMessage = ""
+            )
+        }
+    }
+
+    fun setIsViagemDeletedToFalse() {
+        state.update {
+            it.copy(
+                isViagemDeleted = false,
+                successMessage = ""
+            )
+        }
+    }
+
+    private suspend fun setDetalhesViagemComFotosVerificadas(viagemData: ViagemDetalhesListagemDto): ViagemDetalhesListagemDto {
+        return withContext(Dispatchers.IO) {
+            val motoristaValidado = validarFotoMotorista(viagemData.motorista)
+            val passageirosValidados = validarFotosPassageiros(viagemData.passageiros)
+            val solicitacoesValidadas = validarFotosSolicitacoes(viagemData.solicitacoes)
+
+            viagemData.copy(
+                motorista = motoristaValidado,
+                passageiros = passageirosValidados,
+                solicitacoes = solicitacoesValidadas
+            )
+        }
+    }
+
+    private suspend fun validarFotosSolicitacoes(solicitacoes: List<SolicitacaoViagemListagemDto>): List<SolicitacaoViagemListagemDto> {
+        return solicitacoes.map { solicitacao ->
+            solicitacao.copy(
+                usuario = solicitacao.usuario.copy(
+                    isFotoValida = isUrlFotoUserValida(solicitacao.usuario.fotoUrl)
+                )
+            )
+        }
+    }
+
+    private suspend fun validarFotosPassageiros(passageiros: List<PassageiroDto>): List<PassageiroDto> {
+        return passageiros.map { passageiro ->
+            passageiro.copy(
+                isFotoValida = isUrlFotoUserValida(passageiro.fotoUrl)
+            )
+        }
+    }
+
+    private suspend fun validarFotoMotorista(motorista: UsuarioSimplesListagemDto): UsuarioSimplesListagemDto {
+        return motorista.copy(
+            isFotoValida = isUrlFotoUserValida(motorista.fotoUrl)
+        )
+    }
+
+    private suspend fun getEnderecoUsuario() {
+        try {
+            val response = usuarioRepository.findEnderecoByUsuarioId(idUser.value!!)
+
+            if (response.code() == 200) {
+                Log.e("detalhesViagem", "Sucesso ao buscar endereço do usuário: ${response.body()}")
+                state.update {
+                    it.copy(
+                        enderecoUsuario = response.body()
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "detalhesViagem",
+                "Exception -> erro ao buscar endereço do usuário: ${e.printStackTrace()}"
+            )
+        }
+    }
+
 }

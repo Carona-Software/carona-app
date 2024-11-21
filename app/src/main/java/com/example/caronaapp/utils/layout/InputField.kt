@@ -48,6 +48,7 @@ fun InputField(
     buttonIconEnabled: Boolean = true,
     iconDescription: String? = null,
     onIconClick: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
     handleChange: (String) -> Unit = {}
 ) {
     CaronaAppTheme {
@@ -97,7 +98,7 @@ fun InputField(
                         .border(
                             BorderStroke(0.dp, Color.Transparent),
                             shape = RoundedCornerShape(12.dp)
-                        ),
+                        ).then(modifier),
                     textStyle = MaterialTheme.typography.headlineMedium,
                     placeholder = {
                         Text(

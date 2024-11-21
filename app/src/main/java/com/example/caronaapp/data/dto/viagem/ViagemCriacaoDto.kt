@@ -1,12 +1,13 @@
 package com.example.caronaapp.data.dto.viagem
 
-import com.example.caronaapp.utils.formatTime
+import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 data class ViagemCriacaoDto(
-    val data: String = "",
-    val horarioPartida: String = formatTime(LocalTime.now()),
-    val horarioChegada: String = formatTime(LocalTime.now()),
+    val data: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    val horarioPartida: String = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")),
+    val horarioChegada: String = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")),
     val preco: Double = 0.0,
     val apenasMulheres: Boolean = false,
     val pontoPartida: Coordenadas = Coordenadas(0.0, 0.0),

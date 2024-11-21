@@ -25,4 +25,10 @@ interface CaronaApi {
         @Path("viagemId") viagemId: Int,
         @Path("usuarioId") usuarioId: Int
     ): Response<Void>
+
+    @GET("caronas/ocorrencias/{motoristaId}/{passageiroId}")
+    suspend fun countViagensBetweenMotoristaAndPassageiro(
+        @Path("motoristaId") motoristaId: Int,
+        @Path("passageiroId") passageiroId: Int
+    ): Response<Int>
 }

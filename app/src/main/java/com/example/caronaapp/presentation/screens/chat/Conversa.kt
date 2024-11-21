@@ -121,7 +121,7 @@ fun ConversaScreen(navController: NavController) {
                     .fillMaxSize()
                     .background(Color.White)
             ) {
-                TopBarUser(navController = navController, fotoUser = null, nome = "Lucas Arantes")
+//                TopBarUser(navController = navController, fotoUrl = null, nome = "Lucas Arantes")
 
                 Column(
                     modifier = Modifier

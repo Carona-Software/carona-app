@@ -1,6 +1,5 @@
 package com.example.caronaapp.presentation.screens.fidelizados
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,10 +19,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -46,8 +44,11 @@ import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.VermelhoExcluir
 import com.example.caronaapp.ui.theme.Viagem
 import com.example.caronaapp.utils.layout.CardButton
+import com.example.caronaapp.utils.layout.CustomAsyncImage
+import com.example.caronaapp.utils.layout.CustomDefaultImage
 import com.example.caronaapp.utils.layout.CustomDialog
 import com.example.caronaapp.utils.layout.CustomItemCard
+import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
 import org.koin.androidx.compose.koinViewModel
@@ -57,12 +58,11 @@ fun FidelizadosScreen(
     navController: NavController,
     viewModel: FidelizadosViewModel = koinViewModel()
 ) {
-    val fidelizados = viewModel.fidelizados.collectAsState()
-    val solicitacoes = viewModel.solicitacoes.collectAsState()
-
-    val fidelizadoToDelete = viewModel.fidelizadoToDelete.collectAsState()
-
-    val isRemoveFidelizadoDialogOpened = viewModel.isRemoveFidelizadoDialogOpened.collectAsState()
+    val fidelizados by viewModel.fidelizados.collectAsState()
+    val solicitacoes by viewModel.solicitacoes.collectAsState()
+    val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
+    val fidelizadoToDelete by viewModel.fidelizadoToDelete.collectAsState()
+    val isRemoveFidelizadoDialogOpened by viewModel.isRemoveFidelizadoDialogOpened.collectAsState()
 
     CaronaAppTheme {
         Scaffold { innerPadding ->
@@ -78,96 +78,101 @@ fun FidelizadosScreen(
                     title = stringResource(id = R.string.fidelizados)
                 )
 
-                if (fidelizados.value != null) {
-                    LazyColumn {
-                        items(items = fidelizados.value!!.toList()) { fidelizado ->
-                            FidelizadoCard(
-                                fotoUser = painterResource(id = R.mipmap.user_default),
-                                fidelizadoData = fidelizado,
-                                onNegativeButton = { viewModel.onRemoverClick(fidelizado) },
-                                onPositiveButton = { navController.navigate("chat") }
-                            )
-                        }
-                    }
+                if (isLoadingScreen) {
+                    LoadingScreen(backGround = CinzaF5)
                 } else {
-                    NoResultsComponent(
-                        text = stringResource(id = R.string.sem_conteudo_fidelizados)
-                    )
-                }
-
-                if (solicitacoes.value != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.solicitacoes_pendentes),
-                            color = Azul,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier
-                                .padding(horizontal = 20.dp)
-
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
+                    if (fidelizados != null) {
                         LazyColumn {
-                            items(items = solicitacoes.value!!.toList()) { solicitacao ->
+                            items(items = fidelizados!!.toList()) { fidelizado ->
                                 FidelizadoCard(
-                                    fotoUser = painterResource(id = R.mipmap.user_default),
-                                    fidelizadoData = solicitacao.passageiro,
-                                    isSolicitacao = true,
-                                    onNegativeButton = {
-                                        viewModel.handleRefuseFidelizado(
-                                            solicitacao
-                                        )
-                                    },
-                                    onPositiveButton = {
-                                        viewModel.handleAcceptFidelizado(
-                                            solicitacao
-                                        )
-                                    }
+                                    fotoUrl = fidelizado.fotoUrl,
+                                    isUrlFotoValida = fidelizado.isFotoValida,
+                                    fidelizadoData = fidelizado,
+                                    onNegativeButton = { viewModel.onRemoverClick(fidelizado) },
+                                    onPositiveButton = { navController.navigate("chat") }
                                 )
                             }
                         }
+                    } else {
+                        NoResultsComponent(
+                            text = stringResource(id = R.string.sem_conteudo_fidelizados),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
                     }
-                }
 
-                if (isRemoveFidelizadoDialogOpened.value) {
-                    CustomDialog(
-                        onDismissRequest = { viewModel.onDismissDialog() },
-                        content = {
-                            val message = stringResource(
-                                id = R.string.message_confirmation_remove_fidelizado,
-                                fidelizadoToDelete.value!!.nome,
+                    if (solicitacoes != null) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Column(
+                            modifier = Modifier
+                                .padding(top = 12.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.solicitacoes_pendentes),
+                                color = Azul,
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp)
+
                             )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            LazyColumn {
+                                items(items = solicitacoes!!.toList()) { solicitacao ->
+                                    FidelizadoCard(
+                                        fotoUrl = solicitacao.passageiro.fotoUrl,
+                                        isUrlFotoValida = solicitacao.passageiro.isFotoValida,
+                                        fidelizadoData = solicitacao.passageiro,
+                                        isSolicitacao = true,
+                                        onNegativeButton = {
+                                            viewModel.handleRefuseFidelizado(solicitacao)
+                                        },
+                                        onPositiveButton = {
+                                            viewModel.handleAcceptFidelizado(solicitacao)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
 
-                            // Estilizar o texto para deixar em negrito apenas uma parte da string
-                            val annotatedString = buildAnnotatedString {
-                                val nomeIndex = message.indexOf(fidelizadoToDelete.value!!.nome)
+                    if (isRemoveFidelizadoDialogOpened) {
+                        CustomDialog(
+                            onDismissRequest = { viewModel.onDismissDialog() },
+                            content = {
+                                val message = stringResource(
+                                    id = R.string.message_confirmation_remove_fidelizado,
+                                    fidelizadoToDelete!!.nome,
+                                )
 
-                                append(message.substring(0, nomeIndex))
+                                // Estilizar o texto para deixar em negrito apenas uma parte da string
+                                val annotatedString = buildAnnotatedString {
+                                    val nomeIndex = message.indexOf(fidelizadoToDelete!!.nome)
 
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(fidelizadoToDelete.value!!.nome)
+                                    append(message.substring(0, nomeIndex))
+
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append(fidelizadoToDelete!!.nome)
+                                    }
+
+                                    append(
+                                        message.substring(
+                                            nomeIndex + fidelizadoToDelete!!.nome.length
+                                        )
+                                    )
                                 }
 
-                                append(
-                                    message.substring(
-                                        nomeIndex + fidelizadoToDelete.value!!.nome.length
-                                    )
+                                Text(
+                                    text = annotatedString,
+                                    color = Azul,
+                                    style = MaterialTheme.typography.titleSmall,
                                 )
-                            }
-
-                            Text(
-                                text = annotatedString,
-                                color = Azul,
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                        },
-                        saveButtonLabel = stringResource(id = R.string.label_button_excluir),
-                        saveButtonColor = VermelhoExcluir
-                    ) {
-                        viewModel.handleDeleteFidelizado()
+                            },
+                            saveButtonLabel = stringResource(id = R.string.label_button_excluir),
+                            saveButtonColor = VermelhoExcluir
+                        ) {
+                            viewModel.handleDeleteFidelizado()
+                        }
                     }
                 }
             }
@@ -177,7 +182,8 @@ fun FidelizadosScreen(
 
 @Composable
 fun FidelizadoCard(
-    fotoUser: Painter,
+    fotoUrl: String,
+    isUrlFotoValida: Boolean,
     fidelizadoData: FidelizadoListagemDto,
     isSolicitacao: Boolean = false,
     onNegativeButton: () -> Unit,
@@ -189,12 +195,15 @@ fun FidelizadoCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Image(
-                painter = fotoUser,
-                contentDescription = null,
-                modifier = Modifier
-                    .width(68.dp)
-            )
+            if (isUrlFotoValida) {
+                CustomAsyncImage(
+                    fotoUrl = fotoUrl,
+                    modifier = Modifier
+                        .width(68.dp)
+                )
+            } else {
+                CustomDefaultImage(modifier = Modifier.width(68.dp))
+            }
         }
 
         Column(

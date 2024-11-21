@@ -1,7 +1,8 @@
 package com.example.caronaapp.presentation.screens.viagens
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -22,31 +25,25 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +51,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
+import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
+import com.example.caronaapp.presentation.view_models.ViagensViewModel
+import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -62,32 +62,45 @@ import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaCB
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
-import com.example.caronaapp.ui.theme.CoracaoPreenchido
+import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Filtro
 import com.example.caronaapp.ui.theme.LaranjaLonge
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
 import com.example.caronaapp.ui.theme.VerdePerto
-import com.example.caronaapp.ui.theme.VermelhoErro
-import com.example.caronaapp.utils.formatTime
+import com.example.caronaapp.utils.functions.formatTime
 import com.example.caronaapp.utils.layout.ApenasMulheresSwitch
+import com.example.caronaapp.utils.layout.CustomAsyncImage
+import com.example.caronaapp.utils.layout.CustomDefaultImage
+import com.example.caronaapp.utils.layout.LoadingScreen
+import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.PrecoFieldComponent
 import com.example.caronaapp.utils.layout.QtdPassageirosField
 import com.example.caronaapp.utils.layout.TopBarTitle
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViagensScreen(navController: NavController) {
+fun ViagensScreen(
+    navController: NavController,
+    viagem: ViagemProcuraDto,
+    pontoPartida: String,
+    pontoDestino: String,
+    viewModel: ViagensViewModel = koinViewModel()
+) {
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setViagemDto(
+            viagem = viagem,
+            pontoPartida = pontoPartida,
+            pontoDestino = pontoDestino
+        )
+    }
 
-    var pontoPartida by remember { mutableStateOf("São Paulo, SP") }
-    var pontoChegada by remember { mutableStateOf("Taubaté, SP") }
-    var dia by remember { mutableStateOf("") }
-    var capacidadePassageiros by remember { mutableStateOf("1") }
-    var precoMinimo by remember { mutableStateOf("") }
-    var precoMaximo by remember { mutableStateOf("") }
-    var apenasMulheres by remember { mutableStateOf(false) }
+    val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
+    val viagens by viewModel.viagens.collectAsState()
+    val state by viewModel.state.collectAsState()
+    val perfilUser by viewModel.perfilUser.collectAsState()
 
-    var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
     CaronaAppTheme {
@@ -108,176 +121,148 @@ fun ViagensScreen(navController: NavController) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White),
+                            .background(Color.White)
+                            .padding(start = 16.dp, end = 16.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 6.dp, horizontal = 16.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(CinzaF5),
-                            verticalAlignment = Alignment.CenterVertically
+                                .border(
+                                    border = BorderStroke(1.dp, CinzaE8),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .padding(8.dp)
                         ) {
-                            Icon(
-                                modifier = Modifier.padding(start = 5.dp),
-                                imageVector = PontoPartida,
-                                contentDescription = "Voltar",
-                                tint = Azul,
-                            )
-
-                            TextField(
-                                value = pontoPartida,
-                                onValueChange = { pontoPartida = it },
-                                placeholder = {
-                                    Text(
-                                        text = "Ponto de partida",
-                                        color = Cinza90,
-                                        style = MaterialTheme.typography.displayLarge
-                                    )
-                                },
+                            Row(
                                 modifier = Modifier
-                                    .background(Color.Transparent),
-                                colors = TextFieldDefaults.colors(
-                                    focusedTextColor = Azul,
-                                    unfocusedTextColor = Azul,
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                ),
-                                textStyle = MaterialTheme.typography.headlineMedium
-                            )
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.padding(),
+                                    imageVector = PontoPartida,
+                                    contentDescription = "Voltar",
+                                    tint = Azul,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = state.pontoPartida,
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Azul,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.padding(),
+                                    imageVector = Localizacao,
+                                    contentDescription = "Chegada",
+                                    tint = Azul,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = state.pontoDestino,
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Azul,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier,
+                                    imageVector = Calendario,
+                                    contentDescription = "date",
+                                    tint = Azul,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = state.data,
+                                    style = MaterialTheme.typography.displayLarge,
+                                    color = Azul
+                                )
+                            }
                         }
 
-                        Row(
+                        Button(
+                            onClick = { viewModel.showBottomSheet() },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp, horizontal = 16.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(CinzaF5),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(vertical = 10.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .height(36.dp)
+                                .align(Alignment.End),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CinzaF5
+                            ),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
                         ) {
-                            Icon(
-                                modifier = Modifier.padding(start = 5.dp),
-                                imageVector = Localizacao,
-                                contentDescription = "Chegada",
-                                tint = Azul,
-                            )
-
-                            TextField(
-                                value = pontoChegada,
-                                onValueChange = { pontoChegada = it },
-                                placeholder = {
-                                    Text(
-                                        text = "Ponto de chegada",
-                                        color = Cinza90,
-                                        style = MaterialTheme.typography.displayLarge
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth(0.85f)
-                                    .background(Color.Transparent),
-                                colors = TextFieldDefaults.colors(
-                                    focusedTextColor = Azul,
-                                    unfocusedTextColor = Azul,
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                ),
-                                textStyle = MaterialTheme.typography.headlineMedium
-                            )
+                            Row(
+                                modifier = Modifier.clip(RoundedCornerShape(8.dp)),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.filtrar),
+                                    color = Azul,
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Filtro,
+                                    contentDescription = null,
+                                    tint = Azul,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp, horizontal = 16.dp)
-                                .clip(RoundedCornerShape(12.dp)),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(start = 5.dp),
-                                imageVector = Calendario,
-                                contentDescription = "date",
-                                tint = Azul,
-                            )
-
-                            TextField(
-                                value = dia,
-                                onValueChange = { dia = it },
-                                placeholder = {
-                                    Text(
-                                        text = "Data",
-                                        style = MaterialTheme.typography.displayLarge
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth(0.85f)
-                                    .background(Color.Transparent),
-                                colors = TextFieldDefaults.colors(
-                                    focusedTextColor = Azul,
-                                    unfocusedTextColor = Azul,
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                ),
-                                textStyle = MaterialTheme.typography.headlineMedium
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 10.dp)
-                                .clip(RoundedCornerShape(12.dp)),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Button(
-                                onClick = { showBottomSheet = true },
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .height(40.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = CinzaF5
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                                content = {
-                                    Row(
-                                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = R.string.filtrar),
-                                            color = Azul,
-                                            style = MaterialTheme.typography.bodySmall,
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Icon(
-                                            imageVector = Filtro,
-                                            contentDescription = null,
-                                            tint = Azul,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
-                            )
-                        }
-
-                        HorizontalDivider(color = CinzaE8, thickness = 2.dp)
+                        HorizontalDivider(
+                            color = CinzaE8,
+                            thickness = 1.dp,
+                            modifier = Modifier.scale(1.2f)
+                        )
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-//                    ViagemCard(
-//                        viagemData =
-//                    )
+
+                    if (isLoadingScreen) {
+                        LoadingScreen(backGround = CinzaF5)
+                    } else {
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        if (viagens == null) {
+                            NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
+                        } else {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                items(items = viagens!!.toList()) { viagem ->
+                                    ViagemCard(
+                                        viagemData = viagem,
+                                        navigate = { navController.navigate("viagens/detalhes/${viagem.id}") }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            if (showBottomSheet) {
+            if (state.showBottomSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
+                    onDismissRequest = { viewModel.onDismissBottomSheet() },
                     sheetState = sheetState,
                     modifier = Modifier,
                     containerColor = Color.White
@@ -305,14 +290,22 @@ fun ViagensScreen(navController: NavController) {
                         ) {
                             PrecoFieldComponent(
                                 label = stringResource(id = R.string.label_preco_minimo),
-                                value = precoMinimo,
-                                handleOnChange = { precoMinimo = it }
+                                value = if (state.precoMinimo == 0.0) "" else state.precoMinimo.toString(),
+                                handleOnChange = {
+                                    viewModel.handleOnChange(
+                                        ViagensField.PrecoMinimo(it.toDouble())
+                                    )
+                                }
                             )
                             Spacer(modifier = Modifier.width(24.dp))
                             PrecoFieldComponent(
                                 label = stringResource(id = R.string.label_preco_maximo),
-                                value = precoMaximo,
-                                handleOnChange = { precoMaximo = it }
+                                value = if (state.precoMaximo == 0.0) "" else state.precoMaximo.toString(),
+                                handleOnChange = {
+                                    viewModel.handleOnChange(
+                                        ViagensField.PrecoMaximo(it.toDouble())
+                                    )
+                                }
                             )
                         }
 
@@ -320,18 +313,38 @@ fun ViagensScreen(navController: NavController) {
 
                         // Capacidade de passageiros
                         QtdPassageirosField(
-                            value = capacidadePassageiros,
-                            handleAddQnt = { },
-                            handleRemoveQnt = { }
+                            value = state.capacidadePassageiros.toString(),
+                            handleAddQnt = {
+                                if (state.capacidadePassageiros < 4) {
+                                    viewModel.handleOnChange(
+                                        ViagensField.CapacidadePassageiros(
+                                            state.capacidadePassageiros + 1
+                                        )
+                                    )
+                                }
+                            },
+                            handleRemoveQnt = {
+                                if (state.capacidadePassageiros > 1) {
+                                    viewModel.handleOnChange(
+                                        ViagensField.CapacidadePassageiros(
+                                            state.capacidadePassageiros - 1
+                                        )
+                                    )
+                                }
+                            }
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // Apenas Mulheres
-                        ApenasMulheresSwitch(
-                            checked = apenasMulheres,
-                            onCheckedChange = { apenasMulheres = it }
-                        )
+                        if (perfilUser.uppercase() == "FEMININO") {
+                            ApenasMulheresSwitch(
+                                checked = state.apenasMulheres,
+                                onCheckedChange = {
+                                    viewModel.handleOnChange(ViagensField.ApenasMulheres(it))
+                                }
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(20.dp))
 
@@ -342,7 +355,7 @@ fun ViagensScreen(navController: NavController) {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             TextButton(
-                                onClick = { /*TODO*/ },
+                                onClick = { viewModel.clearFilters() },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = CinzaF5
                                 )
@@ -354,7 +367,7 @@ fun ViagensScreen(navController: NavController) {
                                 )
                             }
                             TextButton(
-                                onClick = { /*TODO*/ },
+                                onClick = { viewModel.handleFilterViagens() },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Azul
                                 )
@@ -373,59 +386,19 @@ fun ViagensScreen(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun InputField(
-    label: String,
-    value: String,
-    startIcon: ImageVector,
-    buttonIconEnabled: Boolean = true,
-    onValueChange: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(8.dp))
-            .padding(16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.width(8.dp))
-            TextField(
-                value = value,
-                onValueChange = onValueChange,
-                label = { Text(text = label) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
-            )
-        }
-    }
-}
-
 @Composable
 fun ViagemCard(
-    viagemData: ViagemListagemDto
+    viagemData: ViagemListagemDto,
+    navigate: () -> Unit
 ) {
-    var isFavorito by remember { mutableStateOf(false) }
-
-    fun setFavorito(valor: Boolean) {
-        if (isFavorito == valor) isFavorito = false else isFavorito = true
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        onClick = { navigate() }
     ) {
         Column(
             modifier = Modifier
@@ -457,7 +430,9 @@ fun ViagemCard(
                                     viagemData.trajeto.pontoPartida.uf
                                 ),
                                 style = MaterialTheme.typography.labelLarge,
-                                color = Azul
+                                color = Azul,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Row {
@@ -474,7 +449,7 @@ fun ViagemCard(
                                             .padding(4.dp)
                                             .fillMaxSize(),
                                         imageVector = Carro,
-                                        contentDescription = "Voltar",
+                                        contentDescription = null,
                                         tint = Color.White,
                                     )
                                 }
@@ -492,7 +467,7 @@ fun ViagemCard(
                                             .padding(4.dp)
                                             .fillMaxSize(),
                                         imageVector = Carro,
-                                        contentDescription = "Voltar",
+                                        contentDescription = null,
                                         tint = Color.White,
                                     )
                                 }
@@ -510,7 +485,7 @@ fun ViagemCard(
                                             .padding(4.dp)
                                             .fillMaxSize(),
                                         imageVector = Carro,
-                                        contentDescription = "Voltar",
+                                        contentDescription = null,
                                         tint = Color.White,
                                     )
                                 }
@@ -528,7 +503,7 @@ fun ViagemCard(
                         Icon(
                             modifier = Modifier.padding(horizontal = 8.dp),
                             imageVector = Localizacao,
-                            contentDescription = "Voltar",
+                            contentDescription = null,
                             tint = Azul,
                         )
                         Column {
@@ -539,7 +514,9 @@ fun ViagemCard(
                                     viagemData.trajeto.pontoChegada.uf
                                 ),
                                 style = MaterialTheme.typography.labelLarge,
-                                color = Azul
+                                color = Azul,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Row {
@@ -556,7 +533,7 @@ fun ViagemCard(
                                             .padding(4.dp)
                                             .fillMaxSize(),
                                         imageVector = Carro,
-                                        contentDescription = "Voltar",
+                                        contentDescription = null,
                                         tint = Color.White,
                                     )
                                 }
@@ -574,7 +551,7 @@ fun ViagemCard(
                                             .padding(4.dp)
                                             .fillMaxSize(),
                                         imageVector = Carro,
-                                        contentDescription = "Voltar",
+                                        contentDescription = null,
                                         tint = Color.White,
                                     )
                                 }
@@ -600,12 +577,24 @@ fun ViagemCard(
                         }
                     }
                 }
-                Text(
-                    text = viagemData.preco.toString(),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Azul
-                )
+                Row(
+                    modifier = Modifier.padding(start = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.cifrao_rs),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Azul
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = viagemData.preco.toString(),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Azul
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -625,16 +614,16 @@ fun ViagemCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row {
-                    Image(
-                        painter = painterResource(id = R.mipmap.foto_gustavo),
-                        contentDescription = "Foto do motorista",
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (viagemData.motorista.isFotoValida) {
+                        CustomAsyncImage(
+                            modifier = Modifier.size(48.dp),
+                            fotoUrl = viagemData.motorista.fotoUrl
+                        )
+                    } else {
+                        CustomDefaultImage(modifier = Modifier.size(48.dp))
+                    }
 
-                    )
                     Column(modifier = Modifier.padding(start = 8.dp)) {
                         Text(
                             text = viagemData.motorista.nome,
@@ -643,7 +632,12 @@ fun ViagemCard(
                             color = Azul
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "★", color = Color(0xFFFFC107))
+                            Icon(
+                                imageVector = EstrelaPreenchida,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = Amarelo
+                            )
                             Text(
                                 text = if (viagemData.motorista.notaGeral == 0.0) "--"
                                 else "${viagemData.motorista.notaGeral}",
@@ -655,24 +649,24 @@ fun ViagemCard(
                         }
                     }
                 }
-                IconButton(onClick = {
-                    setFavorito(true)
-                }) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(CinzaF5),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = CoracaoPreenchido,
-                            modifier = Modifier.size(26.dp),
-                            tint = VermelhoErro,
-                            contentDescription = "Favoritar"
-                        )
-                    }
-                }
+//                IconButton(onClick = {
+//                    setFavorito(true)
+//                }) {
+//                    Row(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .background(CinzaF5),
+//                        horizontalArrangement = Arrangement.Center,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Icon(
+//                            imageVector = CoracaoPreenchido,
+//                            modifier = Modifier.size(26.dp),
+//                            tint = VermelhoErro,
+//                            contentDescription = "Favoritar"
+//                        )
+//                    }
+//                }
             }
         }
     }
@@ -683,6 +677,11 @@ fun ViagemCard(
 @Composable
 fun PreviewViagensScreen() {
     CaronaAppTheme {
-        ViagensScreen(rememberNavController())
+        ViagensScreen(
+            navController = rememberNavController(),
+            viagem = ViagemProcuraDto(),
+            pontoPartida = "São Paulo, SP",
+            pontoDestino = "Taubaté, SP",
+        )
     }
 }

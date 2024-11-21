@@ -9,9 +9,14 @@ import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
 import com.example.caronaapp.data.repositories.FidelizacaoRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoFidelizacaoRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
+import com.example.caronaapp.utils.functions.isUrlFotoUserValida
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FidelizadosViewModel(
     private val fidelizacaoRepository: FidelizacaoRepositoryImpl,
@@ -19,64 +24,15 @@ class FidelizadosViewModel(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
+    val isLoadingScreen = MutableStateFlow(true)
     val fidelizados = MutableStateFlow<List<FidelizadoListagemDto>?>(null)
-
     val solicitacoes = MutableStateFlow<List<SolicitacaoFidelizacaoListagemDto>?>(null)
-
     val isRemoveFidelizadoDialogOpened = MutableStateFlow(false)
-
     val fidelizadoToDelete = MutableStateFlow<FidelizadoListagemDto?>(null)
 
     init {
         _getFidelizados()
         _getSolicitacoesFidelizacao()
-//        val fidelizadosLista = listOf(
-//            FidelizadoListagemDto(
-//                id = 1,
-//                fotoUrl = "foto",
-//                nome = "Matheus Alves",
-//                notaGeral = 4.1,
-//                cidadeLocalidade = "São Paulo",
-//                ufLocalidade = "SP",
-//                qtdViagensJuntos = 3
-//            ),
-//            FidelizadoListagemDto(
-//                id = 1,
-//                fotoUrl = "foto",
-//                nome = "Lucas Arantes",
-//                notaGeral = 4.4,
-//                cidadeLocalidade = "Campinas",
-//                ufLocalidade = "SP",
-//                qtdViagensJuntos = 5
-//            ),
-//        )
-//        fidelizados.value = fidelizadosLista
-
-//        val solicitacoesFidelizacao = listOf(
-//            SolicitacaoFidelizacaoListagemDto(
-//                id = 1,
-//                status = StatusSolicitacao.PENDENTE,
-//                motorista = FidelizadoListagemDto(
-//                    id = 1,
-//                    fotoUrl = "foto",
-//                    nome = "Matheus Alves",
-//                    notaGeral = 4.1,
-//                    cidadeLocalidade = "São Paulo",
-//                    ufLocalidade = "SP",
-//                    qtdViagensJuntos = 5
-//                ),
-//                passageiro = FidelizadoListagemDto(
-//                    id = 1,
-//                    fotoUrl = "foto",
-//                    nome = "Lucas Arantes",
-//                    notaGeral = 4.4,
-//                    cidadeLocalidade = "Campinas",
-//                    ufLocalidade = "SP",
-//                    qtdViagensJuntos = 5
-//                )
-//            )
-//        )
-//        solicitacoes.value = solicitacoesFidelizacao
     }
 
     private fun _getFidelizados() {
@@ -89,7 +45,11 @@ class FidelizadosViewModel(
                     Log.i("fidelizados", "Sucesso ao buscar fidelizados do usuário")
                     Log.i("fidelizados", "Status: ${response.code()}")
                     if (response.code() == 200) {
-                        fidelizados.update { response.body() }
+                        fidelizados.update {
+                            validarFotosFidelizados(
+                                response.body() ?: emptyList()
+                            )
+                        }
                     }
                 } else {
                     Log.e(
@@ -122,7 +82,11 @@ class FidelizadosViewModel(
                         "Status: ${response.code()}"
                     )
                     if (response.code() == 200) {
-                        solicitacoes.update { response.body() }
+                        solicitacoes.update {
+                            validarFotosSolicitacoes(
+                                response.body() ?: emptyList()
+                            )
+                        }
                     }
                 } else {
                     Log.e(
@@ -136,17 +100,19 @@ class FidelizadosViewModel(
                     "fidelizados",
                     "Exception -> erro ao buscar solicitações de fidelização para o usuário: ${e.printStackTrace()}"
                 )
+            } finally {
+                isLoadingScreen.update { false }
             }
         }
     }
 
     fun onDismissDialog() {
-        isRemoveFidelizadoDialogOpened.value = false
+        isRemoveFidelizadoDialogOpened.update { false }
     }
 
     fun onRemoverClick(fidelizado: FidelizadoListagemDto) {
-        isRemoveFidelizadoDialogOpened.value = true
-        fidelizadoToDelete.value = fidelizado
+        isRemoveFidelizadoDialogOpened.update { true }
+        fidelizadoToDelete.update { fidelizado }
     }
 
     fun handleDeleteFidelizado() {
@@ -155,7 +121,7 @@ class FidelizadosViewModel(
                 val response = fidelizacaoRepository.delete(1, fidelizadoToDelete.value!!.id)
 
                 if (response.isSuccessful) {
-                    fidelizadoToDelete.value = null
+                    fidelizadoToDelete.update { null }
                     _getFidelizados()
                     Log.i("fidelizados", "Sucesso ao deletar fidelização")
                 } else {
@@ -221,6 +187,30 @@ class FidelizadosViewModel(
                     "Erro ao aceitar fidelização e fidelizar o usuário: ${e.message}"
                 )
             }
+        }
+    }
+
+    private suspend fun validarFotosFidelizados(fidelizados: List<FidelizadoListagemDto>): List<FidelizadoListagemDto> {
+        return withContext(Dispatchers.IO) {
+            fidelizados.map { fidelizado ->
+                async {
+                    fidelizado.apply {
+                        isFotoValida = isUrlFotoUserValida(fotoUrl)
+                    }
+                }
+            }.awaitAll() // Espera todas as validações serem concluídas
+        }
+    }
+
+    private suspend fun validarFotosSolicitacoes(solicitacoes: List<SolicitacaoFidelizacaoListagemDto>): List<SolicitacaoFidelizacaoListagemDto> {
+        return withContext(Dispatchers.IO) {
+            solicitacoes.map { solicitacao ->
+                async {
+                    solicitacao.apply {
+                        this.passageiro.isFotoValida = isUrlFotoUserValida(this.passageiro.fotoUrl)
+                    }
+                }
+            }.awaitAll() // Espera todas as validações serem concluídas
         }
     }
 }

@@ -11,17 +11,18 @@ import com.example.caronaapp.data.repositories.ViaCepRepositoryImpl
 import com.example.caronaapp.presentation.screens.cadastro.CadastroField
 import com.example.caronaapp.presentation.screens.cadastro.UserCadastroState
 import com.example.caronaapp.presentation.screens.cadastro.UserCadastroValidations
-import com.example.caronaapp.utils.configPhotoToUpload
-import com.example.caronaapp.utils.formatDate
-import com.example.caronaapp.utils.isCepValido
-import com.example.caronaapp.utils.isCpfValido
-import com.example.caronaapp.utils.isEmailValid
-import com.example.caronaapp.utils.isNomeValido
-import com.example.caronaapp.utils.isNumeroValido
-import com.example.caronaapp.utils.senhaContainsCaractereEspecial
-import com.example.caronaapp.utils.senhaContainsMaiuscula
-import com.example.caronaapp.utils.senhaContainsMinuscula
-import com.example.caronaapp.utils.senhaContainsNumero
+import com.example.caronaapp.utils.functions.configPhotoToUpload
+import com.example.caronaapp.utils.functions.formatDate
+import com.example.caronaapp.utils.functions.isCepValido
+import com.example.caronaapp.utils.functions.isCpfValido
+import com.example.caronaapp.utils.functions.isEmailValid
+import com.example.caronaapp.utils.functions.isNomeValido
+import com.example.caronaapp.utils.functions.isNumeroValido
+import com.example.caronaapp.utils.functions.senhaContainsCaractereEspecial
+import com.example.caronaapp.utils.functions.senhaContainsMaiuscula
+import com.example.caronaapp.utils.functions.senhaContainsMinuscula
+import com.example.caronaapp.utils.functions.senhaContainsNumero
+import com.example.caronaapp.utils.functions.setPasswordVisibility
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,8 +38,7 @@ class CadastroViewModel(
     val userCadastroState = MutableStateFlow(UserCadastroState())
     val userCadastroValidations = MutableStateFlow(UserCadastroValidations())
 
-    var etapaAtual = MutableStateFlow(1)
-        private set
+    val etapaAtual = MutableStateFlow(1)
 
     val isSignUpSuccessful = MutableStateFlow(false)
 
@@ -157,7 +157,7 @@ class CadastroViewModel(
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Log.e("cadastro", "Erro ao cadastrar usuário: ${response.code()}")
-                    Log.e("cadastro", "Erro ao cadastrar usuário: ${errorBody}")
+                    Log.e("cadastro", "Erro ao cadastrar usuário: $errorBody")
                     Log.e("cadastro", "Erro ao cadastrar usuário: ${response.message()}")
                 }
             } catch (e: Exception) {
@@ -275,5 +275,21 @@ class CadastroViewModel(
 
     fun setBackToLoginToFalse() {
         isBackToLogin.update { false }
+    }
+
+    fun setPasswordVisibility() {
+        userCadastroValidations.update {
+            it.copy(
+                showPassword = setPasswordVisibility(userCadastroValidations.value.showPassword)
+            )
+        }
+    }
+
+    fun setConfirmationPasswordVisibility() {
+        userCadastroValidations.update {
+            it.copy(
+                showConfirmationPassword = setPasswordVisibility(userCadastroValidations.value.showConfirmationPassword)
+            )
+        }
     }
 }

@@ -1,4 +1,9 @@
-package com.example.caronaapp.utils
+package com.example.caronaapp.utils.functions
+
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 fun isEmailValid(email: String): Boolean {
     return email.isNotBlank() && (
@@ -62,4 +67,18 @@ fun isCepValido(cep: String): Boolean {
 
 fun isNumeroValido(numero: Int): Boolean {
     return numero <= 0
+}
+
+suspend fun isUrlFotoUserValida(url: String): Boolean {
+    return withContext(Dispatchers.IO) {
+        try {
+            val client = OkHttpClient()
+            val request = Request.Builder().url(url).head().build() // HEAD é suficiente para validar
+
+            val response = client.newCall(request).execute()
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

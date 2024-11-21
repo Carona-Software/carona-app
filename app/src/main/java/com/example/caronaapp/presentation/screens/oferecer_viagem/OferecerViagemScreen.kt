@@ -1,5 +1,6 @@
 package com.example.caronaapp.presentation.screens.oferecer_viagem
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,12 +20,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +45,7 @@ import com.example.caronaapp.ui.theme.SetaEsquerda
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CustomCard
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 class OferecerViagemStepClass(
@@ -54,7 +58,10 @@ fun OferecerViagemScreen(
     navController: NavController,
     viewModel: OferecerViagemViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
+
     val perfilUser by viewModel.perfilUser.collectAsState()
+    val generoUser by viewModel.generoUser.collectAsState()
 
     val etapaAtual by viewModel.etapaAtual.collectAsState()
 
@@ -75,6 +82,27 @@ fun OferecerViagemScreen(
             idEtapa = 3
         )
     )
+
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isSuccessful by viewModel.isSuccessful.collectAsState()
+    val isError by viewModel.isError.collectAsState()
+    val idCreatedViagem by viewModel.idCreatedViagem.collectAsState()
+
+    LaunchedEffect(key1 = isSuccessful, key2 = isError) {
+        if (isError) {
+            Toast.makeText(context, "Houve um erro ao criar viagem", Toast.LENGTH_SHORT).show()
+
+            delay(300)
+            viewModel.setIsErrorToFalse()
+        }
+        if (isSuccessful) {
+            Toast.makeText(context, "Viagem cadastrada com sucesso", Toast.LENGTH_SHORT).show()
+
+            delay(300)
+            viewModel.setIsSuccessfulToFalse()
+            navController.navigate("viagens/detalhes/$idCreatedViagem")
+        }
+    }
 
     CaronaAppTheme {
         Scaffold(
@@ -163,6 +191,7 @@ fun OferecerViagemScreen(
                                         .fillMaxWidth()
                                         .weight(1f),
                                     state = state,
+                                    generoUser = generoUser,
                                     handleOnChange = { viewModel.onChangeEvent(it) },
                                     carrosData = carros,
                                     onCarrosDropdownClick = { viewModel.onCarrosDropdownClick() },
@@ -173,7 +202,8 @@ fun OferecerViagemScreen(
 
                             ButtonAction(
                                 label = if (etapaAtual == 3) stringResource(id = R.string.label_button_finalizar)
-                                else stringResource(id = R.string.label_button_proximo)
+                                else stringResource(id = R.string.label_button_proximo),
+                                isLoading = isLoading
                             ) {
                                 viewModel.handleNextClick()
                             }

@@ -51,10 +51,11 @@ import com.example.caronaapp.ui.theme.CinzaSombra
 import com.example.caronaapp.ui.theme.Filtro
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
-import com.example.caronaapp.utils.formatDate
-import com.example.caronaapp.utils.formatTime
+import com.example.caronaapp.utils.functions.formatDate
+import com.example.caronaapp.utils.functions.formatTime
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.CustomItemCard
+import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -69,13 +70,11 @@ fun HistoricoViagensScreen(
     navController: NavController,
     viewModel: HistoricoViagensViewModel = koinViewModel()
 ) {
+    val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
     val perfilUser by viewModel.perfilUser.collectAsState()
-
     val viagens by viewModel.viagens.collectAsState()
     val viagensFiltradas by viewModel.viagensFiltradas.collectAsState()
-
     val isExpanded by viewModel.isExpanded.collectAsState()
-
     val currentFilterOption by viewModel.currentFilterOption.collectAsState()
 
     val itensDropdownMenu = listOf(
@@ -107,95 +106,99 @@ fun HistoricoViagensScreen(
                     .background(CinzaF5)
                     .fillMaxSize()
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 12.dp, horizontal = 20.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.historico),
-                        color = Azul,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+                if (isLoadingScreen) {
+                    LoadingScreen(backGround = CinzaF5)
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 12.dp, horizontal = 20.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.historico),
+                            color = Azul,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
 
-                    if (viagens != null) {
-                        Box {
-                            Button(
-                                onClick = { viewModel.expandDropdownMenu() },
-                                modifier = Modifier
-                                    .shadow(
-                                        elevation = 4.dp,
-                                        shape = RoundedCornerShape(12.dp),
-                                        clip = false, // Deixar o conteúdo sem sombra no topo
-                                        ambientColor = CinzaSombra,
-                                        spotColor = Cinza90
+                        if (viagens != null) {
+                            Box {
+                                Button(
+                                    onClick = { viewModel.expandDropdownMenu() },
+                                    modifier = Modifier
+                                        .shadow(
+                                            elevation = 4.dp,
+                                            shape = RoundedCornerShape(12.dp),
+                                            clip = false, // Deixar o conteúdo sem sombra no topo
+                                            ambientColor = CinzaSombra,
+                                            spotColor = Cinza90
+                                        )
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .height(40.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.White
+                                    ),
+                                    contentPadding = PaddingValues(
+                                        horizontal = 12.dp,
+                                        vertical = 0.dp
+                                    ),
+                                ) {
+                                    Text(
+                                        text = currentFilterOption,
+                                        color = Azul,
+                                        style = MaterialTheme.typography.bodySmall,
                                     )
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .height(40.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                            ) {
-                                Text(
-                                    text = currentFilterOption,
-                                    color = Azul,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Filtro,
-                                    contentDescription = null,
-                                    tint = Azul,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Icon(
+                                        imageVector = Filtro,
+                                        contentDescription = null,
+                                        tint = Azul,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
 
-                            DropdownMenu(
-                                expanded = isExpanded,
-                                onDismissRequest = { viewModel.onDismissRequest() },
-                                modifier = Modifier.background(Color.White)
-                            ) {
-                                itensDropdownMenu.forEach { item ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = item.label,
-                                                color = Azul,
-                                                style = MaterialTheme.typography.bodySmall,
-                                            )
-                                        },
-                                        onClick = {
-                                            viewModel.onMenuItemClick(
-                                                item.label,
-                                                item.data!!
-                                            )
-                                        }
-                                    )
+                                DropdownMenu(
+                                    expanded = isExpanded,
+                                    onDismissRequest = { viewModel.onDismissRequest() },
+                                    modifier = Modifier.background(Color.White)
+                                ) {
+                                    itensDropdownMenu.forEach { item ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = item.label,
+                                                    color = Azul,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.onMenuItemClick(
+                                                    item.label,
+                                                    item.data!!
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                if (viagensFiltradas == null) {
-                    NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
-                } else {
-                    if (viagensFiltradas!!.isNotEmpty()) {
-                        LazyColumn {
-                            items(items = viagensFiltradas!!.toList()) { viagem ->
-                                ViagemCard(
-                                    viagemData = viagem
-                                ) {
-                                    navController.navigate("viagens/detalhes/${viagem.id}")
+                    if (viagensFiltradas == null) {
+                        NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
+                    } else {
+                        if (viagensFiltradas!!.isNotEmpty()) {
+                            LazyColumn {
+                                items(items = viagensFiltradas!!.toList()) { viagem ->
+                                    ViagemCard(viagemData = viagem) {
+                                        navController.navigate("viagens/detalhes/${viagem.id}")
+                                    }
                                 }
                             }
+                        } else {
+                            NoResultsComponent(text = stringResource(id = R.string.nenhuma_viagem_encontrada))
                         }
-                    } else {
-                        NoResultsComponent(text = stringResource(id = R.string.nenhuma_viagem_encontrada))
-
                     }
                 }
             }
@@ -272,6 +275,7 @@ fun ViagemCard(
                 Text(
                     text = stringResource(
                         id = R.string.viagem_data_hora,
+//                        viagemData.dataToShow,
                         formatDate(viagemData.dataInDate),
                         formatTime(viagemData.horarioPartidaInTime)
                     ),

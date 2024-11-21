@@ -1,6 +1,7 @@
 package com.example.caronaapp.presentation.screens.procurar_viagem
 
 import com.example.caronaapp.data.dto.google_maps.GeocodeResponse
+import com.example.caronaapp.utils.functions.formatDate
 import java.time.LocalDate
 
 sealed class ProcurarViagemField {
@@ -15,4 +16,13 @@ data class ProcurarViagemState(
     val data: LocalDate = LocalDate.now(),
     val resultsPontoPartida: List<GeocodeResponse.Result> = emptyList(),
     val resultsPontoChegada: List<GeocodeResponse.Result> = emptyList(),
-)
+) {
+    val dataToShow =
+        if (data.isEqual(LocalDate.now())) {
+            "Hoje"
+        } else if (data.isEqual(LocalDate.now().plusDays(1))) {
+            "Amanhã"
+        } else {
+            formatDate(data)
+        }
+}
