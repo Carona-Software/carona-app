@@ -14,5 +14,6 @@ data class FeedbackListagemDto(
         val id: Int,
         val nome: String,
         val fotoUrl: String,
+        var isFotoValida: Boolean
     )
 }

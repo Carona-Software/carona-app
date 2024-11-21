@@ -1,8 +1,10 @@
 package com.example.caronaapp.data.dto.viagem
 
 import com.example.caronaapp.data.dto.solicitacao.SolicitacaoViagemListagemDto
+import com.example.caronaapp.data.dto.usuario.PassageiroDto
 import com.example.caronaapp.data.dto.usuario.UsuarioSimplesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
+import com.example.caronaapp.utils.functions.formatDate
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -14,15 +16,16 @@ data class ViagemDetalhesListagemDto(
     val horarioPartida: String,
     val horarioChegada: String,
     val preco: Double,
-    val status: String,
+    val status: StatusViagem,
     val motorista: UsuarioSimplesListagemDto,
     val carro: CarroDto,
-    var passageiros: List<UsuarioSimplesListagemDto>,
+    var passageiros: List<PassageiroDto>,
     val trajeto: TrajetoDto,
-    val solicitacoes: List<SolicitacaoViagemListagemDto>
+    val solicitacoes: List<SolicitacaoViagemListagemDto>,
+    val distanciaPartida: Double,
+    val distanciaDestino: Double,
 ) {
-    // Propriedade derivada para converter para LocalDate
-    val dataInDate: LocalDate
+    private val dataInDate: LocalDate
         get() = data.let { LocalDate.parse(it) }
 
     val horarioPartidaInTime: LocalTime
@@ -30,6 +33,15 @@ data class ViagemDetalhesListagemDto(
 
     val horarioChegadaInTime: LocalTime
         get() = horarioChegada.let { LocalTime.parse(it) }
+
+    val dataToShow =
+        if (dataInDate.isEqual(LocalDate.now())) {
+            "Hoje"
+        } else if (dataInDate.isEqual(LocalDate.now().plusDays(1))) {
+            "Amanhã"
+        } else {
+            formatDate(dataInDate)
+        }
 
     data class CarroDto(
         val cor: String,

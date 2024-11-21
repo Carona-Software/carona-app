@@ -1,57 +1,43 @@
 package com.example.caronaapp.presentation.screens.procurar_viagem
 
-import androidx.compose.foundation.BorderStroke
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
-import com.example.caronaapp.data.dto.google_maps.GeocodeResponse
 import com.example.caronaapp.presentation.view_models.ProcurarViagemViewModel
-import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulMensagem
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
-import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
-import com.example.caronaapp.utils.formatDate
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CustomCard
 import com.example.caronaapp.utils.layout.CustomDatePickerDialog
 import com.example.caronaapp.utils.layout.DropdownEnderecoResult
 import com.example.caronaapp.utils.layout.InputField
+import com.google.gson.Gson
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -68,6 +54,7 @@ fun ProcurarViagemScreen(
     val dateDialogState = rememberMaterialDialogState()
 
     val state by viewModel.procurarViagemState.collectAsState()
+    val viagemProcuraDto by viewModel.viagemProcuraDto.collectAsState()
 
     val isDropdownPartidaOpened by viewModel.isDropdownPartidaOpened.collectAsState()
     val isDropdownChegadaOpened by viewModel.isDropdownChegadaOpened.collectAsState()
@@ -140,7 +127,7 @@ fun ProcurarViagemScreen(
 
                                 InputField(
                                     label = stringResource(id = R.string.label_dia),
-                                    value = formatDate(state.data),
+                                    value = state.dataToShow,
                                     startIcon = Calendario,
                                     onIconClick = {
                                         dateDialogState.show()
@@ -158,7 +145,22 @@ fun ProcurarViagemScreen(
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             ButtonAction(label = stringResource(id = R.string.procurar)) {
-                                navController.navigate("viagens")
+                                if (
+                                    viagemProcuraDto.data != "" &&
+                                    viagemProcuraDto.pontoPartida != null &&
+                                    viagemProcuraDto.pontoChegada != null
+                                ) {
+                                    val viagemToString = Gson().toJson(viagemProcuraDto)
+                                    navController.navigate(
+                                        "viagens/${viagemToString}/${state.pontoPartida}/${state.pontoChegada}"
+                                    )
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Preencha todos os campos",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
                     }

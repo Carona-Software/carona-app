@@ -52,6 +52,9 @@ android {
 }
 
 dependencies {
+    //Logging interceptor
+    implementation(libs.logging.interceptor.v500alpha2)
+
     // Biblioteca de ícones Material
     implementation(libs.androidx.material.icons.extended)
 

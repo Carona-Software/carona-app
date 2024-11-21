@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,6 +43,7 @@ import com.example.caronaapp.utils.layout.QtdPassageirosField
 fun OferecerViagemDetalhes(
     modifier: Modifier,
     state: OferecerViagemState,
+    generoUser: String,
     handleOnChange: (OferecerViagemField) -> Unit,
     carrosData: List<CarroListagemDto>?,
     onCarrosDropdownClick: () -> Unit,
@@ -127,6 +127,7 @@ fun OferecerViagemDetalhes(
             }
         }
 
+        // Carro
         Column {
             Text(
                 text = stringResource(id = R.string.carro),
@@ -189,8 +190,10 @@ fun OferecerViagemDetalhes(
             }
         }
 
-        ApenasMulheresSwitch(checked = state.apenasMulheres) {
-            handleOnChange(OferecerViagemField.ApenasMulheres(it))
+        if (generoUser == "FEMININO") {
+            ApenasMulheresSwitch(checked = state.apenasMulheres) {
+                handleOnChange(OferecerViagemField.ApenasMulheres(it))
+            }
         }
     }
 }

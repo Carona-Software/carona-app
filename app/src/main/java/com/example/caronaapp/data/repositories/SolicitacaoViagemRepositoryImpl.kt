@@ -23,4 +23,8 @@ class SolicitacaoViagemRepositoryImpl(private val solicitacaoApi: SolicitacaoVia
     override suspend fun refuse(id: Int): Response<SolicitacaoViagemListagemDto> {
         return solicitacaoApi.refuse(id)
     }
+
+    override suspend fun delete(id: Int): Response<Void> {
+        return solicitacaoApi.delete(id)
+    }
 }

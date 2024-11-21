@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
@@ -26,10 +27,11 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 
 val Procurar = Icons.Default.Search
 val Oferecer = Icons.Default.AddCircleOutline
@@ -40,7 +42,8 @@ val Localizacao = Icons.Default.LocationOn
 val PontoPartida = Icons.Default.Adjust
 val Calendario = Icons.Default.CalendarMonth
 val Horario = Icons.Default.AccessTime
-val Olho = Icons.Default.RemoveRedEye
+val Visibility = Icons.Default.Visibility
+val VisibilityOff = Icons.Default.VisibilityOff
 val Notificacao = Icons.Default.NotificationsNone
 val Avaliacao = Icons.Default.RateReview
 val Fidelizacao = Icons.Default.Loyalty
@@ -60,3 +63,4 @@ val CoracaoPreenchido = Icons.Default.Favorite
 val CoracaoVazado = Icons.Default.FavoriteBorder
 val Mais = Icons.Default.Add
 val Menos = Icons.Default.Remove
+val Circulo = Icons.Default.Circle

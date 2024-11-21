@@ -53,18 +53,22 @@
     <string name="label_button_editar">Editar</string>
     <string name="label_button_atualizar">Atualizar</string>
     <string name="label_button_avaliar">Avaliar</string>
+    <string name="label_button_avaliar_motorista">Avaliar motorista</string>
     <string name="label_button_solicitar_carona">Solicitar carona</string>
+    <string name="label_button_solicitar_fidelizacao">Solicitar fidelização</string>
     <string name="label_button_oferecer_carona">Oferecer carona</string>
     <string name="label_button_conversar">Conversar</string>
     <string name="label_button_remover">Remover</string>
     <string name="label_button_cancelar">Cancelar</string>
     <string name="label_button_cancelar_viagem">Cancelar viagem</string>
     <string name="label_button_cancelar_reserva">Cancelar reserva</string>
+    <string name="label_button_cancelar_solicitacao">Cancelar solicitação</string>
     <string name="label_button_aceitar">Aceitar</string>
     <string name="label_button_recusar">Recusar</string>
     <string name="label_button_iniciar">Iniciar</string>
     <string name="label_button_aplicar">Aplicar</string>
     <string name="label_button_limpar">Limpar</string>
+    <string name="label_button_sair">Sair</string>
 
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>
@@ -74,13 +78,13 @@
     <string name="pontualidade">Pontualidade</string>
     <string name="comportamento">Comportamento</string>
     <string name="comentario">Comentário</string>
-    <string name="comentarios">Comentários</string>
 
     <!--  TEXTS  -->
     <string name="cadastro">Cadastro</string>
     <string name="esqueceu_a_senha">Esqueceu a senha?</string>
     <string name="nao_possui_conta">Não possui conta?</string>
     <string name="cadastre_se">Cadastre-se</string>
+    <string name="sair">Sair</string>
     <string name="orientacao_esqueceu_a_senha">
         Não se preocupe. Enviaremos um código ao seu email cadastrado para alterar a senha.
     </string>
@@ -148,6 +152,12 @@
     <string name="solicitacoes_pendentes">Solicitações pendentes</string>
     <string name="title_date_picker_dialog">SELECIONE UMA DATA</string>
     <string name="title_time_picker_dialog">SELECIONE UM HORÁRIO</string>
+    <string name="message_confirmation_cancel_viagem">Tem certeza que deseja cancelar a viagem?</string>
+    <string name="message_confirmation_cancel_reserva">Tem certeza que deseja cancelar sua reserva?</string>
+    <string name="message_confirmation_cancel_solicitacao">Tem certeza que deseja cancelar sua solicitação de carona para esta viagem?</string>
+    <string name="message_confirmation_iniciar_viagem">Ao iniciar a viagem, ela não poderá mais ser cancelada. Clique em Iniciar para prosseguir</string>
+    <string name="message_confirmation_finalizar_viagem">Para finalizar a viagem, todos os passageiros devem ter desembarcado. Clique em Finalizar para prosseguir</string>
+    <string name="message_confirmation_logout">Tem certeza que deseja sair?</string>
 
     <!--  INPUT ERROR MESSAGES  -->
     <string name="input_message_error_nome">Digite 5 ou mais letras</string>
@@ -191,10 +201,9 @@
     <string name="sem_conteudo_solicitacao_viagem">Nenhuma solicitação de viagem por enquanto</string>
     <string name="sem_conteudo_detalhes_viagem">Não foi possível carregar os detalhes da viagem</string>
     <string name="sem_conteudo_perfil">Não foi possível carregar os detalhes do perfil</string>
+    <string name="sem_conteudo_perfil_feedback">Não foi possível carregar o perfil do usuário</string>
 
     <!--  TEXTOS COM PARÂMETROS  -->
-    <string name="nota_media_criterio_feedback">(%1$.1f)</string>
-    <string name="nota_media_usuario">%1$.1f</string>
     <string name="message_confirmation_delete_carro">Tem certeza que deseja excluir o carro %1$s %2$s?</string>
     <string name="message_confirmation_remove_fidelizado">Tem certeza que deseja remover %1$s dos fidelizados?</string>
     <string name="fidelizado_qtd_viagens_juntos">%1$d viagens juntos</string>

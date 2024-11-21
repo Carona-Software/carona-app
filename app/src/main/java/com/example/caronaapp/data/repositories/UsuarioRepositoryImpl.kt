@@ -1,6 +1,6 @@
 package com.example.caronaapp.data.repositories
 
-import android.util.Log
+import com.example.caronaapp.data.dto.endereco.EnderecoListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioListagemDto
@@ -39,5 +39,9 @@ class UsuarioRepositoryImpl(private val usuarioApi: UsuarioApi) : UsuarioReposit
 
     override suspend fun resetPassword(email: String): Response<String> {
         return usuarioApi.resetPassword(email)
+    }
+
+    override suspend fun findEnderecoByUsuarioId(id: Int): Response<EnderecoListagemDto> {
+        return usuarioApi.findEnderecoByUsuarioId(id)
     }
 }

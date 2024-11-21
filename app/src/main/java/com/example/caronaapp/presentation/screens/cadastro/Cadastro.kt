@@ -199,7 +199,9 @@ fun CadastroScreen(
                         onSaveClick = { viewModel.onSignUpClick(context) },
                         onChangeEvent = { viewModel.onChangeEvent(it) },
                         validations = userCadastroValidations,
-                        isLoading = isCadastroLoading
+                        isLoading = isCadastroLoading,
+                        handleSetPassword = { viewModel.setPasswordVisibility() },
+                        handleSetConfirmationPassword = { viewModel.setConfirmationPasswordVisibility() },
                     )
                 }
             }

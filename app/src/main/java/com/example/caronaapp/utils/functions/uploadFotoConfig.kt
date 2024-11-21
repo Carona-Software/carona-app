@@ -1,4 +1,4 @@
-package com.example.caronaapp.utils
+package com.example.caronaapp.utils.functions
 
 import android.content.Context
 import android.net.Uri

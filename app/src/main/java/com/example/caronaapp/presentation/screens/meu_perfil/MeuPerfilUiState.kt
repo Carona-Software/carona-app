@@ -1,7 +1,6 @@
 package com.example.caronaapp.presentation.screens.meu_perfil
 
 import android.net.Uri
-import com.example.caronaapp.utils.formatDate
 import java.time.LocalDate
 
 sealed class MeuPerfilField {
@@ -18,20 +17,26 @@ sealed class MeuPerfilField {
 }
 
 data class MeuPerfilState(
-    val nome: String,
-    val email: String,
-    val cpf: String,
-    val perfil: String,
-    val genero: String,
-    val dataNascimento: LocalDate,
-    val fotoAtual: String,
+    val nome: String = "",
+    val email: String = "",
+    val cpf: String = "",
+    val perfil: String = "",
+    val genero: String = "",
+    val dataNascimento: LocalDate = LocalDate.now(),
+    val fotoAtual: String = "",
     val novaFoto: Uri? = null,
-    val enderecoCep: String,
-    val enderecoUf: String,
-    val enderecoCidade: String,
-    val enderecoBairro: String,
-    val enderecoLogradouro: String,
-    val enderecoNumero: Int,
+    val enderecoCep: String = "",
+    val enderecoUf: String = "",
+    val enderecoCidade: String = "",
+    val enderecoBairro: String = "",
+    val enderecoLogradouro: String = "",
+    val enderecoNumero: Int = 0,
+    val isNomeDialogEnabled: Boolean = false,
+    val isEmailDialogEnabled: Boolean = false,
+    val isDataNascimentoDialogEnabled: Boolean = false,
+    val isEnderecoDialogEnabled: Boolean = false,
+    val isFotoDialogEnabled: Boolean = false,
+    val isLogoutDialogEnabled: Boolean = false,
 )
 
 data class MeuPerfilValidations(

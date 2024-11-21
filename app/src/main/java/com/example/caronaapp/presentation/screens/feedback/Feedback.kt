@@ -1,5 +1,6 @@
 package com.example.caronaapp.presentation.screens.feedback
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -49,8 +51,14 @@ import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.EstrelaVazada
+import com.example.caronaapp.utils.functions.capitalizeWord
 import com.example.caronaapp.utils.layout.ButtonAction
+import com.example.caronaapp.utils.layout.CustomAsyncImage
+import com.example.caronaapp.utils.layout.CustomDefaultImage
+import com.example.caronaapp.utils.layout.LoadingScreen
+import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -60,21 +68,38 @@ fun FeedbackScreen(
     usuarioId: Int?,
     viewModel: FeedbackViewModel = koinViewModel()
 ) {
-    LaunchedEffect(key1 = viagemId, key2 = usuarioId) {
-        viewModel.setupFeedback(viagemId!!, usuarioId!!)
-    }
-
+    val isSuccessful by viewModel.isSuccessful.collectAsState()
+    val isError by viewModel.isError.collectAsState()
+    val messageToDisplay by viewModel.messageToDisplay.collectAsState()
+    val criteriosFeedback by viewModel.criteriosFeedbackFiltrados.collectAsState()
     val usuarioAvaliado by viewModel.usuarioAvaliado.collectAsState()
-    val criteriosFeedback by viewModel.criteriosFeedback.collectAsState()
-
-    val feedbackState by viewModel.feedbackState.collectAsState()
-
+    val isFotoValida by viewModel.isFotoValida.collectAsState()
+    val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
+    val feedbackState by viewModel.feedbackDto.collectAsState()
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setupFeedback(viagemId!!, usuarioId!!)
+
+        if (isSuccessful) {
+            Toast.makeText(context, messageToDisplay, Toast.LENGTH_SHORT).show()
+            delay(200)
+            viewModel.setControlVariablesToFalse()
+            navController.popBackStack()
+        }
+
+        if (isError) {
+            Toast.makeText(context, messageToDisplay, Toast.LENGTH_SHORT).show()
+            delay(200)
+            viewModel.setControlVariablesToFalse()
+        }
+    }
 
     Scaffold(
         bottomBar = {
             Column {
-                HorizontalDivider(color = CinzaE8, thickness = 2.dp)
+                HorizontalDivider(color = CinzaE8, thickness = 1.dp)
                 Row(
                     modifier = Modifier
                         .background(Color.White)
@@ -99,101 +124,122 @@ fun FeedbackScreen(
             ) {
                 TopBarTitle(navController = navController, title = "Feedback")
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.mipmap.foto_gustavo),
-                            contentDescription = usuarioAvaliado?.nome,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                text = usuarioAvaliado?.nome ?: "",
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Azul
-                            )
-                            Text(
-                                text = "Motorista",
-                                style = MaterialTheme.typography.displayLarge,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
-
-                HorizontalDivider(color = CinzaE8, thickness = 2.dp)
-
-                Column(
-                    modifier = Modifier
-                        .background(CinzaF5)
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    criteriosFeedback?.map { criterio ->
-                        FeedbackSection(label = criterio.nome,
-                            value = viewModel.getNotaCriterio(criterio.id),
-                            onStarClick = { nota ->
-                                viewModel.onChangeEvent(FeedbackField.Criterio(criterio.id, nota))
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.comentario),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Azul
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        BasicTextField(
-                            value = feedbackState.comentario,
-                            onValueChange = {
-                                if (feedbackState.comentario.length <= 256) {
-                                    viewModel.onChangeEvent(FeedbackField.Comentario(it))
-                                }
-                            },
+                if (isLoadingScreen) {
+                    LoadingScreen()
+                } else {
+                    if (usuarioAvaliado == null) {
+                        NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_perfil_feedback))
+                    } else {
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp)
-                                .border(
-                                    width = 2.dp,
-                                    color = Azul,
-                                    shape = RoundedCornerShape(8.dp)
+                                .background(Color.White),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                if (isFotoValida) {
+                                    CustomAsyncImage(
+                                        fotoUrl = usuarioAvaliado!!.fotoUrl,
+                                        modifier = Modifier.size(64.dp)
+                                    )
+                                } else {
+                                    CustomDefaultImage(modifier = Modifier.size(64.dp))
+                                }
+                                Image(
+                                    painter = painterResource(id = R.mipmap.foto_gustavo),
+                                    contentDescription = usuarioAvaliado?.nome,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .clip(CircleShape)
                                 )
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.White)
-                                .padding(8.dp),
-                            textStyle = TextStyle(fontSize = 16.sp, color = Azul),
 
-                            )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column {
+                                    Text(
+                                        text = usuarioAvaliado?.nome ?: "",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = Azul
+                                    )
+                                    Text(
+                                        text = capitalizeWord(usuarioAvaliado?.perfil ?: ""),
+                                        style = MaterialTheme.typography.displayLarge,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
+                        }
+
+                        HorizontalDivider(color = CinzaE8, thickness = 1.dp)
+
+                        Column(
+                            modifier = Modifier
+                                .background(CinzaF5)
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            criteriosFeedback.map { criterio ->
+                                FeedbackSection(label = criterio.nome,
+                                    value = viewModel.getNotaCriterio(criterio.id),
+                                    onStarClick = { nota ->
+                                        viewModel.onChangeEvent(
+                                            FeedbackField.Criterio(
+                                                criterio.id,
+                                                nota
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.comentario),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Azul
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                BasicTextField(
+                                    value = feedbackState.comentario,
+                                    onValueChange = {
+                                        if (feedbackState.comentario.length <= 256) {
+                                            viewModel.onChangeEvent(FeedbackField.Comentario(it))
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(100.dp)
+                                        .border(
+                                            width = 2.dp,
+                                            color = Azul,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.White)
+                                        .padding(8.dp),
+                                    textStyle = TextStyle(fontSize = 16.sp, color = Azul),
+
+                                    )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

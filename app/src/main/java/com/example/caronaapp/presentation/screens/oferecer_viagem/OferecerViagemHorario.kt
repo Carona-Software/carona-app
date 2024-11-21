@@ -18,6 +18,8 @@ import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.ui.theme.Horario
+import com.example.caronaapp.utils.functions.formatDate
+import com.example.caronaapp.utils.functions.formatTime
 import com.example.caronaapp.utils.layout.CustomDatePickerDialog
 import com.example.caronaapp.utils.layout.InputField
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -42,7 +44,7 @@ fun OferecerViagemHorario(
     ) {
         InputField(
             label = stringResource(id = R.string.label_dia),
-            value = state.data,
+            value = formatDate(state.data),
             startIcon = Calendario,
             onIconClick = {
                 dateDialogState.show()
@@ -60,7 +62,7 @@ fun OferecerViagemHorario(
 
         InputField(
             label = stringResource(id = R.string.horario),
-            value = state.hora,
+            value = formatTime(state.hora),
             startIcon = Horario,
             onIconClick = {
                 timeDialogState.show()

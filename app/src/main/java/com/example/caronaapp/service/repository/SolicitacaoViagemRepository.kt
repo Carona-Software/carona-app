@@ -13,4 +13,6 @@ interface SolicitacaoViagemRepository {
     suspend fun approve(id: Int): Response<SolicitacaoViagemListagemDto>
 
     suspend fun refuse(id: Int): Response<SolicitacaoViagemListagemDto>
+
+    suspend fun delete(id: Int): Response<Void>
 }

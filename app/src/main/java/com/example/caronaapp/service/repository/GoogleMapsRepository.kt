@@ -5,5 +5,5 @@ import retrofit2.Response
 
 interface GoogleMapsRepository {
 
-    suspend fun getGeocode(address: String, apiKey: String): Response<GeocodeResponse>
+    suspend fun getGeocode(address: String): Response<GeocodeResponse>
 }

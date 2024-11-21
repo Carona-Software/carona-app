@@ -1,6 +1,5 @@
 package com.example.caronaapp.utils.layout
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,19 +21,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.caronaapp.R
+import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.ui.theme.Azul
+import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.SetaEsquerda
 
 @Composable
 fun TopBarUser(
     navController: NavController,
-    fotoUser: Painter?,
+    fotoUrl: String,
+    isUrlFotoValida: Boolean,
     nome: String
 ) {
     Column(
@@ -66,10 +66,14 @@ fun TopBarUser(
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = fotoUser ?: painterResource(id = R.mipmap.user_default),
-                    contentDescription = nome
-                )
+                if (isUrlFotoValida) {
+                    CustomAsyncImage(
+                        fotoUrl = fotoUrl,
+                        modifier = Modifier.size(48.dp)
+                    )
+                } else {
+                    CustomDefaultImage(modifier = Modifier.size(48.dp))
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = nome,
@@ -82,6 +86,19 @@ fun TopBarUser(
             modifier = Modifier,
             color = CinzaE8,
             thickness = 1.dp
+        )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun TopBarUserPreview() {
+    CaronaAppTheme {
+        TopBarUser(
+            navController = rememberNavController(),
+            fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729808990/arrllgea2l9kg7qpma8q.jpg",
+            isUrlFotoValida = false,
+            nome = "Gustavo Medeiros"
         )
     }
 }

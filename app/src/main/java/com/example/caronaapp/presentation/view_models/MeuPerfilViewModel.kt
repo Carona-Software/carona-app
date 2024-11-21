@@ -13,11 +13,12 @@ import com.example.caronaapp.presentation.screens.meu_perfil.AvaliacoesCriterioU
 import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilField
 import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilState
 import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilValidations
-import com.example.caronaapp.utils.calculateCriteriosFeedback
-import com.example.caronaapp.utils.isCepValido
-import com.example.caronaapp.utils.isEmailValid
-import com.example.caronaapp.utils.isNomeValido
-import com.example.caronaapp.utils.isNumeroValido
+import com.example.caronaapp.utils.functions.calculateCriteriosFeedback
+import com.example.caronaapp.utils.functions.isCepValido
+import com.example.caronaapp.utils.functions.isEmailValid
+import com.example.caronaapp.utils.functions.isNomeValido
+import com.example.caronaapp.utils.functions.isNumeroValido
+import com.example.caronaapp.utils.functions.isUrlFotoUserValida
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,200 +30,64 @@ class MeuPerfilViewModel(
     private val viaCepRepository: ViaCepRepositoryImpl,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
-
+    val isLoadingScreen = MutableStateFlow(true)
     val perfilUser = MutableStateFlow("")
-
-    val userData = MutableStateFlow<UsuarioDetalhesListagemDto?>(
-        null
-//        UsuarioDetalhesListagemDto(
-//            id = 1,
-//            nome = "Gustavo Medeiros",
-//            email = "gustavo@email.com",
-//            cpf = "50378814800",
-//            genero = "MASCULINO",
-//            perfil = "MOTORISTA",
-//            dataNascimento = "",
-//            fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729863605/ph8npbut9xtt2vhg2i0z.png",
-//            notaMedia = 4.1,
-//            viagensRealizadas = 1,
-//            endereco = EnderecoListagemDto(
-//                id = 1,
-//                cep = "04244000",
-//                uf = "SP",
-//                cidade = "São Paulo",
-//                logradouro = "Estrada das Lágrimas",
-//                bairro = "São João CLímaco",
-//                numero = 3621
-//            ),
-//            avaliacoes = listOf(
-//                FeedbackListagemDto(
-//                    data = LocalDate.now(),
-//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-//                    avaliador = FeedbackListagemDto.AvaliadorDto(
-//                        id = 1,
-//                        nome = "Kaiky Cruz",
-//                        fotoUrl = "foto_kaiky"
-//                    ),
-//                    notaMedia = 4.3,
-//                    notasCriterios = listOf(
-//                        NotaCriterioListagemDto(
-//                            criterio = "Comunicação",
-//                            nota = 2.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Pontualidade",
-//                            nota = 5.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Dirigibilidade",
-//                            nota = 3.5
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Segurança",
-//                            nota = 4.0
-//                        )
-//                    )
-//                ),
-//                FeedbackListagemDto(
-//                    data = LocalDate.now(),
-//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-//                    avaliador = FeedbackListagemDto
-//                        .AvaliadorDto(
-//                            id = 1,
-//                            nome = "Kaiky Cruz",
-//                            fotoUrl = "foto_kaiky"
-//                        ),
-//                    notaMedia = 3.2,
-//                    notasCriterios = listOf(
-//                        NotaCriterioListagemDto(
-//                            criterio = "Comunicação",
-//                            nota = 4.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Pontualidade",
-//                            nota = 2.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Dirigibilidade",
-//                            nota = 5.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Segurança",
-//                            nota = 1.0
-//                        )
-//                    )
-//                )
-//            ),
-//            carros = listOf(
-//                UsuarioDetalhesListagemDto.CarroDto(
-//                    marca = "Honda",
-//                    modelo = "Fit",
-//                    cor = "Preto",
-//                    placa = "ABC1D06"
-//                )
-//            ),
-//            fidelizados = listOf(
-//                FidelizadoListagemDto(
-//                    id = 2,
-//                    nome = "Kaiky Cruz",
-//                    fotoUrl = "foto_kaiky",
-//                    notaGeral = 3.5,
-//                    ufLocalidade = "SP",
-//                    cidadeLocalidade = "São Paulo",
-//                    qtdViagensJuntos = 1
-//                )
-//            ),
-//            viagens = listOf(
-//                ViagemSimplesListagemDto(
-//                    id = 1,
-//                    data = LocalDate.now(),
-//                    hora = LocalTime.now(),
-//                    preco = 30.0,
-//                    status = StatusViagem.FINALIZADA
-//                )
-//            ),
-//            principalTrajeto = PrincipalTrajeto(
-//                ufChegada = "SP",
-//                cidadeChegada = "Campinas",
-//                ufPartida = "SP",
-//                cidadePartida = "São Paulo"
-//            )
-//        )
-    )
-
+    val userData = MutableStateFlow<UsuarioDetalhesListagemDto?>(null)
+    val isFotoValida = MutableStateFlow(false)
     val avaliacoesCriterioUser = MutableStateFlow(AvaliacoesCriterioUser())
-
-    val meuPerfilState = MutableStateFlow(
-        MeuPerfilState(
-            nome = userData.value?.nome ?: "",
-            email = userData.value?.email ?: "",
-            cpf = userData.value?.cpf ?: "",
-            perfil = userData.value?.perfil ?: "",
-            genero = userData.value?.genero ?: "",
-            dataNascimento = userData.value?.dataNascimentoDate ?: LocalDate.now(),
-            fotoAtual = userData.value?.fotoUrl ?: "",
-            enderecoCep = userData.value?.endereco?.cep ?: "",
-            enderecoUf = userData.value?.endereco?.uf ?: "",
-            enderecoCidade = userData.value?.endereco?.cidade ?: "",
-            enderecoBairro = userData.value?.endereco?.bairro ?: "",
-            enderecoLogradouro = userData.value?.endereco?.logradouro ?: "",
-            enderecoNumero = userData.value?.endereco?.numero ?: 0
-        )
-    )
-
+    val meuPerfilState = MutableStateFlow(MeuPerfilState())
     val validations = MutableStateFlow(MeuPerfilValidations())
 
-//    var solicitacoesViagem = MutableStateFlow<List<SolicitacaoViagemListagemDto>?>(null)
-//        private set
-//
-//    var solicitacoesFidelizacao = MutableStateFlow<List<SolicitacaoFidelizacaoListagemDto>?>(null)
-//        private set
-
-    // Variáveis de erro
-    var isNomeDialogEnabled = MutableStateFlow(false)
-        private set
-
-    var isEmailDialogEnabled = MutableStateFlow(false)
-        private set
-
-    var isDataNascimentoDialogEnabled = MutableStateFlow(false)
-        private set
-
-    var isFotoDialogEnabled = MutableStateFlow(false)
-        private set
-
-    var isEnderecoDialogEnabled = MutableStateFlow(false)
-        private set
-
-    fun getDetalhesUsuario() {
+    private fun getDetalhesUsuario() {
         viewModelScope.launch {
             try {
                 perfilUser.update { dataStoreManager.getPerfilUser() ?: "" }
 
                 val idUser = dataStoreManager.getIdUser()
                 val response = usuarioRepository.findById(idUser!!)
-//                val response = usuarioRepository.findById(1)
 
                 if (response.isSuccessful) {
                     Log.i("meu perfil", "Usuario Data: ${response.body()}")
-                    userData.update { response.body()!! }
 
+                    userData.update { response.body()!! }
+                    meuPerfilState.update {
+                        it.copy(
+                            nome = userData.value?.nome ?: "",
+                            email = userData.value?.email ?: "",
+                            cpf = userData.value?.cpf ?: "",
+                            perfil = userData.value?.perfil ?: "",
+                            genero = userData.value?.genero ?: "",
+                            dataNascimento = userData.value?.dataNascimentoDate ?: LocalDate.now(),
+                            fotoAtual = userData.value?.fotoUrl ?: "",
+                            enderecoCep = userData.value?.endereco?.cep ?: "",
+                            enderecoUf = userData.value?.endereco?.uf ?: "",
+                            enderecoCidade = userData.value?.endereco?.cidade ?: "",
+                            enderecoBairro = userData.value?.endereco?.bairro ?: "",
+                            enderecoLogradouro = userData.value?.endereco?.logradouro ?: "",
+                            enderecoNumero = userData.value?.endereco?.numero ?: 0
+                        )
+                    }
                     avaliacoesCriterioUser.update {
                         calculateCriteriosFeedback(userData.value!!.avaliacoes)
                     }
+                    isFotoValida.update {
+                        if (userData.value == null) false else isUrlFotoUserValida(
+                            userData.value!!.fotoUrl
+                        )
+                    }
                 } else {
-                    userData.update { null }
                     Log.e(
                         "meu perfil",
                         "Erro ao buscar informações do usuário: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
-                userData.update { null }
                 Log.e(
                     "meu perfil",
                     "Exception -> erro ao buscar informações do usuário: ${e.message}"
                 )
+            } finally {
+                isLoadingScreen.update { false }
             }
         }
     }
@@ -277,52 +142,44 @@ class MeuPerfilViewModel(
 
     fun onOpenModalClick(context: String) {
         when (context.uppercase()) {
-            "NOME" -> isNomeDialogEnabled.update { true }
-            "EMAIL" -> isEmailDialogEnabled.update { true }
-            "DATA DE NASCIMENTO" -> isDataNascimentoDialogEnabled.update { true }
-            "FOTO" -> isFotoDialogEnabled.update { true }
-            "ENDEREÇO" -> isEnderecoDialogEnabled.update { true }
+            "NOME" -> meuPerfilState.update { it.copy(isNomeDialogEnabled = true) }
+            "EMAIL" -> meuPerfilState.update { it.copy(isEmailDialogEnabled = true) }
+            "DATA DE NASCIMENTO" -> meuPerfilState.update { it.copy(isDataNascimentoDialogEnabled = true) }
+            "FOTO" -> meuPerfilState.update { it.copy(isFotoDialogEnabled = true) }
+            "ENDEREÇO" -> meuPerfilState.update { it.copy(isEnderecoDialogEnabled = true) }
+            "LOGOUT" -> meuPerfilState.update { it.copy(isLogoutDialogEnabled = true) }
         }
     }
 
     fun onDismissModalClick(context: String) {
         when (context.uppercase()) {
             "NOME" -> {
-                meuPerfilState.update { it.copy(nome = userData.value!!.nome) }
-                isNomeDialogEnabled.update { false }
+                meuPerfilState.update { it.copy(isNomeDialogEnabled = false) }
             }
 
             "EMAIL" -> {
-                meuPerfilState.update { it.copy(email = userData.value!!.nome) }
-                isEmailDialogEnabled.update { false }
+                meuPerfilState.update { it.copy(isEmailDialogEnabled = false) }
             }
 
             "DATA DE NASCIMENTO" -> {
-                meuPerfilState.update {
-                    it.copy(
-                        dataNascimento = userData.value!!.dataNascimentoDate
-                    )
-                }
-                isDataNascimentoDialogEnabled.update { false }
+                meuPerfilState.update { it.copy(isDataNascimentoDialogEnabled = false) }
             }
 
             "FOTO" -> {
-                meuPerfilState.update { it.copy(novaFoto = null) }
-                isFotoDialogEnabled.update { false }
+                meuPerfilState.update {
+                    it.copy(
+                        novaFoto = null,
+                        isFotoDialogEnabled = false
+                    )
+                }
             }
 
             "ENDEREÇO" -> {
-                meuPerfilState.update {
-                    it.copy(
-                        enderecoCep = userData.value!!.endereco.cep,
-                        enderecoUf = userData.value!!.endereco.uf,
-                        enderecoCidade = userData.value!!.endereco.cidade,
-                        enderecoBairro = userData.value!!.endereco.bairro,
-                        enderecoLogradouro = userData.value!!.endereco.logradouro,
-                        enderecoNumero = userData.value!!.endereco.numero,
-                    )
-                }
-                isEnderecoDialogEnabled.update { false }
+                meuPerfilState.update { it.copy(isEnderecoDialogEnabled = false) }
+            }
+
+            "LOGOUT" -> {
+                meuPerfilState.update { it.copy(isLogoutDialogEnabled = false) }
             }
         }
     }
@@ -415,4 +272,9 @@ class MeuPerfilViewModel(
     init {
         getDetalhesUsuario()
     }
+
+    fun clearDataStore() {
+        viewModelScope.launch { dataStoreManager.clear() }
+    }
+
 }

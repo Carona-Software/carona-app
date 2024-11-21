@@ -1,6 +1,5 @@
 package com.example.caronaapp.presentation.screens.avaliacoes
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -23,12 +21,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +36,10 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.utils.layout.CustomAsyncImage
+import com.example.caronaapp.utils.layout.CustomDefaultImage
 import com.example.caronaapp.utils.layout.CustomItemCard
+import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
 import org.koin.androidx.compose.koinViewModel
@@ -51,7 +49,8 @@ fun AvaliacoesScreen(
     navController: NavController,
     viewModel: AvaliacoesViewModel = koinViewModel()
 ) {
-    val avaliacoes = viewModel.avaliacoes.collectAsState()
+    val avaliacoes by viewModel.avaliacoes.collectAsState()
+    val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
 
     CaronaAppTheme {
         Scaffold { innerPadding ->
@@ -67,23 +66,29 @@ fun AvaliacoesScreen(
                     backGround = CinzaF5
                 )
 
-                if (avaliacoes.value != null) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(items = avaliacoes.value!!.toList()) { avaliacao ->
-                            AvaliacaoCard(
-                                nome = avaliacao.avaliador.nome,
-                                data = avaliacao.data.toString(),
-                                notaFinal = avaliacao.notaMedia,
-                                comentario = avaliacao.comentario
-                            )
-                        }
-                    }
+                if (isLoadingScreen) {
+                    LoadingScreen(backGround = CinzaF5)
                 } else {
-                    NoResultsComponent(
-                        text = stringResource(id = R.string.sem_conteudo_avaliacoes)
-                    )
+                    if (avaliacoes != null) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(items = avaliacoes!!.toList()) { avaliacao ->
+                                AvaliacaoCard(
+                                    nome = avaliacao.avaliador.nome,
+                                    fotoUrl = avaliacao.avaliador.fotoUrl,
+                                    isFotoValida = avaliacao.avaliador.isFotoValida,
+                                    data = avaliacao.data.toString(),
+                                    notaFinal = avaliacao.notaMedia,
+                                    comentario = avaliacao.comentario
+                                )
+                            }
+                        }
+                    } else {
+                        NoResultsComponent(
+                            text = stringResource(id = R.string.sem_conteudo_avaliacoes)
+                        )
+                    }
                 }
             }
         }
@@ -93,7 +98,8 @@ fun AvaliacoesScreen(
 @Composable
 fun AvaliacaoCard(
     nome: String,
-    fotoUser: Painter? = null,
+    fotoUrl: String,
+    isFotoValida: Boolean,
     data: String,
     notaFinal: Double,
     comentario: String
@@ -104,14 +110,11 @@ fun AvaliacaoCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Image(
-                painter = fotoUser ?: painterResource(id = R.mipmap.user_default),
-                contentDescription = "usuário",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(CircleShape)
-            )
+            if (isFotoValida) {
+                CustomAsyncImage(fotoUrl = fotoUrl, modifier = Modifier.size(52.dp))
+            } else {
+                CustomDefaultImage(modifier = Modifier.size(52.dp))
+            }
         }
 
         Column(

@@ -3,26 +3,18 @@ package com.example.caronaapp.presentation.view_models
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.caronaapp.data.dto.endereco.EnderecoListagemDto
-import com.example.caronaapp.data.dto.endereco.PrincipalTrajeto
 import com.example.caronaapp.data.dto.feedback.FeedbackCriterioCriacaoDto
-import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
 import com.example.caronaapp.data.dto.nota_criterio.NotaCriterioCriacaoDto
-import com.example.caronaapp.data.dto.nota_criterio.NotaCriterioListagemDto
-import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
-import com.example.caronaapp.data.dto.viagem.ViagemSimplesListagemDto
 import com.example.caronaapp.data.entity.CriterioFeedback
-import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.FeedbackRepositoryImpl
 import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.feedback.FeedbackField
+import com.example.caronaapp.utils.functions.isUrlFotoUserValida
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
 
 class FeedbackViewModel(
     private val feedbackRepository: FeedbackRepositoryImpl,
@@ -30,7 +22,8 @@ class FeedbackViewModel(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    val criteriosFeedback = MutableStateFlow<List<CriterioFeedback>?>(
+    val isLoadingScreen = MutableStateFlow(true)
+    private val criteriosFeedback = MutableStateFlow<List<CriterioFeedback>?>(
         null
 //        listOf(
 //            CriterioFeedback(
@@ -55,128 +48,49 @@ class FeedbackViewModel(
 //            ),
 //        )
     )
-
+    val criteriosFeedbackFiltrados = MutableStateFlow<List<CriterioFeedback>>(emptyList())
+    val isFotoValida = MutableStateFlow(true)
     val usuarioAvaliado = MutableStateFlow<UsuarioDetalhesListagemDto?>(
         null
 //        UsuarioDetalhesListagemDto(
 //            id = 1,
-//            nome = "Gustavo Medeiros",
-//            email = "gustavo@email.com",
-//            cpf = "50378814800",
-//            genero = "MASCULINO",
-//            perfil = "MOTORISTA",
-//            dataNascimento = "",
-//            fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729863605/ph8npbut9xtt2vhg2i0z.png",
-//            notaMedia = 4.1,
-//            viagensRealizadas = 1,
+//            nome = "João Silva",
+//            email = "joao.silva@example.com",
+//            cpf = "123.456.789-00",
+//            perfil = "PASSAGEIRO",
+//            genero = "Masculino",
+//            dataNascimento = "1990-05-15",
+//            fotoUrl = "https://example.com/foto_joao_silva.jpg",
+//            notaMedia = 4.7,
+//            viagensRealizadas = 120,
 //            endereco = EnderecoListagemDto(
 //                id = 1,
-//                cep = "04244000",
-//                uf = "SP",
 //                cidade = "São Paulo",
-//                logradouro = "Estrada das Lágrimas",
-//                bairro = "São João CLímaco",
-//                numero = 3621
+//                uf = "SP",
+//                bairro = "Centro",
+//                logradouro = "Rua das Flores",
+//                numero = 123,
+//                cep = "01001-000",
 //            ),
-//            avaliacoes = listOf(
-//                FeedbackListagemDto(
-//                    data = LocalDate.now(),
-//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-//                    avaliador = FeedbackListagemDto.AvaliadorDto(
-//                        id = 1,
-//                        nome = "Kaiky Cruz",
-//                        fotoUrl = "foto_kaiky"
-//                    ),
-//                    notaMedia = 4.3,
-//                    notasCriterios = listOf(
-//                        NotaCriterioListagemDto(
-//                            criterio = "Comunicação",
-//                            nota = 2.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Pontualidade",
-//                            nota = 5.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Dirigibilidade",
-//                            nota = 3.5
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Segurança",
-//                            nota = 4.0
-//                        )
-//                    )
-//                ),
-//                FeedbackListagemDto(
-//                    data = LocalDate.now(),
-//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-//                    avaliador = FeedbackListagemDto
-//                        .AvaliadorDto(
-//                            id = 1,
-//                            nome = "Kaiky Cruz",
-//                            fotoUrl = "foto_kaiky"
-//                        ),
-//                    notaMedia = 3.2,
-//                    notasCriterios = listOf(
-//                        NotaCriterioListagemDto(
-//                            criterio = "Comunicação",
-//                            nota = 4.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Pontualidade",
-//                            nota = 2.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Dirigibilidade",
-//                            nota = 5.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Segurança",
-//                            nota = 1.0
-//                        )
-//                    )
-//                )
-//            ),
-//            carros = listOf(
-//                UsuarioDetalhesListagemDto.CarroDto(
-//                    marca = "Honda",
-//                    modelo = "Fit",
-//                    cor = "Preto",
-//                    placa = "ABC1D06"
-//                )
-//            ),
-//            fidelizados = listOf(
-//                FidelizadoListagemDto(
-//                    id = 2,
-//                    nome = "Kaiky Cruz",
-//                    fotoUrl = "foto_kaiky",
-//                    notaGeral = 3.5,
-//                    ufLocalidade = "SP",
-//                    cidadeLocalidade = "São Paulo",
-//                    qtdViagensJuntos = 1
-//                )
-//            ),
-//            viagens = listOf(
-//                ViagemSimplesListagemDto(
-//                    id = 1,
-//                    data = LocalDate.now(),
-//                    hora = LocalTime.now(),
-//                    preco = 30.0,
-//                    status = StatusViagem.FINALIZADA
-//                )
-//            ),
+//            avaliacoes = emptyList(),
+//            viagens = emptyList(),
+//            fidelizados = emptyList(),
+//            carros = null,
 //            principalTrajeto = PrincipalTrajeto(
-//                ufChegada = "SP",
-//                cidadeChegada = "Campinas",
+//                cidadePartida = "São Paulo",
 //                ufPartida = "SP",
-//                cidadePartida = "São Paulo"
+//                cidadeChegada = "Campinas",
+//                ufChegada = "SP",
 //            )
 //        )
     )
+    val isSuccessful = MutableStateFlow(false)
+    val isError = MutableStateFlow(false)
+    val messageToDisplay = MutableStateFlow("")
 
-    val feedbackState = MutableStateFlow(FeedbackCriterioCriacaoDto())
+    val feedbackDto = MutableStateFlow(FeedbackCriterioCriacaoDto())
 
-    suspend fun getCriteriosFeedback() {
+    private suspend fun getCriteriosFeedback() {
         try {
             val response = feedbackRepository.findAllCriterios()
 
@@ -187,18 +101,20 @@ class FeedbackViewModel(
                         "Não há critérios de Feedback cadastrados!"
                     )
                 } else {
-                    criteriosFeedback.update {
-                        response.body()!!.filter {
-                            if (usuarioAvaliado.value != null && usuarioAvaliado.value!!.perfil.uppercase() == "MOTORISTA") {
-                                it.nome.uppercase() != "COMPORTAMENTO"
-                            } else {
-                                it.nome.uppercase() != "DIRIGIBILIDADE"
-                            }
+                    criteriosFeedback.update { response.body() }
+
+                    if (usuarioAvaliado.value != null && usuarioAvaliado.value!!.perfil.uppercase() == "MOTORISTA") {
+                        criteriosFeedbackFiltrados.update {
+                            criteriosFeedback.value!!.filter { it.nome.uppercase() != "COMPORTAMENTO" }
+                        }
+                    } else {
+                        criteriosFeedbackFiltrados.update {
+                            criteriosFeedback.value!!.filter { it.nome.uppercase() != "DIRIGIBILIDADE" }
                         }
                     }
 
-                    feedbackState.update {
-                        it.copy(notasCriterios = criteriosFeedback.value!!.map { criterio ->
+                    feedbackDto.update {
+                        it.copy(notasCriterios = criteriosFeedbackFiltrados.value.map { criterio ->
                             NotaCriterioCriacaoDto(
                                 criterioId = criterio.id,
                                 nota = 0.0
@@ -220,13 +136,14 @@ class FeedbackViewModel(
         }
     }
 
-    suspend fun getUsuarioAvaliado(usuarioId: Int) {
+    private suspend fun getUsuarioAvaliado(usuarioId: Int) {
         try {
             val response = usuarioRepository.findById(usuarioId)
 
             if (response.isSuccessful) {
                 usuarioAvaliado.update { response.body() }
-                feedbackState.update { it.copy(destinatarioId = response.body()!!.id) }
+                feedbackDto.update { it.copy(destinatarioId = response.body()!!.id) }
+                validarFotoUsuario(response.body()!!.fotoUrl)
             } else {
                 Log.e(
                     "feedback",
@@ -243,29 +160,35 @@ class FeedbackViewModel(
 
     fun setupFeedback(viagemId: Int, usuarioId: Int) {
         viewModelScope.launch {
-            feedbackState.update { it.copy(viagemId = viagemId, data = LocalDate.now()) }
-//            getUsuarioAvaliado(usuarioId)
+            getUsuarioAvaliado(usuarioId)
             getCriteriosFeedback()
+            feedbackDto.update {
+                it.copy(
+                    viagemId = viagemId,
+                    destinatarioId = dataStoreManager.getIdUser()!!
+                )
+            }
+            isLoadingScreen.update { false }
         }
     }
 
     fun onChangeEvent(field: FeedbackField) {
-        Log.i("dtoCriacao", "FeedbackCriterioCriacaoDto: ${feedbackState.value}")
+        Log.i("dtoCriacao", "FeedbackCriterioCriacaoDto: ${feedbackDto.value}")
         when (field) {
             is FeedbackField.Criterio -> {
-                feedbackState.update { currentState ->
+                feedbackDto.update { currentState ->
                     updateNotasCriteriosFeedbackState(currentState, field.id, field.value)
                 }
             }
 
             is FeedbackField.Comentario -> {
-                feedbackState.update { it.copy(comentario = field.value) }
+                feedbackDto.update { it.copy(comentario = field.value) }
             }
         }
     }
 
     fun getNotaCriterio(criterioId: Int): Double {
-        val notaCriterio = feedbackState.value.notasCriterios?.find { it.criterioId == criterioId }
+        val notaCriterio = feedbackDto.value.notasCriterios?.find { it.criterioId == criterioId }
         return notaCriterio?.nota ?: 0.0
     }
 
@@ -288,16 +211,35 @@ class FeedbackViewModel(
     fun saveFeedback() {
         viewModelScope.launch {
             try {
-                val response = feedbackRepository.save(feedbackState.value)
+                Log.i("feedback", "FeedbackCriacaoDto: ${feedbackDto.value}")
+                val response = feedbackRepository.save(feedbackDto.value)
 
                 if (response.isSuccessful) {
-                    Log.i("feedback", "Exception -> erro ao salvar o feedback: ${response.body()}")
+                    Log.i("feedback", "Sucesso ao salvar o feedback: ${response.body()}")
+                    isSuccessful.update { true }
+                    messageToDisplay.update { "Feedback enviado" }
                 } else {
                     Log.e("feedback", "Erro ao salvar o feedback: ${response.errorBody()}")
+                    isError.update { true }
+                    messageToDisplay.update { "Não foi possível enviar o feedback" }
                 }
             } catch (e: Exception) {
                 Log.e("feedback", "Exception -> erro ao salvar o feedback: ${e.printStackTrace()}")
+                isError.update { true }
+                messageToDisplay.update { "Não foi possível enviar o feedback" }
             }
+        }
+    }
+
+    fun setControlVariablesToFalse() {
+        isSuccessful.update { false }
+        isError.update { false }
+        messageToDisplay.update { "" }
+    }
+
+    private suspend fun validarFotoUsuario(fotoUrl: String) {
+        isFotoValida.update {
+            isUrlFotoUserValida(fotoUrl)
         }
     }
 }

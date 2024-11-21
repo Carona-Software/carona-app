@@ -1,5 +1,6 @@
 package com.example.caronaapp.service.repository
 
+import com.example.caronaapp.data.dto.endereco.EnderecoListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioListagemDto
@@ -21,4 +22,6 @@ interface UsuarioRepository {
     suspend fun update(id: Int, usuario: UsuarioCriacaoDto): Response<UsuarioDetalhesListagemDto>
 
     suspend fun resetPassword(email: String): Response<String>
+
+    suspend fun findEnderecoByUsuarioId(id: Int): Response<EnderecoListagemDto>
 }

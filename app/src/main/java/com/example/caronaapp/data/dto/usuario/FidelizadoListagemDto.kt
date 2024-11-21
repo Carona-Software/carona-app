@@ -7,5 +7,6 @@ data class FidelizadoListagemDto(
     val ufLocalidade: String,
     val cidadeLocalidade: String,
     val notaGeral: Double,
-    val qtdViagensJuntos: Int
+    val qtdViagensJuntos: Int,
+    var isFotoValida: Boolean,
 )

@@ -26,11 +26,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Cinza90
-import com.example.caronaapp.ui.theme.Olho
+import com.example.caronaapp.ui.theme.Visibility
+import com.example.caronaapp.ui.theme.VisibilityOff
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.InputField
 
@@ -38,6 +40,8 @@ import com.example.caronaapp.utils.layout.InputField
 fun CadastroSenha(
     userData: UserCadastroState,
     onChangeEvent: (CadastroField) -> Unit,
+    handleSetPassword: () -> Unit,
+    handleSetConfirmationPassword: () -> Unit,
     onSaveClick: () -> Unit,
     validations: UserCadastroValidations,
     isLoading: Boolean
@@ -160,12 +164,13 @@ fun CadastroSenha(
                 label = stringResource(id = R.string.label_senha),
                 value = userData.senha,
                 handleChange = { onChangeEvent(CadastroField.Senha(it)) },
-                visualTransformation = PasswordVisualTransformation(),
-                endIcon = Olho,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
-                )
+                ),
+                visualTransformation = if (validations.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                endIcon = if (validations.showPassword) Visibility else VisibilityOff,
+                onIconClick = { handleSetPassword() }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -174,8 +179,9 @@ fun CadastroSenha(
                 label = stringResource(id = R.string.label_confirmacao_senha),
                 value = userData.confirmacaoSenha,
                 handleChange = { onChangeEvent(CadastroField.ConfirmacaoSenha(it)) },
-                visualTransformation = PasswordVisualTransformation(),
-                endIcon = Olho
+                visualTransformation = if (validations.showConfirmationPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                endIcon = if (validations.showConfirmationPassword) Visibility else VisibilityOff,
+                onIconClick = { handleSetConfirmationPassword() }
             )
         }
 

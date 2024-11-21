@@ -3,32 +3,40 @@ package com.example.caronaapp.presentation.screens.carros
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,20 +44,26 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.data.dto.carro.CarroCriacaoDto
+import com.example.caronaapp.data.dto.carro.CarroListagemDto
 import com.example.caronaapp.presentation.view_models.CarrosViewModel
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.example.caronaapp.ui.theme.Chevron
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.ui.theme.Circulo
 import com.example.caronaapp.ui.theme.VermelhoExcluir
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CardButton
 import com.example.caronaapp.utils.layout.CustomDialog
 import com.example.caronaapp.utils.layout.CustomItemCard
 import com.example.caronaapp.utils.layout.InputField
+import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
+import com.example.caronaapp.utils.functions.returnCorCarro
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,39 +72,33 @@ fun CarrosScreen(
     viewModel: CarrosViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
+    val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
+    val state by viewModel.state.collectAsState()
 
-    @Composable
-    fun returnCorCarro(cor: String): Painter {
-        return when (cor) {
-            "Amarelo" -> painterResource(id = R.drawable.carro_amarelo)
-            "Branco" -> painterResource(id = R.drawable.carro_branco)
-            "Cinza" -> painterResource(id = R.drawable.carro_cinza)
-            "Laranja" -> painterResource(id = R.drawable.carro_laranja)
-            "Marrom" -> painterResource(id = R.drawable.carro_marrom)
-            "Prata" -> painterResource(id = R.drawable.carro_prata)
-            "Preto" -> painterResource(id = R.drawable.carro_preto)
-            "Roxo" -> painterResource(id = R.drawable.carro_roxo)
-            "Verde" -> painterResource(id = R.drawable.carro_verde)
-            "Vermelho" -> painterResource(id = R.drawable.carro_vermelho)
-            else -> painterResource(id = R.drawable.carro_vinho)
+    LaunchedEffect(key1 = state.isError, key2 = state.isSuccess) {
+        if (state.isError) {
+            Toast.makeText(
+                context,
+                state.errorMessage,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            delay(300)
+
         }
+
+        if (state.isSuccess) {
+            Toast.makeText(
+                context,
+                state.successMessage,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            delay(300)
+            viewModel.setIsSuccessToFalse()
+        }
+
     }
-
-    val carros by viewModel.carros.collectAsState()
-
-    val isNovoCarroDialogOpened by viewModel.isCreateDialogOpened.collectAsState()
-    val isEditCarroDialogOpened by viewModel.isEditDialogOpened.collectAsState()
-    val isDeleteCarroDialogOpened by viewModel.isDeleteDialogOpened.collectAsState()
-
-    val novoCarro = CarroCriacaoDto()
-    val editCarro by viewModel.editCarro.collectAsState()
-    val deleteCarro by viewModel.deleteCarro.collectAsState()
-
-    val isError by viewModel.isError.collectAsState()
-    val isSuccess by viewModel.isSuccess.collectAsState()
-
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val successMessage by viewModel.successMessage.collectAsState()
 
     CaronaAppTheme {
         Scaffold { innerPadding ->
@@ -106,80 +114,89 @@ fun CarrosScreen(
                     backGround = CinzaF5
                 )
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(CinzaF5)
-                        .padding(bottom = 16.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    if (carros != null) {
-                        LazyColumn {
-                            items(items = carros!!.toList()) { carro ->
-                                CarroCard(
-                                    marca = carro.marca,
-                                    modelo = carro.modelo,
-                                    placa = carro.placa,
-                                    carroImg = returnCorCarro(cor = carro.cor),
-                                    onDeleteButton = { viewModel.onDeleteCLick(carro) },
-                                    onEditButton = { viewModel.onEditCLick(carro) }
-                                )
-                            }
-                        }
-                    } else {
-                        NoResultsComponent(
-                            text = stringResource(id = R.string.sem_conteudo_carros),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        )
-                    }
-
-                    Row(
+                if (isLoadingScreen) {
+                    LoadingScreen(backGround = CinzaF5)
+                } else {
+                    Column(
                         modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
+                            .fillMaxSize()
+                            .background(CinzaF5)
+                            .padding(bottom = 16.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        ButtonAction(label = stringResource(id = R.string.novo_carro)) {
-                            viewModel.onCreateCLick()
+                        if (state.carros != null) {
+                            LazyColumn {
+                                items(items = state.carros?.toList() ?: emptyList()) { carro ->
+                                    CarroCard(
+                                        carroData = carro,
+                                        onDeleteButton = { viewModel.onDeleteClick(carro) },
+                                        onEditButton = { viewModel.onEditClick(carro) }
+                                    )
+                                }
+                            }
+                        } else {
+                            NoResultsComponent(
+                                text = stringResource(id = R.string.sem_conteudo_carros),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .fillMaxWidth()
+                        ) {
+                            ButtonAction(label = stringResource(id = R.string.novo_carro)) {
+                                viewModel.onCreateClick()
+                            }
                         }
                     }
                 }
 
                 when {
-                    isDeleteCarroDialogOpened -> {
+                    state.isDeleteDialogOpened -> {
                         CustomDialog(
                             onDismissRequest = { viewModel.onDismissDeleteDialog() },
                             content = {
                                 val message = stringResource(
                                     id = R.string.message_confirmation_delete_carro,
-                                    deleteCarro!!.marca,
-                                    deleteCarro!!.modelo
+                                    state.deleteCarroData?.marca ?: "",
+                                    state.deleteCarroData?.modelo ?: ""
                                 )
 
                                 // Estilizar o texto para deixar em negrito apenas uma parte da string
                                 val annotatedString = buildAnnotatedString {
-                                    val marcaIndex = message.indexOf(deleteCarro!!.marca)
-                                    val modeloIndex = message.indexOf(deleteCarro!!.modelo)
+                                    val marcaIndex =
+                                        message.indexOf(state.deleteCarroData?.marca ?: "")
+                                    val modeloIndex =
+                                        message.indexOf(state.deleteCarroData?.modelo ?: "")
 
                                     append(message.substring(0, marcaIndex))
 
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(deleteCarro!!.marca)
+                                        append(state.deleteCarroData?.marca ?: "")
                                     }
 
                                     append(
                                         message.substring(
-                                            marcaIndex + deleteCarro!!.marca.length,
+                                            marcaIndex + (state.deleteCarroData?.marca?.length
+                                                ?: 0),
                                             modeloIndex
                                         )
                                     )
 
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(deleteCarro!!.modelo)
+                                        append(state.deleteCarroData?.modelo ?: "")
                                     }
 
-                                    append(message.substring(modeloIndex + deleteCarro!!.modelo.length))
+                                    append(
+                                        message.substring(
+                                            modeloIndex + (state.deleteCarroData?.modelo?.length
+                                                ?: 0)
+                                        )
+                                    )
                                 }
 
                                 Text(
@@ -195,74 +212,59 @@ fun CarrosScreen(
                         }
                     }
 
-                    isEditCarroDialogOpened -> {
-                        editCarro?.let { carro ->
-                            CarroInfoDialog(
-                                onDismissRequest = { viewModel.onDismissEditDialog() },
-                                buttonLabel = stringResource(id = R.string.label_button_editar),
-                                carroData = carro,
-                                onMarcaChange = { marca ->
-                                    editCarro!!.marca = marca
-                                },
-                                onModeloChange = { modelo ->
-                                    editCarro!!.modelo = modelo
-                                },
-                                onCorChange = { cor ->
-                                    editCarro!!.cor = cor
-                                },
-                                onPlacaChange = { placa ->
-                                    editCarro!!.placa = placa
-                                }
-                            ) {
-                                viewModel.handleEditCarro()
-                            }
-                        }
+                    state.isEditDialogOpened -> {
+                        CarroInfoDialog(
+                            onDismissRequest = { viewModel.onDismissEditDialog() },
+                            buttonLabel = stringResource(id = R.string.label_button_salvar),
+                            carroData = state.editCarroData,
+                            onChangeEvent = {
+                                viewModel.onChangeEvent(
+                                    field = it,
+                                    isEditCarro = true
+                                )
+                            },
+                            marcasData = state.marcasCarroData,
+                            modelosData = state.modelosCarroData,
+                            cores = state.coresCarro,
+                            onMarcasDropdownClick = { viewModel.onMarcasDropdownClick() },
+                            onModelosDropdownClick = { viewModel.onModelosDropdownClick() },
+                            onCoresDropdownClick = { viewModel.onCoresDropdownClick() },
+                            isMarcasExpanded = state.isMarcasDropdownExpanded,
+                            isModelosExpanded = state.isModelosDropdownExpanded,
+                            isCoresExpanded = state.isCoresDropdownExpanded,
+                            onMarcasDismissRequest = { viewModel.onDismissMarcasDropdown() },
+                            onModelosDismissRequest = { viewModel.onDismissModelosDropdown() },
+                            onCoresDismissRequest = { viewModel.onDismissCoresDropdown() },
+                            onSaveClick = { viewModel.handleEditCarro() }
+                        )
                     }
 
-                    isNovoCarroDialogOpened -> {
+                    state.isCreateDialogOpened -> {
                         CarroInfoDialog(
                             onDismissRequest = { viewModel.onDismissCreateDialog() },
                             buttonLabel = stringResource(id = R.string.label_button_salvar),
-                            carroData = novoCarro,
-                            onMarcaChange = { marca ->
-                                novoCarro.marca = marca
+                            carroData = state.createCarroData,
+                            onChangeEvent = {
+                                viewModel.onChangeEvent(
+                                    field = it,
+                                    isEditCarro = false
+                                )
                             },
-                            onModeloChange = { modelo ->
-                                novoCarro.modelo = modelo
-                            },
-                            onCorChange = { cor ->
-                                novoCarro.cor = cor
-                            },
-                            onPlacaChange = { placa ->
-                                novoCarro.placa = placa
-                            }
-                        ) {
-                            Toast.makeText(
-                                context,
-                                "Carro cadastrado com sucesso",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            viewModel.handleCreateCarro()
-                        }
+                            marcasData = state.marcasCarroData,
+                            modelosData = state.modelosCarroData,
+                            cores = state.coresCarro,
+                            onMarcasDropdownClick = { viewModel.onMarcasDropdownClick() },
+                            onModelosDropdownClick = { viewModel.onModelosDropdownClick() },
+                            onCoresDropdownClick = { viewModel.onCoresDropdownClick() },
+                            isMarcasExpanded = state.isMarcasDropdownExpanded,
+                            isModelosExpanded = state.isModelosDropdownExpanded,
+                            isCoresExpanded = state.isCoresDropdownExpanded,
+                            onMarcasDismissRequest = { viewModel.onDismissMarcasDropdown() },
+                            onModelosDismissRequest = { viewModel.onDismissModelosDropdown() },
+                            onCoresDismissRequest = { viewModel.onDismissCoresDropdown() },
+                            onSaveClick = { viewModel.handleCreateCarro() }
+                        )
                     }
-                }
-            }
-
-            when {
-                isError -> {
-                    Toast.makeText(
-                        context,
-                        errorMessage,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                isSuccess -> {
-                    Toast.makeText(
-                        context,
-                        successMessage,
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }
         }
@@ -271,10 +273,7 @@ fun CarrosScreen(
 
 @Composable
 fun CarroCard(
-    marca: String,
-    modelo: String,
-    placa: String,
-    carroImg: Painter,
+    carroData: CarroListagemDto,
     onDeleteButton: () -> Unit,
     onEditButton: () -> Unit,
 ) {
@@ -285,10 +284,9 @@ fun CarroCard(
             verticalArrangement = Arrangement.Top
         ) {
             Image(
-                painter = carroImg,
+                painter = returnCorCarro(cor = carroData.cor),
                 contentDescription = "Carro",
-                modifier = Modifier
-                    .width(110.dp)
+                modifier = Modifier.width(110.dp)
             )
         }
 
@@ -307,13 +305,17 @@ fun CarroCard(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "$marca $modelo",
+                        text = stringResource(
+                            id = R.string.carro_marca_modelo,
+                            carroData.marca,
+                            carroData.modelo
+                        ),
                         color = Azul,
                         style = MaterialTheme.typography.labelLarge
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = placa,
+                        text = carroData.placa,
                         color = Cinza90,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -345,35 +347,150 @@ fun CarroInfoDialog(
     onDismissRequest: () -> Unit,
     buttonLabel: String,
     carroData: CarroCriacaoDto,
-    onMarcaChange: (String) -> Unit,
-    onModeloChange: (String) -> Unit,
-    onCorChange: (String) -> Unit,
-    onPlacaChange: (String) -> Unit,
+    marcasData: List<String> = emptyList(),
+    modelosData: List<String> = emptyList(),
+    cores: List<CorCarro>,
+    onMarcasDropdownClick: () -> Unit,
+    onModelosDropdownClick: () -> Unit,
+    onCoresDropdownClick: () -> Unit,
+    isMarcasExpanded: Boolean,
+    isModelosExpanded: Boolean,
+    isCoresExpanded: Boolean,
+    onMarcasDismissRequest: () -> Unit,
+    onModelosDismissRequest: () -> Unit,
+    onCoresDismissRequest: () -> Unit,
+    onChangeEvent: (CarroField) -> Unit,
     onSaveClick: () -> Unit
 ) {
     CustomDialog(
         onDismissRequest = { onDismissRequest() },
         content = {
             Column {
-                InputField(
-                    label = stringResource(id = R.string.label_marca),
-                    value = carroData.marca
-                ) { onMarcaChange(it) }
+                // Marca
+                Column {
+                    InputField(
+                        label = stringResource(id = R.string.label_marca),
+                        value = carroData.marca,
+                        enabled = false,
+                        endIcon = Chevron,
+                        onIconClick = { onMarcasDropdownClick() },
+                        modifier = Modifier.clickable { onMarcasDropdownClick() }
+                    )
+                    Box {
+                        DropdownMenu(
+                            expanded = isMarcasExpanded,
+                            onDismissRequest = { onMarcasDismissRequest() },
+                            modifier = Modifier
+                                .background(Color.White)
+                                .heightIn(max = 160.dp)
+                        ) {
+                            marcasData.map { marca ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = marca,
+                                            color = Azul,
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    },
+                                    onClick = { onChangeEvent(CarroField.Marca(marca)) }
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
-                InputField(
-                    label = stringResource(id = R.string.label_modelo),
-                    value = carroData.modelo
-                ) { onModeloChange(it) }
+
+                // Modelo
+                Column {
+                    InputField(
+                        label = stringResource(id = R.string.label_modelo),
+                        value = carroData.modelo,
+                        enabled = false,
+                        endIcon = Chevron,
+                        onIconClick = { onModelosDropdownClick() },
+                        modifier = Modifier.clickable { onModelosDropdownClick() }
+                    )
+                    Box {
+                        DropdownMenu(
+                            expanded = isModelosExpanded,
+                            onDismissRequest = { onModelosDismissRequest() },
+                            modifier = Modifier
+                                .background(Color.White)
+                                .heightIn(max = 160.dp)
+                        ) {
+                            modelosData.map { modelo ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = modelo,
+                                            color = Azul,
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    },
+                                    onClick = { onChangeEvent(CarroField.Modelo(modelo)) }
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
-                InputField(
-                    label = stringResource(id = R.string.label_cor),
-                    value = carroData.cor
-                ) { onCorChange(it) }
+
+                // Cor
+                Column {
+                    InputField(
+                        label = stringResource(id = R.string.label_cor),
+                        value = carroData.cor,
+                        enabled = false,
+                        endIcon = Chevron,
+                        onIconClick = { onCoresDropdownClick() },
+                        modifier = Modifier.clickable { onCoresDropdownClick() }
+                    )
+                    Box {
+                        DropdownMenu(
+                            expanded = isCoresExpanded,
+                            onDismissRequest = { onCoresDismissRequest() },
+                            modifier = Modifier
+                                .background(Color.White)
+                                .heightIn(max = 160.dp)
+                        ) {
+                            cores.map { cor ->
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Circulo,
+                                            contentDescription = cor.label,
+                                            tint = cor.cor,
+                                        )
+                                    },
+                                    text = {
+                                        Text(
+                                            text = cor.label,
+                                            color = Azul,
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    },
+                                    onClick = { onChangeEvent(CarroField.Cor(cor.label)) }
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
+
+                // Placa
                 InputField(
                     label = stringResource(id = R.string.label_placa),
-                    value = carroData.placa
-                ) { onPlacaChange(it) }
+                    value = carroData.placa,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters)
+                ) {
+                    if (it.length < 8) {
+                        onChangeEvent(CarroField.Placa(it))
+                    }
+                }
             }
         },
         saveButtonLabel = buttonLabel,

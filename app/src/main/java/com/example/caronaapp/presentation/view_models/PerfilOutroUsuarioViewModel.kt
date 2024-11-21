@@ -3,177 +3,200 @@ package com.example.caronaapp.presentation.view_models
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.caronaapp.data.dto.endereco.EnderecoListagemDto
-import com.example.caronaapp.data.dto.endereco.PrincipalTrajeto
-import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
-import com.example.caronaapp.data.dto.nota_criterio.NotaCriterioListagemDto
-import com.example.caronaapp.data.dto.usuario.FidelizadoListagemDto
-import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
-import com.example.caronaapp.data.dto.viagem.ViagemSimplesListagemDto
-import com.example.caronaapp.data.enums.StatusViagem
+import com.example.caronaapp.data.dto.solicitacao.SolicitacaoFidelizacaoCriacaoDto
+import com.example.caronaapp.data.repositories.CaronaRepositoryImpl
+import com.example.caronaapp.data.repositories.FidelizacaoRepositoryImpl
+import com.example.caronaapp.data.repositories.SolicitacaoFidelizacaoRepositoryImpl
 import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
-import com.example.caronaapp.presentation.screens.meu_perfil.AvaliacoesCriterioUser
-import com.example.caronaapp.utils.calculateCriteriosFeedback
+import com.example.caronaapp.di.DataStoreManager
+import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioUiState
+import com.example.caronaapp.utils.functions.calculateCriteriosFeedback
+import com.example.caronaapp.utils.functions.isUrlFotoUserValida
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
 
 class PerfilOutroUsuarioViewModel(
-    private val usuarioRepository: UsuarioRepositoryImpl
+    private val usuarioRepository: UsuarioRepositoryImpl,
+    private val dataStoreManager: DataStoreManager,
+    private val caronaRepository: CaronaRepositoryImpl,
+    private val solicitacaoFidelizacaoRepository: SolicitacaoFidelizacaoRepositoryImpl,
+    private val fidelizacaoRepository: FidelizacaoRepositoryImpl
 ) : ViewModel() {
-    val userData = MutableStateFlow<UsuarioDetalhesListagemDto?>(
-        null
-//        UsuarioDetalhesListagemDto(
-//            id = 1,
-//            nome = "Gustavo Medeiros",
-//            email = "gustavo@email.com",
-//            cpf = "50378814800",
-//            genero = "MASCULINO",
-//            perfil = "MOTORISTA",
-//            dataNascimento = "",
-//            fotoUrl = "https://res.cloudinary.com/carona/image/upload/v1729863605/ph8npbut9xtt2vhg2i0z.png",
-//            notaMedia = 4.1,
-//            viagensRealizadas = 1,
-//            endereco = EnderecoListagemDto(
-//                id = 1,
-//                cep = "04244000",
-//                uf = "SP",
-//                cidade = "São Paulo",
-//                logradouro = "Estrada das Lágrimas",
-//                bairro = "São João CLímaco",
-//                numero = 3621
-//            ),
-//            avaliacoes = listOf(
-//                FeedbackListagemDto(
-//                    data = LocalDate.now(),
-//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-//                    avaliador = FeedbackListagemDto.AvaliadorDto(
-//                        id = 1,
-//                        nome = "Kaiky Cruz",
-//                        fotoUrl = "foto_kaiky"
-//                    ),
-//                    notaMedia = 4.3,
-//                    notasCriterios = listOf(
-//                        NotaCriterioListagemDto(
-//                            criterio = "Comunicação",
-//                            nota = 2.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Pontualidade",
-//                            nota = 5.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Dirigibilidade",
-//                            nota = 3.5
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Segurança",
-//                            nota = 4.0
-//                        )
-//                    )
-//                ),
-//                FeedbackListagemDto(
-//                    data = LocalDate.now(),
-//                    comentario = "Dirige muito bem! A viagem foi tranquila, podia ser melhor na comunicação",
-//                    avaliador = FeedbackListagemDto
-//                        .AvaliadorDto(
-//                            id = 1,
-//                            nome = "Kaiky Cruz",
-//                            fotoUrl = "foto_kaiky"
-//                        ),
-//                    notaMedia = 3.2,
-//                    notasCriterios = listOf(
-//                        NotaCriterioListagemDto(
-//                            criterio = "Comunicação",
-//                            nota = 4.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Pontualidade",
-//                            nota = 2.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Dirigibilidade",
-//                            nota = 5.0
-//                        ),
-//                        NotaCriterioListagemDto(
-//                            criterio = "Segurança",
-//                            nota = 1.0
-//                        )
-//                    )
-//                )
-//            ),
-//            carros = listOf(
-//                UsuarioDetalhesListagemDto.CarroDto(
-//                    marca = "Honda",
-//                    modelo = "Fit",
-//                    cor = "Preto",
-//                    placa = "ABC1D06"
-//                )
-//            ),
-//            fidelizados = listOf(
-//                FidelizadoListagemDto(
-//                    id = 2,
-//                    nome = "Kaiky Cruz",
-//                    fotoUrl = "foto_kaiky",
-//                    notaGeral = 3.5,
-//                    ufLocalidade = "SP",
-//                    cidadeLocalidade = "São Paulo",
-//                    qtdViagensJuntos = 1
-//                )
-//            ),
-//            viagens = listOf(
-//                ViagemSimplesListagemDto(
-//                    id = 1,
-//                    data = LocalDate.now(),
-//                    hora = LocalTime.now(),
-//                    preco = 30.0,
-//                    status = StatusViagem.FINALIZADA
-//                )
-//            ),
-//            principalTrajeto = PrincipalTrajeto(
-//                ufChegada = "SP",
-//                cidadeChegada = "Campinas",
-//                ufPartida = "SP",
-//                cidadePartida = "São Paulo"
-//            )
-//        )
-    )
 
-    val avaliacoesCriterioUser = MutableStateFlow(AvaliacoesCriterioUser())
+    val state = MutableStateFlow(PerfilOutroUsuarioUiState())
 
     fun getDetalhesUsuario(id: Int) {
         viewModelScope.launch {
             try {
+                state.update {
+                    it.copy(perfilUser = dataStoreManager.getPerfilUser() ?: "")
+                }
+
                 val response = usuarioRepository.findById(id)
 
                 if (response.isSuccessful) {
-                    userData.update { response.body()!! }
-
-                    avaliacoesCriterioUser.update {
-                        calculateCriteriosFeedback(userData.value!!.avaliacoes)
+                    state.update {
+                        it.copy(
+                            userData = response.body()!!,
+                            avaliacoesCriterioUser = calculateCriteriosFeedback(response.body()!!.avaliacoes),
+                            isFotoValida = if (response.body() == null) false
+                            else isUrlFotoUserValida(response.body()!!.fotoUrl),
+                            totalViagensJuntos = countViagensBetweenMotoristaAndPassageiro(
+                                response.body()!!.id,
+                                dataStoreManager.getIdUser()!!
+                            )
+                        )
+                    }
+                    if (response.body()?.perfil == "MOTORISTA") {
+                    // verifica se passageiro e motorista estão fidelizados
+                        state.update {
+                            it.copy(
+                                isPassageiroFidelizado = verifyFidelizacaoBetweenPassageiroAndMotorista(
+                                    passageiroId = dataStoreManager.getIdUser() ?: 0,
+                                    motoristaId = response.body()?.id ?: 0
+                                )
+                            )
+                        }
                     }
                 } else {
-                    userData.update { null }
                     Log.e(
                         "perfil outro usuario",
                         "Erro ao buscar informações do usuário: ${response.errorBody()}"
                     )
                 }
             } catch (e: Exception) {
-                userData.update { null }
                 Log.e(
                     "perfil outro usuario",
                     "Exception -> erro ao buscar informações do usuário: ${e.message}"
                 )
+            } finally {
+                state.update {
+                    it.copy(isLoadingScreen = false)
+                }
             }
         }
     }
 
-    init { // Remover quando integração estiver OK
-        avaliacoesCriterioUser.update {
-            calculateCriteriosFeedback(userData.value!!.avaliacoes)
+    private suspend fun verifyFidelizacaoBetweenPassageiroAndMotorista(
+        passageiroId: Int,
+        motoristaId: Int
+    ): Boolean {
+        try {
+            val response = fidelizacaoRepository.existsFidelizacao(
+                passageiroId = passageiroId,
+                motoristaId = motoristaId
+            )
+
+            if (response.isSuccessful) {
+                Log.i(
+                    "perfilOutroUsuario",
+                    "Sucesso ao verificar fidelização entre motorista e passageiro: ${response.body()}"
+                )
+                return response.body()!!
+            } else {
+                Log.e(
+                    "perfilOutroUsuario",
+                    "Erro ao verificar fidelização entre motorista e passageiro: ${response.errorBody()}"
+                )
+                return false
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "perfilOutroUsuario",
+                "Exception -> erro ao verificar fidelização entre motorista e passageiro: ${e.message}"
+            )
+            return false
+        }
+    }
+
+    private suspend fun countViagensBetweenMotoristaAndPassageiro(
+        motoristaId: Int,
+        passageiroId: Int
+    ): Int {
+        try {
+            val response = caronaRepository.countViagensBetweenMotoristaAndPassageiro(
+                motoristaId,
+                passageiroId
+            )
+
+            if (response.isSuccessful) {
+                Log.i(
+                    "perfilOutroUsuario",
+                    "Sucesso ao contar viagens entre motorista e passageiro: ${response.body()}"
+                )
+                return response.body()!!
+            } else {
+                Log.e(
+                    "perfilOutroUsuario",
+                    "Erro ao contar viagens entre motorista e passageiro: ${response.errorBody()}"
+                )
+                return 0
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "perfilOutroUsuario",
+                "Exception -> erro ao contar viagens entre motorista e passageiro: ${e.message}"
+            )
+            return 0
+        }
+    }
+
+    fun handleSolicitarFidelizacao() {
+        viewModelScope.launch {
+            try {
+                val solicitacao = SolicitacaoFidelizacaoCriacaoDto(
+                    motoristaId = state.value.userData!!.id,
+                    passageiroId = dataStoreManager.getIdUser()!!
+                )
+
+                val response = solicitacaoFidelizacaoRepository.save(solicitacao)
+
+                if (response.isSuccessful) {
+                    Log.i(
+                        "perfilOutroUsuario",
+                        "Sucesso ao solicitar fidelização: ${response.body()}"
+                    )
+                    state.update {
+                        it.copy(
+                            isSuccessful = true,
+                            messageToDisplay = "Solicitação de fidelização enviada",
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "perfilOutroUsuario",
+                        "Erro ao solicitar fidelização: ${response.errorBody()}"
+                    )
+                    state.update {
+                        it.copy(
+                            isError = true,
+                            messageToDisplay = "Não foi possível enviar a solicitação",
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "perfilOutroUsuario",
+                    "Exception -> erro ao solicitar fidelização: ${e.message}"
+                )
+                state.update {
+                    it.copy(
+                        isError = true,
+                        messageToDisplay = "Não foi possível enviar a solicitação",
+                    )
+                }
+            }
+        }
+    }
+
+    fun setControlVariablesToFalse() {
+        state.update {
+            it.copy(
+                isSuccessful = false,
+                isError = false,
+                messageToDisplay = "",
+            )
         }
     }
 }

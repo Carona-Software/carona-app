@@ -4,6 +4,7 @@ import com.example.caronaapp.data.dto.carro.CarroListagemDto
 import com.example.caronaapp.data.dto.google_maps.GeocodeResponse
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 sealed class OferecerViagemField {
     data class PontoPartida(val value: String) : OferecerViagemField()
@@ -24,8 +25,8 @@ sealed class OferecerViagemEnderecoField {
 data class OferecerViagemState(
     val pontoPartida: String = "",
     val pontoDestino: String = "",
-    val data: String = "",
-    val hora: String = "",
+    val data: LocalDate = LocalDate.now(),
+    val hora: LocalTime = LocalTime.now(),
     val capacidadePassageiros: Int = 1,
     val apenasMulheres: Boolean = false,
     val preco: Double = 0.0,

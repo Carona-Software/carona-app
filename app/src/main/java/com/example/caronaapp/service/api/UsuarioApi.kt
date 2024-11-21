@@ -1,5 +1,6 @@
 package com.example.caronaapp.service.api
 
+import com.example.caronaapp.data.dto.endereco.EnderecoListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.dto.usuario.UsuarioListagemDto
@@ -38,4 +39,7 @@ interface UsuarioApi {
 
     @POST("usuarios/redefinir-senha")
     suspend fun resetPassword(@Query("email") email: String): Response<String>
+
+    @GET("usuarios/{id}/endereco")
+    suspend fun findEnderecoByUsuarioId(@Path("id") id: Int): Response<EnderecoListagemDto>
 }

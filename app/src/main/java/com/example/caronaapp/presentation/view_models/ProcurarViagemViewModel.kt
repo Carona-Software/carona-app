@@ -7,16 +7,15 @@ import com.example.caronaapp.data.dto.google_maps.GeocodeResponse
 import com.example.caronaapp.data.dto.viagem.Coordenadas
 import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
 import com.example.caronaapp.data.repositories.GoogleMapsRepositoryImpl
-import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemField
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 class ProcurarViagemViewModel(
-    private val viagemRepository: ViagemRepositoryImpl,
     private val googleMapsRepository: GoogleMapsRepositoryImpl,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
@@ -28,14 +27,11 @@ class ProcurarViagemViewModel(
         }
     }
 
-    private val viagemProcuraDto = MutableStateFlow(ViagemProcuraDto())
+    val viagemProcuraDto = MutableStateFlow(ViagemProcuraDto())
     val procurarViagemState = MutableStateFlow(ProcurarViagemState())
 
     val isDropdownPartidaOpened = MutableStateFlow(false)
     val isDropdownChegadaOpened = MutableStateFlow(false)
-
-    val viagensForamEncontradas = MutableStateFlow(false)
-    val viagensNaoForamEncontradas = MutableStateFlow(false)
 
     fun onChangeEvent(field: ProcurarViagemField) {
         when (field) {
@@ -51,15 +47,16 @@ class ProcurarViagemViewModel(
 
             is ProcurarViagemField.Data -> {
                 procurarViagemState.update { it.copy(data = field.value) }
+                viagemProcuraDto.update { it.copy(data = field.value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) }
             }
         }
     }
 
-    fun searchAddress(address: String, isPartida: Boolean) {
+    private fun searchAddress(address: String, isPartida: Boolean) {
         viewModelScope.launch {
             try {
-                val API_KEY = "AIzaSyBCgrMgCudI7Jcc3xd8DDZAlqb8_7lWvF4"
-                val response = googleMapsRepository.getGeocode(address, API_KEY)
+                val response = googleMapsRepository.getGeocode(address)
+
                 if (response.isSuccessful) {
                     Log.i("geocoder", "Sucesso no Geocode: ${response.body()}")
                     Log.i("geocoder", "Endereços retornados: ${response.body()!!.results.size}")
@@ -138,32 +135,5 @@ class ProcurarViagemViewModel(
         }
 
         isDropdownChegadaOpened.update { false }
-    }
-
-    fun procurarViagens() {
-        viewModelScope.launch {
-            try {
-                val response = viagemRepository.findAll(viagemProcuraDto.value)
-
-                if (response.isSuccessful) {
-                    Log.i(
-                        "procurarViagem",
-                        "Sucesso ao buscar viagens: ${response.body()}"
-                    )
-                    viagensForamEncontradas.update { true }
-                } else {
-                    Log.e(
-                        "procurarViagem",
-                        "Erro ao buscar viagens: ${response.errorBody()}"
-                    )
-                    viagensNaoForamEncontradas.update { true }
-                }
-            } catch (e: Exception) {
-                Log.e(
-                    "procurarViagem",
-                    "Exception -> erro ao buscar viagens: ${e.printStackTrace()}"
-                )
-            }
-        }
     }
 }

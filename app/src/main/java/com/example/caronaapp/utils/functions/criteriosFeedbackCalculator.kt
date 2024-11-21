@@ -1,4 +1,4 @@
-package com.example.caronaapp.utils
+package com.example.caronaapp.utils.functions
 
 import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
 import com.example.caronaapp.presentation.screens.meu_perfil.AvaliacoesCriterioUser

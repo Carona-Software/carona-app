@@ -13,4 +13,6 @@ interface SolicitacaoFidelizacaoRepository {
     suspend fun approve(id: Int): Response<SolicitacaoFidelizacaoListagemDto>
 
     suspend fun refuse(id: Int): Response<SolicitacaoFidelizacaoListagemDto>
+
+    suspend fun delete(id: Int): Response<Void>
 }

@@ -5,9 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
 import com.example.caronaapp.presentation.screens.avaliacoes.AvaliacoesScreen
 import com.example.caronaapp.presentation.screens.cadastro.CadastroScreen
 import com.example.caronaapp.presentation.screens.carros.CarrosScreen
@@ -28,6 +31,7 @@ import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOut
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemScreen
 import com.example.caronaapp.presentation.screens.viagens.ViagensScreen
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,8 +74,33 @@ class MainActivity : ComponentActivity() {
                     composable("meu-perfil/carros") {
                         CarrosScreen(navController)
                     }
-                    composable("viagens") {
-                        ViagensScreen(navController)
+                    composable(
+                        "viagens/{viagem}/{ponto_partida}/{ponto_destino}",
+                        arguments = listOf(
+                            navArgument(
+                                name = "viagem",
+                                builder = { type = NavType.StringType }
+                            ),
+                            navArgument(
+                                name = "ponto_partida",
+                                builder = { type = NavType.StringType }
+                            ),
+                            navArgument(
+                                name = "ponto_destino",
+                                builder = { type = NavType.StringType }
+                            ),
+                        )
+                    ) { entry ->
+                        val viagem = entry.arguments?.getString("viagem")
+                        val pontoPartida = entry.arguments?.getString("ponto_partida") ?: ""
+                        val pontoDestino = entry.arguments?.getString("ponto_destino") ?: ""
+                        val viagemProcuraDto = Gson().fromJson(viagem, ViagemProcuraDto::class.java)
+                        ViagensScreen(
+                            navController = navController,
+                            viagem = viagemProcuraDto,
+                            pontoPartida = pontoPartida,
+                            pontoDestino = pontoDestino
+                        )
                     }
                     composable("viagens/procurar") {
                         ProcurarViagemScreen(navController)
@@ -82,13 +111,24 @@ class MainActivity : ComponentActivity() {
                     composable("viagens/historico") {
                         HistoricoViagensScreen(navController)
                     }
-                    composable("viagens/detalhes/{id}") { entry ->
+                    composable(
+                        "viagens/detalhes/{id}",
+                        arguments = listOf(navArgument(
+                            name = "id",
+                            builder = { type = NavType.IntType }
+                        ))
+                    ) { entry ->
                         val viagemId = entry.arguments?.getInt("id")
-                        DetalhesViagemScreen(navController, viagemId!!.toInt())
+                        DetalhesViagemScreen(navController, viagemId ?: 0)
                     }
-                    composable("usuarios/perfil/{id}") { entry ->
-                        val userId = entry.arguments?.getInt("id")
-                        PerfilOutroUsuarioScreen(navController, userId!!)
+                    composable(
+                        route = "usuarios/perfil/{id}",
+                        arguments = listOf(navArgument(
+                            name = "id",
+                            builder = { type = NavType.IntType }
+                        ))) { entry ->
+                        val userId = entry.arguments?.getInt("id") ?: 0
+                        PerfilOutroUsuarioScreen(navController, userId)
                     }
                     composable("chat") {
                         ChatScreen(navController)
@@ -96,10 +136,23 @@ class MainActivity : ComponentActivity() {
                     composable("chat/conversa") {
                         ConversaScreen(navController)
                     }
-                    composable("feedback/{viagemId}/{usuarioId}") { entry ->
-                        val viagemId = entry.arguments?.getInt("viagemId")
-                        val usuarioId = entry.arguments?.getInt("usuarioId")
-                        FeedbackScreen(navController, viagemId, usuarioId)
+                    composable("feedback/{viagem_id}/{usuario_id}",
+                        arguments = listOf(navArgument(
+                            name = "viagem_id",
+                            builder = { type = NavType.IntType }
+                        ),
+                            navArgument(
+                                name = "usuario_id",
+                                builder = { type = NavType.IntType })
+                        )
+                    ) { entry ->
+                        val viagemId = entry.arguments?.getInt("viagem_id")
+                        val usuarioId = entry.arguments?.getInt("usuario_id")
+                        FeedbackScreen(
+                            navController = navController,
+                            viagemId = viagemId,
+                            usuarioId = usuarioId
+                        )
                     }
                 }
             }

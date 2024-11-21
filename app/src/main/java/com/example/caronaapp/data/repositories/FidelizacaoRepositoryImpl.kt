@@ -20,4 +20,8 @@ class FidelizacaoRepositoryImpl(private val fidelizacaoApi: FidelizacaoApi) :
     override suspend fun delete(motoristaId: Int, passageiroId: Int): Response<Void> {
         return fidelizacaoApi.delete(motoristaId, passageiroId)
     }
+
+    override suspend fun existsFidelizacao(passageiroId: Int, motoristaId: Int): Response<Boolean> {
+        return fidelizacaoApi.existsFidelizacao(passageiroId, motoristaId)
+    }
 }
