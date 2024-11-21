@@ -165,7 +165,7 @@ val viewModelModule = module {
     viewModel { HistoricoViagensViewModel(get(), get()) }
     viewModel { MeuPerfilViewModel(get(), get(), get()) }
     viewModel { OferecerViagemViewModel(get(), get(), get(), get(), get()) }
-    viewModel { PerfilOutroUsuarioViewModel(get(), get()) }
+    viewModel { PerfilOutroUsuarioViewModel(get(), get(), get(), get(), get()) }
     viewModel { ProcurarViagemViewModel(get(), get()) }
     viewModel { ViagensViewModel(get(), get(), get(), get()) }
 }
