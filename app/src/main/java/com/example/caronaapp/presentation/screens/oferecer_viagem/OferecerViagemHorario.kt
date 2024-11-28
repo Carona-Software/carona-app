@@ -56,9 +56,12 @@ fun OferecerViagemHorario(
             dialogState = dateDialogState,
             allowedDateValidator = {
                 !it.isBefore(LocalDate.now())
-            }) { novaData ->
-            handleOnChange(OferecerViagemField.Data(novaData))
-        }
+            },
+            selectedDate = state.data,
+            onDateChange = { novaData ->
+                handleOnChange(OferecerViagemField.Data(novaData))
+            }
+        )
 
         InputField(
             label = stringResource(id = R.string.horario),

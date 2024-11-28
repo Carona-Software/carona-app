@@ -8,24 +8,20 @@ import com.example.caronaapp.data.dto.viagem.Coordenadas
 import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
 import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
 import com.example.caronaapp.data.repositories.MapboxRepositoryImpl
-import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.viagens.ViagensField
 import com.example.caronaapp.presentation.screens.viagens.ViagensState
 import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.functions.isUrlFotoUserValida
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 class ViagensViewModel(
     private val viagemRepository: ViagemRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
-    private val usuarioRepository: UsuarioRepositoryImpl,
     private val mapboxRepository: MapboxRepositoryImpl
 ) : ViewModel() {
 
@@ -83,30 +79,24 @@ class ViagensViewModel(
                         "procurarViagem",
                         "Sucesso ao buscar viagens: ${response.body()}"
                     )
-                    val viagensValidadas = response.body()?.content?.map { viagem ->
-                        setDetalhesViagemComFotosVerificadas(viagem)
+
+                    val viagensComDistancia = response.body()?.content?.map { viagem ->
+                        val distanciaPartida = calcularDistancia(
+                            coordenadasPartida = viagemProcuraDto.value.pontoPartida!!,
+                            coordenadasDestino = viagem.trajeto.pontoPartida.coordenadas
+                        )
+                        val distanciaDestino = calcularDistancia(
+                            coordenadasPartida = viagemProcuraDto.value.pontoChegada!!,
+                            coordenadasDestino = viagem.trajeto.pontoChegada.coordenadas
+                        )
+
+                        viagem.copy(
+                            distanciaPartida = distanciaPartida,
+                            distanciaDestino = distanciaDestino,
+                            motorista = validarFotoMotorista(viagem.motorista)
+                        )
                     }
-                    viagens.update { viagensValidadas }
-//                    getEnderecoUsuario()
-//                    val viagensComDistancia = response.body()?.content?.map { viagem ->
-//                        val distanciaPartida = calcularDistancia(
-//                            coordenadasPartida = Coordenadas(
-//                                latitude = state.value.enderecoUsuario!!.latitude!!,
-//                                longitude = state.value.enderecoUsuario!!.longitude!!
-//                            ),
-//                            coordenadasDestino = viagem.trajeto.pontoPartida.coordenadas
-//                        )
-//                        val distanciaDestino = calcularDistancia(
-//                            coordenadasPartida = viagemProcuraDto.value.pontoPartida!!,
-//                            coordenadasDestino = viagem.trajeto.pontoChegada.coordenadas
-//                        )
-//
-//                        viagem.copy(
-//                            distanciaPartida = distanciaPartida,
-//                            distanciaDestino = distanciaDestino
-//                        )
-//                    }
-                    viagens.update { response.body()!!.content }
+                    viagens.update { viagensComDistancia }
                 } else {
                     Log.e(
                         "procurarViagem",
@@ -174,6 +164,7 @@ class ViagensViewModel(
 
     fun handleFilterViagens() {
         onDismissBottomSheet()
+        isLoadingScreen.update { true }
         procurarViagens()
     }
 
@@ -184,27 +175,6 @@ class ViagensViewModel(
                 precoMinimo = null,
                 precoMaximo = null,
                 apenasMulheres = null
-            )
-        }
-    }
-
-    private suspend fun getEnderecoUsuario() {
-        try {
-            val response = usuarioRepository.findEnderecoByUsuarioId(idUser.value)
-
-            if (response.code() == 200) {
-                Log.e("viagens", "Sucesso ao buscar endereço do usuário: ${response.body()}")
-                state.update {
-                    it.copy(
-                        enderecoUsuario = response.body()
-                    )
-                }
-                getEnderecoUsuario()
-            }
-        } catch (e: Exception) {
-            Log.e(
-                "viagens",
-                "Exception -> erro ao buscar endereço do usuário: ${e.printStackTrace()}"
             )
         }
     }
@@ -222,7 +192,7 @@ class ViagensViewModel(
             )
 
             return if (response.isSuccessful) {
-                (response.body()?.routes?.firstOrNull()?.distance?.div(1000) ?: 0.0)
+                response.body()?.routes?.firstOrNull()?.distance?.div(1000) ?: 0.0
             } else {
                 0.0
             }
@@ -232,16 +202,6 @@ class ViagensViewModel(
                 "Exception -> erro ao calcular distância: ${e.printStackTrace()}"
             )
             return 0.0
-        }
-    }
-
-    private suspend fun setDetalhesViagemComFotosVerificadas(viagemData: ViagemListagemDto): ViagemListagemDto {
-        return withContext(Dispatchers.IO) {
-            val motoristaValidado = validarFotoMotorista(viagemData.motorista)
-
-            viagemData.copy(
-                motorista = motoristaValidado,
-            )
         }
     }
 

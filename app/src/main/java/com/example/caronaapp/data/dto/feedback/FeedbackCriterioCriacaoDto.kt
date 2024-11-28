@@ -8,7 +8,7 @@ data class FeedbackCriterioCriacaoDto(
     val remetenteId: Int = 0,
     val destinatarioId: Int = 0,
     val comentario: String = "",
-    val data: String = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
+    val data: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
     val viagemId: Int = 0,
     val notasCriterios: List<NotaCriterioCriacaoDto>? = null
 )

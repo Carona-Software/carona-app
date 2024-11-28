@@ -54,6 +54,7 @@ import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
 import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
 import com.example.caronaapp.presentation.view_models.ViagensViewModel
 import com.example.caronaapp.ui.theme.Amarelo
+import com.example.caronaapp.ui.theme.AmareloMedio
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -251,7 +252,11 @@ fun ViagensScreen(
                                 items(items = viagens!!.toList()) { viagem ->
                                     ViagemCard(
                                         viagemData = viagem,
-                                        navigate = { navController.navigate("viagens/detalhes/${viagem.id}") }
+                                        navigate = {
+                                            navController.navigate(
+                                                "viagens/detalhes/${viagem.id}/${viagem.distanciaPartida}/${viagem.distanciaDestino}"
+                                            )
+                                        }
                                     )
                                 }
                             }
@@ -394,7 +399,7 @@ fun ViagemCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -435,65 +440,10 @@ fun ViagemCard(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Row {
-                                Row(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(24.dp)
-                                        .background(CinzaCB),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Carro,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(24.dp)
-                                        .background(CinzaCB),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Carro,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(24.dp)
-                                        .background(LaranjaLonge),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Carro,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                    )
-                                }
-                            }
+                            DistanciaIndicator(distancia = viagemData.distanciaPartida)
                         }
                     }
-                    Spacer(modifier = Modifier.height(15.dp))
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     Row(verticalAlignment = Alignment.Top) {
                         Text(
                             text = formatTime(viagemData.horarioChegadaInTime),
@@ -519,61 +469,7 @@ fun ViagemCard(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Row {
-                                Row(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(24.dp)
-                                        .background(VerdePerto),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Carro,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(24.dp)
-                                        .background(CinzaCB),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Carro,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(24.dp)
-                                        .background(CinzaCB),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .fillMaxSize(),
-                                        imageVector = Carro,
-                                        contentDescription = "Voltar",
-                                        tint = Color.White,
-                                    )
-                                }
-                            }
+                            DistanciaIndicator(distancia = viagemData.distanciaDestino)
                         }
                     }
                 }
@@ -668,6 +564,67 @@ fun ViagemCard(
 //                    }
 //                }
             }
+        }
+    }
+}
+
+@Composable
+fun DistanciaIndicator(
+    distancia: Double
+) {
+    Row {
+        Row(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(24.dp)
+                .background(if (distancia <= 2.0) VerdePerto else CinzaCB),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxSize(),
+                imageVector = Carro,
+                contentDescription = null,
+                tint = Color.White,
+            )
+        }
+        Spacer(modifier = Modifier.width(5.dp))
+        Row(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(24.dp)
+                .background(if (distancia > 3.0 && distancia <= 10.0) AmareloMedio else CinzaCB),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxSize(),
+                imageVector = Carro,
+                contentDescription = null,
+                tint = Color.White,
+            )
+        }
+        Spacer(modifier = Modifier.width(5.dp))
+        Row(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(24.dp)
+                .background(if (distancia > 10.0) LaranjaLonge else CinzaCB),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxSize(),
+                imageVector = Carro,
+                contentDescription = null,
+                tint = Color.White,
+            )
         }
     }
 }

@@ -31,6 +31,7 @@ import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
+import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CustomCard
@@ -53,7 +54,7 @@ fun ProcurarViagemScreen(
 
     val dateDialogState = rememberMaterialDialogState()
 
-    val state by viewModel.procurarViagemState.collectAsState()
+    val state by viewModel.state.collectAsState()
     val viagemProcuraDto by viewModel.viagemProcuraDto.collectAsState()
 
     val isDropdownPartidaOpened by viewModel.isDropdownPartidaOpened.collectAsState()
@@ -127,7 +128,7 @@ fun ProcurarViagemScreen(
 
                                 InputField(
                                     label = stringResource(id = R.string.label_dia),
-                                    value = state.dataToShow,
+                                    value = formatDate(state.data),
                                     startIcon = Calendario,
                                     onIconClick = {
                                         dateDialogState.show()
@@ -139,9 +140,12 @@ fun ProcurarViagemScreen(
                                     dialogState = dateDialogState,
                                     allowedDateValidator = {
                                         !it.isBefore(LocalDate.now())
-                                    }) { novaData ->
-                                    viewModel.onChangeEvent(ProcurarViagemField.Data(novaData))
-                                }
+                                    },
+                                    selectedDate = state.data,
+                                    onDateChange = { novaData ->
+                                        viewModel.onChangeEvent(ProcurarViagemField.Data(novaData))
+                                    }
+                                )
                             }
                             Spacer(modifier = Modifier.height(28.dp))
                             ButtonAction(label = stringResource(id = R.string.procurar)) {

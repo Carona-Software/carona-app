@@ -7,5 +7,10 @@ data class MapboxResponseDto(
     data class Route(
         val duration: Double,
         val distance: Double,
+        val geometry: Geometry
+    )
+
+    data class Geometry(
+        val coordinates: List<List<Double>>
     )
 }

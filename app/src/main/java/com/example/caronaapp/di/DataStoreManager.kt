@@ -1,6 +1,7 @@
 package com.example.caronaapp.di
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -13,11 +14,18 @@ private val Context.dataStore by preferencesDataStore("user_preferences")
 
 class DataStoreManager(private val context: Context) {
 
+    private val ONBOARDING_DONE = booleanPreferencesKey("onboardingDone")
     private val ID_USER = intPreferencesKey("idUser")
     private val PERFIL_USER = stringPreferencesKey("perfilUser")
     private val GENERO_USER = stringPreferencesKey("generoUser")
 
     // Gravação
+    suspend fun setOnboardingDone() {
+        context.dataStore.edit { preferences ->
+            preferences[ONBOARDING_DONE] = true
+        }
+    }
+
     suspend fun setIdUser(id: Int) {
         context.dataStore.edit { preferences ->
             preferences[ID_USER] = id
@@ -49,6 +57,10 @@ class DataStoreManager(private val context: Context) {
         preferences[GENERO_USER]
     }
 
+    private val onboardingDoneFlow: Flow<Boolean?> = context.dataStore.data.map { preferences ->
+        preferences[ONBOARDING_DONE]
+    }
+
     suspend fun getIdUser(): Int? {
         return idUserFlow.first()
     }
@@ -61,10 +73,16 @@ class DataStoreManager(private val context: Context) {
         return generoUserFlow.first()
     }
 
+    suspend fun getOnboardingState(): Boolean? {
+        return onboardingDoneFlow.first()
+    }
+
     // Limpar
-    suspend fun clear() {
+    suspend fun clearUserData() {
         context.dataStore.edit { preferences ->
-            preferences.clear()
+            preferences[ID_USER] = 0
+            preferences[PERFIL_USER] = ""
+            preferences[GENERO_USER] = ""
         }
     }
 }

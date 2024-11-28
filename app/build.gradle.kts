@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -52,6 +53,19 @@ android {
 }
 
 dependencies {
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
+    // GOOGLE MAPS
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    // Google maps for compose
+    implementation(libs.maps.compose)
+    // KTX for the Maps SDK for Android
+    implementation(libs.maps.ktx)
+    // KTX for the Maps SDK for Android Utility Library
+    implementation( libs.maps.utils.ktx)
+
     //Logging interceptor
     implementation(libs.logging.interceptor.v500alpha2)
 

@@ -10,7 +10,14 @@ import com.example.caronaapp.data.repositories.GoogleMapsRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemField
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemState
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
@@ -28,26 +35,61 @@ class ProcurarViagemViewModel(
     }
 
     val viagemProcuraDto = MutableStateFlow(ViagemProcuraDto())
-    val procurarViagemState = MutableStateFlow(ProcurarViagemState())
+    val state = MutableStateFlow(ProcurarViagemState())
 
     val isDropdownPartidaOpened = MutableStateFlow(false)
     val isDropdownChegadaOpened = MutableStateFlow(false)
 
+    // Tentativa com debounce
+    private val _pontoPartida = MutableStateFlow("")
+    val pontoPartida = _pontoPartida.asStateFlow()
+
+    private val _pontoChegada = MutableStateFlow("")
+    val pontoChegada = _pontoChegada.asStateFlow()
+
+    @OptIn(FlowPreview::class)
+    val pontoPartidaResults = pontoPartida
+        .debounce(700)
+        .filter { it.isNotEmpty() }
+        .distinctUntilChanged() // Ignore valores iguais consecutivos
+        .onEach { query ->
+            searchAddress(query, true)
+        }
+        .launchIn(viewModelScope)
+
+    @OptIn(FlowPreview::class)
+    val pontoChegadaResults = pontoChegada
+        .debounce(700)
+        .filter { it.isNotEmpty() }
+        .distinctUntilChanged() // Ignore valores iguais consecutivos
+        .onEach { query ->
+            searchAddress(query, false)
+        }
+        .launchIn(viewModelScope)
+
     fun onChangeEvent(field: ProcurarViagemField) {
         when (field) {
             is ProcurarViagemField.PontoPartida -> {
-                procurarViagemState.update { it.copy(pontoPartida = field.value) }
-                searchAddress(field.value, true)
+                state.update { it.copy(pontoPartida = field.value) }
+                _pontoPartida.update { field.value }
             }
 
             is ProcurarViagemField.PontoChegada -> {
-                procurarViagemState.update { it.copy(pontoChegada = field.value) }
-                searchAddress(field.value, false)
+                state.update { it.copy(pontoChegada = field.value) }
+                _pontoChegada.update { field.value }
             }
 
             is ProcurarViagemField.Data -> {
-                procurarViagemState.update { it.copy(data = field.value) }
-                viagemProcuraDto.update { it.copy(data = field.value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) }
+                state.update { it.copy(data = field.value) }
+                viagemProcuraDto.update {
+                    it.copy(
+                        data = field.value.format(
+                            DateTimeFormatter.ofPattern(
+                                "yyyy-MM-dd"
+                            )
+                        )
+                    )
+                }
             }
         }
     }
@@ -64,14 +106,14 @@ class ProcurarViagemViewModel(
 
                     if (isPartida) {
                         isDropdownPartidaOpened.update { true }
-                        procurarViagemState.update {
+                        state.update {
                             it.copy(
                                 resultsPontoPartida = response.body()!!.results
                             )
                         }
                     } else {
                         isDropdownChegadaOpened.update { true }
-                        procurarViagemState.update {
+                        state.update {
                             it.copy(
                                 resultsPontoChegada = response.body()!!.results
                             )
@@ -108,16 +150,10 @@ class ProcurarViagemViewModel(
             )
         }
 
-        procurarViagemState.update {
+        state.update {
             it.copy(pontoPartida = pontoPartida.formatted_address)
         }
-
         isDropdownPartidaOpened.update { false }
-
-        Log.i("geocoder", "Opção escolhida")
-        Log.i("geocoder", "Endereço: ${pontoPartida.formatted_address}")
-        Log.i("geocoder", "Coordenadas: ${pontoPartida.geometry.location}")
-        Log.i("geocoder", "===============================================================")
     }
 
     fun onDropDownChegadaClick(pontoChegada: GeocodeResponse.Result) {
@@ -130,10 +166,9 @@ class ProcurarViagemViewModel(
             )
         }
 
-        procurarViagemState.update {
+        state.update {
             it.copy(pontoChegada = pontoChegada.formatted_address)
         }
-
         isDropdownChegadaOpened.update { false }
     }
 }

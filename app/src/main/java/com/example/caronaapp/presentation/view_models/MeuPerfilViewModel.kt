@@ -274,7 +274,7 @@ class MeuPerfilViewModel(
     }
 
     fun clearDataStore() {
-        viewModelScope.launch { dataStoreManager.clear() }
+        viewModelScope.launch { dataStoreManager.clearUserData() }
     }
 
 }

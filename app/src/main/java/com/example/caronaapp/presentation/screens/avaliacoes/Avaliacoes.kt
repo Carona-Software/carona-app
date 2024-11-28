@@ -36,6 +36,7 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.layout.CustomAsyncImage
 import com.example.caronaapp.utils.layout.CustomDefaultImage
 import com.example.caronaapp.utils.layout.CustomItemCard
@@ -43,6 +44,7 @@ import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 
 @Composable
 fun AvaliacoesScreen(
@@ -78,7 +80,7 @@ fun AvaliacoesScreen(
                                     nome = avaliacao.avaliador.nome,
                                     fotoUrl = avaliacao.avaliador.fotoUrl,
                                     isFotoValida = avaliacao.avaliador.isFotoValida,
-                                    data = avaliacao.data.toString(),
+                                    data = avaliacao.dataInDate,
                                     notaFinal = avaliacao.notaMedia,
                                     comentario = avaliacao.comentario
                                 )
@@ -100,7 +102,7 @@ fun AvaliacaoCard(
     nome: String,
     fotoUrl: String,
     isFotoValida: Boolean,
-    data: String,
+    data: LocalDate,
     notaFinal: Double,
     comentario: String
 ) {
@@ -138,7 +140,7 @@ fun AvaliacaoCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = data,
+                        text = formatDate(data),
                         color = Cinza90,
                         style = MaterialTheme.typography.bodySmall
                     )

@@ -69,6 +69,8 @@
     <string name="label_button_aplicar">Aplicar</string>
     <string name="label_button_limpar">Limpar</string>
     <string name="label_button_sair">Sair</string>
+    <string name="label_button_voltar">Voltar</string>
+    <string name="label_button_comecar">Começar</string>
 
     <!--  AVALIAÇÕES  -->
     <string name="avaliacao_geral">Avaliação geral</string>
@@ -122,6 +124,8 @@
     <string name="defina_sua_senha">Defina sua senha</string>
     <string name="filtrar">Filtrar</string>
     <string name="cifrao_rs">R$</string>
+    <string name="preco_viagem">R$ %1$.0f</string>
+    <string name="capacidade_maxima_passageiros">%1$d passageiros (máximo)</string>
     <string name="apenas_mulheres">Apenas mulheres</string>
     <string name="carro">Carro</string>
     <string name="ver_no_mapa">Ver no Mapa</string>
@@ -208,7 +212,8 @@
     <string name="message_confirmation_remove_fidelizado">Tem certeza que deseja remover %1$s dos fidelizados?</string>
     <string name="fidelizado_qtd_viagens_juntos">%1$d viagens juntos</string>
     <string name="fidelizado_localidade">%1$s, %2$s</string>
-    <string name="viagem_endereco">%1$s, %2$d - %3$s, %4$s, %5$s</string>
+    <string name="viagem_endereco_completo">%1$s, %2$d - %3$s, %4$s, %5$s</string>
+    <string name="viagem_endereco_simples">%1$s, %2$d</string>
     <string name="carro_marca_modelo">%1$s %2$s</string>
 
     <!--  TEXTOS FILTROS  -->

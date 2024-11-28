@@ -2,7 +2,6 @@ package com.example.caronaapp.data.dto.viagem
 
 import com.example.caronaapp.data.dto.usuario.UsuarioSimplesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
-import com.example.caronaapp.utils.functions.formatDate
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -17,8 +16,8 @@ data class ViagemListagemDto(
     val status: StatusViagem,
     val motorista: UsuarioSimplesListagemDto,
     val trajeto: TrajetoDto,
-    val distanciaPartida: Double,
-    val distanciaDestino: Double,
+    val distanciaPartida: Double = 0.0,
+    val distanciaDestino: Double = 0.0,
 ) {
     // Propriedade derivada para converter para LocalDate
     val dataInDate: LocalDate
@@ -29,15 +28,4 @@ data class ViagemListagemDto(
 
     val horarioChegadaInTime: LocalTime
         get() = horarioChegada.let { LocalTime.parse(it) }
-
-    val dataToShow =
-        if (dataInDate.isEqual(LocalDate.now())) {
-            "Hoje"
-        } else if (dataInDate.isEqual(LocalDate.now().plusDays(1))) {
-            "Amanhã"
-        } else if (dataInDate.isEqual(LocalDate.now().minusDays(1))) {
-            "Ontem"
-        } else {
-            formatDate(dataInDate)
-        }
 }

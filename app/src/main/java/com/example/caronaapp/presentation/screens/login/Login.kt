@@ -65,7 +65,7 @@ fun LoginScreen(
             delay(200)
 
             navController.navigate("meu-perfil") {
-                popUpTo(navController.graph.startDestinationRoute!!) {
+                popUpTo(navController.graph.startDestinationId) {
                     inclusive = true
                 }
             }

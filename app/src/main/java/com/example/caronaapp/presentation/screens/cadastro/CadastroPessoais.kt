@@ -121,9 +121,12 @@ fun CadastroPessoais(
             dialogState = dateDialogState,
             allowedDateValidator = {
                 it.isBefore(LocalDate.now().minusYears(18))
-            }) { novaData ->
-            onChangeEvent(CadastroField.DataNascimento(novaData))
-        }
+            },
+            selectedDate = LocalDate.parse(userData.dataNascimento),
+            onDateChange = { novaData ->
+                onChangeEvent(CadastroField.DataNascimento(novaData))
+            }
+        )
 
         Column {
             Text(

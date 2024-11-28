@@ -34,6 +34,7 @@ import com.example.caronaapp.ui.theme.VermelhoErro
 
 @Composable
 fun InputField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
     maxLines: Int = 1,
@@ -48,7 +49,6 @@ fun InputField(
     buttonIconEnabled: Boolean = true,
     iconDescription: String? = null,
     onIconClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
     handleChange: (String) -> Unit = {}
 ) {
     CaronaAppTheme {

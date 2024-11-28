@@ -92,7 +92,11 @@ fun CadastroScreen(
     )
 
     if (isSignUpSuccessful) {
-        navController.navigate("login")
+        navController.navigate("login") {
+            popUpTo(navController.graph.startDestinationId) {
+                inclusive = true
+            }
+        }
     }
 
     LaunchedEffect(key1 = isSignUpSuccessful, key2 = isBackToLogin) {

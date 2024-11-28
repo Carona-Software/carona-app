@@ -1,7 +1,5 @@
 package com.example.caronaapp.presentation.screens.viagens
 
-import com.example.caronaapp.data.dto.endereco.EnderecoListagemDto
-
 sealed class ViagensField {
     data class CapacidadePassageiros(val value: Int) : ViagensField()
     data class PrecoMinimo(val value: Double) : ViagensField()
@@ -10,7 +8,6 @@ sealed class ViagensField {
 }
 
 data class ViagensState(
-    val enderecoUsuario: EnderecoListagemDto? = null,
     val showBottomSheet: Boolean = false,
     val capacidadePassageiros: Int = 1,
     val precoMinimo: Double = 0.0,

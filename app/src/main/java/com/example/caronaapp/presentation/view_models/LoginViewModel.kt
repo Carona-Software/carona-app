@@ -1,12 +1,12 @@
 package com.example.caronaapp.presentation.view_models
 
 import android.util.Log
-import com.example.caronaapp.utils.functions.setPasswordVisibility
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.usuario.UsuarioLoginDto
 import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
+import com.example.caronaapp.utils.functions.setPasswordVisibility
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,11 +33,12 @@ class LoginViewModel(
                     Log.i("login", "Login realizado com sucesso: ${response.body()}")
                     isLoginSuccessful.update { true }
 
-                    dataStoreManager.clear()
+                    val usuario = response.body()!!
+                    dataStoreManager.clearUserData()
 
-                    dataStoreManager.setIdUser(response.body()!!.id)
-                    dataStoreManager.setPerfilUser(response.body()!!.perfil)
-                    dataStoreManager.setGeneroUser(response.body()!!.genero.uppercase())
+                    dataStoreManager.setIdUser(usuario.id)
+                    dataStoreManager.setPerfilUser(usuario.perfil)
+                    dataStoreManager.setGeneroUser(usuario.genero)
 
                     Log.i("dataStore", "----------------------------------- ")
                     Log.i("dataStore", "DataStore: ")

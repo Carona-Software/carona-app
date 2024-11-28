@@ -100,7 +100,7 @@ fun OferecerViagemScreen(
 
             delay(300)
             viewModel.setIsSuccessfulToFalse()
-            navController.navigate("viagens/detalhes/$idCreatedViagem")
+            navController.navigate("viagens/detalhes/$idCreatedViagem/null/null")
         }
     }
 
