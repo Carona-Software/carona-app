@@ -5,7 +5,15 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 fun formatDate(date: LocalDate): String {
-    return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    return if (date.isEqual(LocalDate.now())) {
+        "Hoje"
+    } else if (date.isEqual(LocalDate.now().plusDays(1))) {
+        "Amanhã"
+    } else if (date.isEqual(LocalDate.now().minusDays(1))) {
+        "Ontem"
+    } else {
+        date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    }
 }
 
 fun formatTime(time: LocalTime): String {

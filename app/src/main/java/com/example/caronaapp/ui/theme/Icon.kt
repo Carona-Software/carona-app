@@ -11,17 +11,20 @@ import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.Groups2
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MarkUnreadChatAlt
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
@@ -37,10 +40,13 @@ val Procurar = Icons.Default.Search
 val Oferecer = Icons.Default.AddCircleOutline
 val Chat = Icons.AutoMirrored.Filled.Chat
 val Viagem = Icons.Default.Map
-val MeuPerfil = Icons.Default.Person
+val Pessoa = Icons.Default.Person
+val Pessoas = Icons.Default.Groups2
 val Localizacao = Icons.Default.LocationOn
 val PontoPartida = Icons.Default.Adjust
 val Calendario = Icons.Default.CalendarMonth
+val Check = Icons.Default.Check
+val Preco = Icons.Default.MonetizationOn
 val Horario = Icons.Default.AccessTime
 val Visibility = Icons.Default.Visibility
 val VisibilityOff = Icons.Default.VisibilityOff

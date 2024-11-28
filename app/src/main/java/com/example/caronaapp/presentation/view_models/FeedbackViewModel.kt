@@ -23,72 +23,30 @@ class FeedbackViewModel(
 ) : ViewModel() {
 
     val isLoadingScreen = MutableStateFlow(true)
-    private val criteriosFeedback = MutableStateFlow<List<CriterioFeedback>?>(
-        null
-//        listOf(
-//            CriterioFeedback(
-//                id = 1,
-//                nome = "Comunicação"
-//            ),
-//            CriterioFeedback(
-//                id = 2,
-//                nome = "Segurança"
-//            ),
-//            CriterioFeedback(
-//                id = 3,
-//                nome = "Pontualidade"
-//            ),
-//            CriterioFeedback(
-//                id = 4,
-//                nome = "Comportamento"
-//            ),
-//            CriterioFeedback(
-//                id = 5,
-//                nome = "Dirigibilidade"
-//            ),
-//        )
-    )
+    private val criteriosFeedback = MutableStateFlow<List<CriterioFeedback>?>(null)
     val criteriosFeedbackFiltrados = MutableStateFlow<List<CriterioFeedback>>(emptyList())
     val isFotoValida = MutableStateFlow(true)
-    val usuarioAvaliado = MutableStateFlow<UsuarioDetalhesListagemDto?>(
-        null
-//        UsuarioDetalhesListagemDto(
-//            id = 1,
-//            nome = "João Silva",
-//            email = "joao.silva@example.com",
-//            cpf = "123.456.789-00",
-//            perfil = "PASSAGEIRO",
-//            genero = "Masculino",
-//            dataNascimento = "1990-05-15",
-//            fotoUrl = "https://example.com/foto_joao_silva.jpg",
-//            notaMedia = 4.7,
-//            viagensRealizadas = 120,
-//            endereco = EnderecoListagemDto(
-//                id = 1,
-//                cidade = "São Paulo",
-//                uf = "SP",
-//                bairro = "Centro",
-//                logradouro = "Rua das Flores",
-//                numero = 123,
-//                cep = "01001-000",
-//            ),
-//            avaliacoes = emptyList(),
-//            viagens = emptyList(),
-//            fidelizados = emptyList(),
-//            carros = null,
-//            principalTrajeto = PrincipalTrajeto(
-//                cidadePartida = "São Paulo",
-//                ufPartida = "SP",
-//                cidadeChegada = "Campinas",
-//                ufChegada = "SP",
-//            )
-//        )
-    )
+    val usuarioAvaliado = MutableStateFlow<UsuarioDetalhesListagemDto?>(null)
     val isSuccessful = MutableStateFlow(false)
     val isError = MutableStateFlow(false)
     val messageToDisplay = MutableStateFlow("")
 
     val feedbackDto = MutableStateFlow(FeedbackCriterioCriacaoDto())
+
+    fun setupFeedback(viagemId: Int, usuarioId: Int) {
+        viewModelScope.launch {
+            getUsuarioAvaliado(usuarioId)
+            getCriteriosFeedback()
+            feedbackDto.update {
+                it.copy(
+                    viagemId = viagemId,
+                    destinatarioId = usuarioId,
+                    remetenteId = dataStoreManager.getIdUser()!!
+                )
+            }
+            isLoadingScreen.update { false }
+        }
+    }
 
     private suspend fun getCriteriosFeedback() {
         try {
@@ -158,22 +116,7 @@ class FeedbackViewModel(
         }
     }
 
-    fun setupFeedback(viagemId: Int, usuarioId: Int) {
-        viewModelScope.launch {
-            getUsuarioAvaliado(usuarioId)
-            getCriteriosFeedback()
-            feedbackDto.update {
-                it.copy(
-                    viagemId = viagemId,
-                    destinatarioId = dataStoreManager.getIdUser()!!
-                )
-            }
-            isLoadingScreen.update { false }
-        }
-    }
-
     fun onChangeEvent(field: FeedbackField) {
-        Log.i("dtoCriacao", "FeedbackCriterioCriacaoDto: ${feedbackDto.value}")
         when (field) {
             is FeedbackField.Criterio -> {
                 feedbackDto.update { currentState ->

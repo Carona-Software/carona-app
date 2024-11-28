@@ -185,19 +185,15 @@ fun HistoricoViagensScreen(
                         }
                     }
 
-                    if (viagensFiltradas == null) {
+                    if (viagensFiltradas.isEmpty()) {
                         NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
                     } else {
-                        if (viagensFiltradas!!.isNotEmpty()) {
-                            LazyColumn {
-                                items(items = viagensFiltradas!!.toList()) { viagem ->
-                                    ViagemCard(viagemData = viagem) {
-                                        navController.navigate("viagens/detalhes/${viagem.id}")
-                                    }
+                        LazyColumn {
+                            items(items = viagensFiltradas.toList()) { viagem ->
+                                ViagemCard(viagemData = viagem) {
+                                    navController.navigate("viagens/detalhes/${viagem.id}/null/null")
                                 }
                             }
-                        } else {
-                            NoResultsComponent(text = stringResource(id = R.string.nenhuma_viagem_encontrada))
                         }
                     }
                 }
@@ -275,7 +271,6 @@ fun ViagemCard(
                 Text(
                     text = stringResource(
                         id = R.string.viagem_data_hora,
-//                        viagemData.dataToShow,
                         formatDate(viagemData.dataInDate),
                         formatTime(viagemData.horarioPartidaInTime)
                     ),

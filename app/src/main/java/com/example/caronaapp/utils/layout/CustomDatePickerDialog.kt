@@ -22,7 +22,8 @@ import java.time.LocalDate
 fun CustomDatePickerDialog(
     dialogState: MaterialDialogState,
     allowedDateValidator: (LocalDate) -> Boolean,
-    onDateChange: (LocalDate) -> Unit
+    onDateChange: (LocalDate) -> Unit,
+    selectedDate: LocalDate = LocalDate.now()
 ) {
     MaterialDialog(
         dialogState = dialogState,
@@ -48,7 +49,7 @@ fun CustomDatePickerDialog(
         properties = DialogProperties(dismissOnBackPress = true)
     ) {
         this.datepicker(
-            initialDate = LocalDate.now(),
+            initialDate = selectedDate,
             title = stringResource(id = R.string.title_date_picker_dialog),
             allowedDateValidator = { allowedDateValidator(it) },
             colors = DatePickerDefaults.colors(
@@ -57,8 +58,7 @@ fun CustomDatePickerDialog(
                 headerBackgroundColor = Azul,
                 dateInactiveTextColor = Azul,
                 headerTextColor = Color.White,
-                dateActiveBackgroundColor = Azul,
-                
+                dateActiveBackgroundColor = Azul
             )
         ) {
             onDateChange(it)

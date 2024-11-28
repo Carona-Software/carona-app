@@ -12,9 +12,7 @@ import com.example.caronaapp.data.dto.viagem.ViagemDetalhesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.CaronaRepositoryImpl
 import com.example.caronaapp.data.repositories.FeedbackRepositoryImpl
-import com.example.caronaapp.data.repositories.MapboxRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoViagemRepositoryImpl
-import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.detalhes_viagem.DetalhesViagemUiState
@@ -31,10 +29,9 @@ class DetalhesViagemViewModel(
     private val solicitacaoViagemRepository: SolicitacaoViagemRepositoryImpl,
     private val caronaRepository: CaronaRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
-    private val usuarioRepository: UsuarioRepositoryImpl,
     private val feedbackRepository: FeedbackRepositoryImpl,
-    private val mapboxRepository: MapboxRepositoryImpl,
 ) : ViewModel() {
+
     val isLoadingScreen = MutableStateFlow(true)
     val idUser = MutableStateFlow<Int?>(null)
     val perfilUser = MutableStateFlow<String?>(null)
@@ -55,12 +52,7 @@ class DetalhesViagemViewModel(
                         "detalhesViagem",
                         "Sucesso ao buscar detalhes da viagem: ${response.body()}"
                     )
-                    if (response.body()!!.status == StatusViagem.PENDENTE) {
-                        if (perfilUser.value == "MOTORISTA") {
-                            // calcular distâncias
-//                            getEnderecoUsuario()
-                        }
-                    } else if (response.body()!!.status == StatusViagem.FINALIZADA) {
+                    if (response.body()!!.status == StatusViagem.FINALIZADA) {
                         if (perfilUser.value == "PASSAGEIRO") {
                             verifyFeedbackFromPassageiroToMotorista(
                                 passageiroId = idUser.value!!,
@@ -106,8 +98,8 @@ class DetalhesViagemViewModel(
         try {
             val response = feedbackRepository.existsByDestinatarioAndRemetenteAndViagem(
                 FeedbackConsultaDto(
-                    destinatarioId = passageiroId,
-                    remetenteId = motoristaId,
+                    destinatarioId = motoristaId,
+                    remetenteId = passageiroId,
                     viagemId = viagemId
                 )
             )
@@ -617,26 +609,6 @@ class DetalhesViagemViewModel(
         return motorista.copy(
             isFotoValida = isUrlFotoUserValida(motorista.fotoUrl)
         )
-    }
-
-    private suspend fun getEnderecoUsuario() {
-        try {
-            val response = usuarioRepository.findEnderecoByUsuarioId(idUser.value!!)
-
-            if (response.code() == 200) {
-                Log.e("detalhesViagem", "Sucesso ao buscar endereço do usuário: ${response.body()}")
-                state.update {
-                    it.copy(
-                        enderecoUsuario = response.body()
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(
-                "detalhesViagem",
-                "Exception -> erro ao buscar endereço do usuário: ${e.printStackTrace()}"
-            )
-        }
     }
 
 }

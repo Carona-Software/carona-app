@@ -1,16 +1,28 @@
 package com.example.caronaapp
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.caronaapp.data.dto.viagem.Coordenadas
 import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
+import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.avaliacoes.AvaliacoesScreen
 import com.example.caronaapp.presentation.screens.cadastro.CadastroScreen
 import com.example.caronaapp.presentation.screens.carros.CarrosScreen
@@ -24,25 +36,64 @@ import com.example.caronaapp.presentation.screens.feedback.FeedbackScreen
 import com.example.caronaapp.presentation.screens.fidelizados.FidelizadosScreen
 import com.example.caronaapp.presentation.screens.historico_viagens.HistoricoViagensScreen
 import com.example.caronaapp.presentation.screens.login.LoginScreen
+import com.example.caronaapp.presentation.screens.mapa_viagem.MapaViagemScreen
 import com.example.caronaapp.presentation.screens.meu_perfil.MeuPerfilScreen
 import com.example.caronaapp.presentation.screens.notificacoes.NotificacoesScreen
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemScreen
+import com.example.caronaapp.presentation.screens.onboarding.OnboardingScreen
 import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioScreen
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemScreen
 import com.example.caronaapp.presentation.screens.viagens.ViagensScreen
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.google.gson.Gson
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("CoroutineCreationDuringComposition", "StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
+        installSplashScreen()
         setContent {
             CaronaAppTheme {
                 val navController = rememberNavController()
+                val dataStoreManager = DataStoreManager(LocalContext.current)
 
-                NavHost(navController = navController, startDestination = "login") {
+                fun navigate(destination: String) {
+                    navController.navigate(destination) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
+                }
+
+                LaunchedEffect(key1 = Unit) {
+                    val isOnboardingDone = dataStoreManager.getOnboardingState()
+                    val idUser = dataStoreManager.getIdUser()
+
+                    Log.d("initial", "isOnboardingDone: $isOnboardingDone")
+                    Log.d("initial", "idUser: $idUser")
+
+                    if (isOnboardingDone == null) {
+                        navigate("onboarding")
+                    } else if (idUser != null && idUser != 0) {
+                        navigate("meu-perfil")
+                    } else {
+                        navigate("login")
+                    }
+                }
+
+                NavHost(navController = navController, startDestination = "post-splash") {
+                    composable("post-splash") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White)
+                        )
+                    }
+                    composable("onboarding") {
+                        OnboardingScreen(navController)
+                    }
                     composable("login") {
                         LoginScreen(navController)
                     }
@@ -75,7 +126,7 @@ class MainActivity : ComponentActivity() {
                         CarrosScreen(navController)
                     }
                     composable(
-                        "viagens/{viagem}/{ponto_partida}/{ponto_destino}",
+                        route = "viagens/{viagem}/{ponto_partida}/{ponto_destino}",
                         arguments = listOf(
                             navArgument(
                                 name = "viagem",
@@ -94,7 +145,8 @@ class MainActivity : ComponentActivity() {
                         val viagem = entry.arguments?.getString("viagem")
                         val pontoPartida = entry.arguments?.getString("ponto_partida") ?: ""
                         val pontoDestino = entry.arguments?.getString("ponto_destino") ?: ""
-                        val viagemProcuraDto = Gson().fromJson(viagem, ViagemProcuraDto::class.java)
+                        val viagemProcuraDto =
+                            Gson().fromJson(viagem, ViagemProcuraDto::class.java)
                         ViagensScreen(
                             navController = navController,
                             viagem = viagemProcuraDto,
@@ -112,14 +164,65 @@ class MainActivity : ComponentActivity() {
                         HistoricoViagensScreen(navController)
                     }
                     composable(
-                        "viagens/detalhes/{id}",
-                        arguments = listOf(navArgument(
-                            name = "id",
-                            builder = { type = NavType.IntType }
-                        ))
+                        route = "viagens/detalhes/{id}/{distancia_partida}/{distancia_destino}",
+                        arguments = listOf(
+                            navArgument(
+                                name = "id",
+                                builder = { type = NavType.IntType }
+                            ),
+                            navArgument(
+                                name = "distancia_partida",
+                                builder = {
+                                    type = NavType.StringType
+                                    nullable = true
+                                    defaultValue = null
+                                },
+                            ),
+                            navArgument(
+                                name = "distancia_destino",
+                                builder = {
+                                    type = NavType.StringType
+                                    nullable = true
+                                    defaultValue = null
+                                }
+                            ),
+                        )
                     ) { entry ->
                         val viagemId = entry.arguments?.getInt("id")
-                        DetalhesViagemScreen(navController, viagemId ?: 0)
+                        val distanciaPartida =
+                            entry.arguments?.getString("distancia_partida")
+                        val distanciaDestino =
+                            entry.arguments?.getString("distancia_destino")
+                        DetalhesViagemScreen(
+                            navController = navController,
+                            viagemId = viagemId ?: 0,
+                            distanciaPartida = distanciaPartida?.toDouble(),
+                            distanciaDestino = distanciaDestino?.toDouble()
+                        )
+                    }
+                    composable(
+                        route = "viagens/mapa/{viagemId}/{pontoPartida}",
+                        arguments = listOf(
+                            navArgument(
+                                name = "viagemId",
+                                builder = { type = NavType.IntType }
+                            ),
+                            navArgument(
+                                name = "pontoPartida",
+                                builder = { type = NavType.StringType }
+                            )
+                        )
+                    ) { entry ->
+                        val viagemId = entry.arguments?.getInt("viagemId") ?: 0
+                        val pontoPartida = entry.arguments?.getString("pontoPartida")
+                        val pontoPartidaCoordenadas =
+                            Gson().fromJson(pontoPartida, Coordenadas::class.java)
+                        MapaViagemScreen(
+                            navController = navController,
+                            viagemId = viagemId,
+                            pontoPartida = pontoPartidaCoordenadas
+                        )
+
                     }
                     composable(
                         route = "usuarios/perfil/{id}",
@@ -136,7 +239,8 @@ class MainActivity : ComponentActivity() {
                     composable("chat/conversa") {
                         ConversaScreen(navController)
                     }
-                    composable("feedback/{viagem_id}/{usuario_id}",
+                    composable(
+                        route = "feedback/{viagem_id}/{usuario_id}",
                         arguments = listOf(navArgument(
                             name = "viagem_id",
                             builder = { type = NavType.IntType }

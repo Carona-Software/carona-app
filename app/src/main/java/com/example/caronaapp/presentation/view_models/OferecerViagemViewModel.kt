@@ -14,7 +14,14 @@ import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemEnderecoField
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemField
 import com.example.caronaapp.presentation.screens.oferecer_viagem.OferecerViagemState
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -50,6 +57,32 @@ class OferecerViagemViewModel(
     val isSuccessful = MutableStateFlow(false)
     val isError = MutableStateFlow(false)
     val idCreatedViagem = MutableStateFlow(0)
+
+    private val _pontoPartida = MutableStateFlow("")
+    val pontoPartida = _pontoPartida.asStateFlow()
+
+    private val _pontoChegada = MutableStateFlow("")
+    val pontoChegada = _pontoChegada.asStateFlow()
+
+    @OptIn(FlowPreview::class)
+    val pontoPartidaResults = pontoPartida
+        .debounce(700)
+        .filter { it.isNotEmpty() }
+        .distinctUntilChanged() // Ignore valores iguais consecutivos
+        .onEach { query ->
+            searchAddress(query, true)
+        }
+        .launchIn(viewModelScope)
+
+    @OptIn(FlowPreview::class)
+    val pontoChegadaResults = pontoChegada
+        .debounce(700)
+        .filter { it.isNotEmpty() }
+        .distinctUntilChanged() // Ignore valores iguais consecutivos
+        .onEach { query ->
+            searchAddress(query, false)
+        }
+        .launchIn(viewModelScope)
 
     private fun getCarrosUser() {
         viewModelScope.launch {
@@ -95,14 +128,14 @@ class OferecerViagemViewModel(
                 state.update {
                     it.copy(pontoPartida = field.value)
                 }
-                searchAddress(field.value, true)
+                _pontoPartida.update { field.value }
             }
 
             is OferecerViagemField.PontoDestino -> {
                 state.update {
                     it.copy(pontoDestino = field.value)
                 }
-                searchAddress(field.value, false)
+                _pontoChegada.update { field.value }
             }
 
             is OferecerViagemField.Data -> {

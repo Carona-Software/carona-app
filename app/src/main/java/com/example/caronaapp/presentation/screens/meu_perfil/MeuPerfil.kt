@@ -107,13 +107,13 @@ fun MeuPerfilScreen(
     fun logout() {
         viewModel.onDismissModalClick("logout")
 
+        viewModel.clearDataStore()
+
         navController.navigate("login") {
-            popUpTo(navController.graph.startDestinationRoute!!) {
+            popUpTo(navController.graph.startDestinationId) {
                 inclusive = true
             }
         }
-
-        viewModel.clearDataStore()
     }
 
     CaronaAppTheme {
@@ -498,13 +498,16 @@ fun MeuPerfilScreen(
                                         dialogState = dateDialogState,
                                         allowedDateValidator = {
                                             it.isBefore(LocalDate.now().minusYears(18))
-                                        }) { novaData ->
-                                        viewModel.onChangeEvent(
-                                            MeuPerfilField.DataNascimento(
-                                                novaData
+                                        },
+                                        selectedDate = meuPerfilState.dataNascimento,
+                                        onDateChange = { novaData ->
+                                            viewModel.onChangeEvent(
+                                                MeuPerfilField.DataNascimento(
+                                                    novaData
+                                                )
                                             )
-                                        )
-                                    }
+                                        }
+                                    )
                                 }
 
                                 meuPerfilState.isFotoDialogEnabled -> {

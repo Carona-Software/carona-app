@@ -1,5 +1,6 @@
 package com.example.caronaapp.presentation.screens.detalhes_viagem
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,20 +46,31 @@ import com.example.caronaapp.data.dto.viagem.LocalidadeDto
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.presentation.view_models.DetalhesViagemViewModel
 import com.example.caronaapp.ui.theme.Amarelo
+import com.example.caronaapp.ui.theme.AmareloMedio
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Carro
+import com.example.caronaapp.ui.theme.Check
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
+import com.example.caronaapp.ui.theme.Circulo
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
+import com.example.caronaapp.ui.theme.LaranjaLonge
 import com.example.caronaapp.ui.theme.Localizacao
+import com.example.caronaapp.ui.theme.Pessoas
 import com.example.caronaapp.ui.theme.PontoPartida
+import com.example.caronaapp.ui.theme.Preco
 import com.example.caronaapp.ui.theme.SetaDireita
 import com.example.caronaapp.ui.theme.VerdePerto
+import com.example.caronaapp.ui.theme.VerdeSwitchButton
+import com.example.caronaapp.ui.theme.VermelhoComboBox
 import com.example.caronaapp.ui.theme.VermelhoExcluir
+import com.example.caronaapp.ui.theme.Viagem
 import com.example.caronaapp.utils.functions.formatCep
+import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.functions.formatTime
+import com.example.caronaapp.utils.functions.returnCorCarro
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CardButton
 import com.example.caronaapp.utils.layout.CustomAsyncImage
@@ -67,7 +79,7 @@ import com.example.caronaapp.utils.layout.CustomDialog
 import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarTitle
-import com.example.caronaapp.utils.functions.returnCorCarro
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,8 +87,13 @@ import org.koin.androidx.compose.koinViewModel
 fun DetalhesViagemScreen(
     navController: NavController,
     viagemId: Int,
+    distanciaPartida: Double?,
+    distanciaDestino: Double?,
     viewModel: DetalhesViagemViewModel = koinViewModel()
 ) {
+    Log.d("distancia", "Distancia partida pós-navigation: $distanciaPartida")
+    Log.d("distancia", "Distancia destino pós-navigation: $distanciaDestino")
+
     val context = LocalContext.current
     val idUser by viewModel.idUser.collectAsState()
     val perfilUser by viewModel.perfilUser.collectAsState()
@@ -139,6 +156,38 @@ fun DetalhesViagemScreen(
                                     modifier = Modifier,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    val statusIcon =
+                                        if (state.viagem!!.status == StatusViagem.PENDENTE || state.viagem!!.status == StatusViagem.ANDAMENTO) Circulo
+                                        else Check
+
+                                    val statusColor =
+                                        if (state.viagem!!.status == StatusViagem.PENDENTE || state.viagem!!.status == StatusViagem.FINALIZADA) VerdeSwitchButton
+                                        else VermelhoComboBox
+
+                                    val viagemStatus = when (state.viagem!!.status) {
+                                        StatusViagem.PENDENTE -> "Pendente"
+                                        StatusViagem.ANDAMENTO -> "Em andamento"
+                                        StatusViagem.FINALIZADA -> "Finalizada"
+                                    }
+
+                                    Icon(
+                                        imageVector = statusIcon,
+                                        contentDescription = "Status",
+                                        tint = statusColor,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = viagemStatus,
+                                        color = Azul,
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Row(
+                                    modifier = Modifier,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Icon(
                                         imageVector = Calendario,
                                         contentDescription = "Calendário",
@@ -149,7 +198,7 @@ fun DetalhesViagemScreen(
                                     Text(
                                         text = stringResource(
                                             id = R.string.viagem_data_hora,
-                                            state.viagem!!.dataToShow,
+                                            formatDate(state.viagem!!.dataInDate),
                                             formatTime(state.viagem!!.horarioPartidaInTime)
                                         ),
                                         color = Azul,
@@ -159,31 +208,107 @@ fun DetalhesViagemScreen(
                                 Spacer(modifier = Modifier.height(20.dp))
                                 EnderecoComponent(
                                     icon = PontoPartida,
-                                    endereco = state.viagem!!.trajeto.pontoPartida
+                                    endereco = state.viagem!!.trajeto.pontoPartida,
+                                    distancia = distanciaPartida,
+                                    isPartida = true
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
                                 EnderecoComponent(
                                     icon = Localizacao,
-                                    endereco = state.viagem!!.trajeto.pontoChegada
+                                    endereco = state.viagem!!.trajeto.pontoChegada,
+                                    distancia = distanciaDestino,
+                                    isPartida = false
                                 )
                                 Spacer(modifier = Modifier.height(28.dp))
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            val pontoPartida =
+                                                Gson().toJson(state.viagem!!.trajeto.pontoPartida.coordenadas)
+                                            navController.navigate("viagens/mapa/${state.viagem!!.id}/$pontoPartida")
+                                        },
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = stringResource(
-                                            id = R.string.ver_no_mapa
-                                        ),
-                                        color = Azul,
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Viagem,
+                                            contentDescription = "Mapa",
+                                            tint = Azul,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text(
+                                            text = stringResource(
+                                                id = R.string.ver_no_mapa
+                                            ),
+                                            color = Azul,
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    }
                                     Icon(
                                         imageVector = SetaDireita,
                                         contentDescription = "Navegar",
                                         tint = Cinza90,
                                         modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp),
+                                color = CinzaE8,
+                                thickness = 8.dp
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Preco,
+                                        contentDescription = "Preço",
+                                        tint = Azul,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = stringResource(
+                                            id = R.string.preco_viagem,
+                                            state.viagem!!.preco,
+                                        ),
+                                        color = Azul,
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Row(
+                                    modifier = Modifier,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Pessoas,
+                                        contentDescription = "Capacidade de passageiros",
+                                        tint = Azul,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = stringResource(
+                                            id = R.string.capacidade_maxima_passageiros,
+                                            state.viagem!!.capacidadePassageiros,
+                                        ),
+                                        color = Azul,
+                                        style = MaterialTheme.typography.labelLarge
                                     )
                                 }
                             }
@@ -212,6 +337,12 @@ fun DetalhesViagemScreen(
                                     fotoUrl = state.viagem!!.motorista.fotoUrl,
                                     isFotoValida = state.viagem!!.motorista.isFotoValida,
                                     notaMedia = state.viagem!!.motorista.notaGeral,
+                                    isUserLoggedInMotorista = perfilUser == "MOTORISTA",
+                                    isTheUserLoggedIn = idUser == state.viagem!!.motorista.id,
+                                    modifier = if (idUser == state.viagem!!.motorista.id) Modifier
+                                    else Modifier.clickable {
+                                        navController.navigate("usuarios/perfil/${state.viagem!!.motorista.id}")
+                                    }
                                 )
                             }
 
@@ -304,6 +435,8 @@ fun DetalhesViagemScreen(
                                                 isFotoValida = passageiro.isFotoValida,
                                                 notaMedia = passageiro.notaGeral,
                                                 isLast = passageiro == state.viagem!!.passageiros.last(),
+                                                isTheUserLoggedIn = idUser == passageiro.id,
+                                                isUserLoggedInMotorista = perfilUser == "MOTORISTA",
                                                 modifier = if (idUser == passageiro.id) Modifier
                                                 else Modifier.clickable {
                                                     navController.navigate("usuarios/perfil/${passageiro.id}")
@@ -311,7 +444,8 @@ fun DetalhesViagemScreen(
                                                 onFeedbackClick = {
                                                     navController.navigate("feedback/${state.viagem!!.id}/${passageiro.id}")
                                                 },
-                                                foiAvaliado = passageiro.foiAvaliado
+                                                foiAvaliado = passageiro.foiAvaliado,
+                                                viagemFinalizada = state.viagem!!.status == StatusViagem.FINALIZADA,
                                             )
                                         }
                                     }
@@ -379,7 +513,8 @@ fun DetalhesViagemScreen(
 
                             if (
                                 state.viagem!!.status == StatusViagem.PENDENTE ||
-                                (state.viagem!!.status == StatusViagem.ANDAMENTO && perfilUser == "MOTORISTA")
+                                (state.viagem!!.status == StatusViagem.ANDAMENTO && perfilUser == "MOTORISTA") ||
+                                (perfilUser == "PASSAGEIRO" && !state.motoristaFoiAvaliado)
                             ) {
                                 HorizontalDivider(
                                     modifier = Modifier
@@ -542,6 +677,7 @@ fun DetalhesViagemScreen(
                                     }
                                 }
                             }
+                            Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
                 }
@@ -553,8 +689,20 @@ fun DetalhesViagemScreen(
 @Composable
 fun EnderecoComponent(
     icon: ImageVector,
-    endereco: LocalidadeDto
+    endereco: LocalidadeDto,
+    distancia: Double?,
+    isPartida: Boolean
 ) {
+    fun getColorDistanciaViagem(): Color {
+        return if (distancia != null && distancia <= 2.0) {
+            VerdePerto
+        } else if (distancia != null && distancia > 3.0 && distancia <= 10.0) {
+            AmareloMedio
+        } else {
+            LaranjaLonge
+        }
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
@@ -579,7 +727,7 @@ fun EnderecoComponent(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(
-                    id = R.string.viagem_endereco,
+                    id = R.string.viagem_endereco_completo,
                     endereco.logradouro,
                     endereco.numero,
                     formatCep(endereco.cep),
@@ -589,32 +737,35 @@ fun EnderecoComponent(
                 color = Cinza90,
                 style = MaterialTheme.typography.labelMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(VerdePerto)
-                        .padding(3.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Carro,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
+            if (distancia != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) { // distância
+                    Column(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(getColorDistanciaViagem())
+                            .padding(3.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Carro,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(
+                            id = if (isPartida) R.string.viagem_texto_distancia_ponto_de_partida
+                            else R.string.viagem_texto_distancia_ponto_de_chegada,
+                            distancia
+                        ),
+                        color = getColorDistanciaViagem(),
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(
-                        id = R.string.viagem_texto_distancia_ponto_de_partida,
-                        0.6
-                    ),
-                    color = VerdePerto,
-                    style = MaterialTheme.typography.bodySmall
-                )
             }
         }
     }
@@ -627,6 +778,8 @@ fun UserRow(
     notaMedia: Double,
     fotoUrl: String,
     isFotoValida: Boolean,
+    isUserLoggedInMotorista: Boolean = false,
+    isTheUserLoggedIn: Boolean,
     foiAvaliado: Boolean = false,
     viagemFinalizada: Boolean = false,
     onFeedbackClick: () -> Unit = {},
@@ -685,7 +838,7 @@ fun UserRow(
                     style = MaterialTheme.typography.displayLarge
                 )
             }
-            if (!foiAvaliado && viagemFinalizada) {
+            if (!foiAvaliado && viagemFinalizada && isUserLoggedInMotorista) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -699,12 +852,14 @@ fun UserRow(
             }
         }
 
-        Icon(
-            imageVector = SetaDireita,
-            contentDescription = "Navegar",
-            tint = Cinza90,
-            modifier = Modifier.size(20.dp)
-        )
+        if (!isTheUserLoggedIn) {
+            Icon(
+                imageVector = SetaDireita,
+                contentDescription = "Navegar",
+                tint = Cinza90,
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
 
     if (!isLast) {
@@ -826,7 +981,8 @@ fun DetalhesViagemmScreenPreview() {
             fotoUrl = "",
             isFotoValida = false,
             notaMedia = 4.5,
-            viagemFinalizada = false,
+            viagemFinalizada = true,
+            isTheUserLoggedIn = true
         )
 
     }

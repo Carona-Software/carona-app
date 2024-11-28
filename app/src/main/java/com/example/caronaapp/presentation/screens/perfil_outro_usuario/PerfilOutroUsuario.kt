@@ -1,7 +1,6 @@
 package com.example.caronaapp.presentation.screens.perfil_outro_usuario
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,13 +27,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +48,8 @@ import com.example.caronaapp.ui.theme.Viagem
 import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CriterioFeedback
+import com.example.caronaapp.utils.layout.CustomAsyncImage
+import com.example.caronaapp.utils.layout.CustomDefaultImage
 import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarUser
@@ -265,9 +261,10 @@ fun PerfilOutroUsuarioScreen(
                                     ) {
                                         items(items = state.userData!!.avaliacoes) { avaliacao ->
                                             AvaliacaoItem(
-                                                fotoUser = null,
+                                                isFotoValida = avaliacao.avaliador.isFotoValida,
+                                                fotoUrl = avaliacao.avaliador.fotoUrl,
                                                 nome = avaliacao.avaliador.nome,
-                                                data = avaliacao.data,
+                                                data = avaliacao.dataInDate,
                                                 comentario = avaliacao.comentario,
                                                 isLast = state.userData!!.avaliacoes.last() == avaliacao
                                             )
@@ -284,10 +281,17 @@ fun PerfilOutroUsuarioScreen(
                             }
 
                             if (state.userData!!.perfil != state.perfilUser) {
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .padding(vertical = 24.dp)
+                                        .scale(1.2f),
+                                    color = CinzaE8,
+                                    thickness = 8.dp
+                                )
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 16.dp)
+                                        .padding(bottom = 16.dp)
                                 ) {
                                     if (state.totalViagensJuntos > 2 && !state.isPassageiroFidelizado) {
                                         ButtonAction(
@@ -313,7 +317,8 @@ fun PerfilOutroUsuarioScreen(
 
 @Composable
 fun AvaliacaoItem(
-    fotoUser: Painter?,
+    isFotoValida: Boolean,
+    fotoUrl: String,
     nome: String,
     data: LocalDate,
     comentario: String,
@@ -328,14 +333,11 @@ fun AvaliacaoItem(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = fotoUser ?: painterResource(id = R.mipmap.user_default),
-                contentDescription = "usuário",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-            )
+            if (isFotoValida) {
+                CustomAsyncImage(fotoUrl = fotoUrl, modifier = Modifier.size(40.dp))
+            } else {
+                CustomDefaultImage(modifier = Modifier.size(40.dp))
+            }
             Spacer(modifier = Modifier.width(16.dp))
             Column(
                 // nome e data

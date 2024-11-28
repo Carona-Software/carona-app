@@ -1,7 +1,6 @@
 package com.example.caronaapp.presentation.screens.feedback
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
@@ -33,9 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,7 +75,7 @@ fun FeedbackScreen(
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = Unit, key2 = isSuccessful, key3 = isError) {
         viewModel.setupFeedback(viagemId!!, usuarioId!!)
 
         if (isSuccessful) {
@@ -151,14 +147,6 @@ fun FeedbackScreen(
                                 } else {
                                     CustomDefaultImage(modifier = Modifier.size(64.dp))
                                 }
-                                Image(
-                                    painter = painterResource(id = R.mipmap.foto_gustavo),
-                                    contentDescription = usuarioAvaliado?.nome,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .size(64.dp)
-                                        .clip(CircleShape)
-                                )
 
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {

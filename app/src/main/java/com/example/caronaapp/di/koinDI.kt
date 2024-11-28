@@ -22,8 +22,10 @@ import com.example.caronaapp.presentation.view_models.FeedbackViewModel
 import com.example.caronaapp.presentation.view_models.FidelizadosViewModel
 import com.example.caronaapp.presentation.view_models.HistoricoViagensViewModel
 import com.example.caronaapp.presentation.view_models.LoginViewModel
+import com.example.caronaapp.presentation.view_models.MapaViagemViewModel
 import com.example.caronaapp.presentation.view_models.MeuPerfilViewModel
 import com.example.caronaapp.presentation.view_models.OferecerViagemViewModel
+import com.example.caronaapp.presentation.view_models.OnboardingViewModel
 import com.example.caronaapp.presentation.view_models.PerfilOutroUsuarioViewModel
 import com.example.caronaapp.presentation.view_models.ProcurarViagemViewModel
 import com.example.caronaapp.presentation.view_models.ViagensViewModel
@@ -52,7 +54,7 @@ const val BASE_URL_CLOUDINARY = "https://api.cloudinary.com/v1_1/"
 const val BASE_URL_GOOGLE_MAPS = "https://maps.googleapis.com/maps/api/"
 const val BASE_URL_MAPBOX = "https://api.mapbox.com/directions/v5/mapbox/driving/"
 const val BASE_URL_VPIC_CARROS = "https://vpic.nhtsa.dot.gov/api/vehicles/"
-const val BASE_URL_CARONA = "http://44.221.101.44:80/api/"
+const val BASE_URL_CARONA = "http://34.194.147.50:80/api/"
 
 fun logginInterceptor(): HttpLoggingInterceptor {
     Log.d("logginInterceptor", "Iniciando logginInterceptor")
@@ -155,19 +157,21 @@ val repositoryModule = module {
 }
 
 val viewModelModule = module {
+    viewModel { OnboardingViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
     viewModel { CadastroViewModel(get(), get(), get()) }
     viewModel { AvaliacoesViewModel(get(), get()) }
     viewModel { CarrosViewModel(get(), get(), get()) }
-    viewModel { DetalhesViagemViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { DetalhesViagemViewModel(get(), get(), get(), get(), get()) }
     viewModel { FeedbackViewModel(get(), get(), get()) }
     viewModel { FidelizadosViewModel(get(), get(), get()) }
     viewModel { HistoricoViagensViewModel(get(), get()) }
     viewModel { MeuPerfilViewModel(get(), get(), get()) }
+    viewModel { MapaViagemViewModel(get(), get()) }
     viewModel { OferecerViagemViewModel(get(), get(), get(), get(), get()) }
     viewModel { PerfilOutroUsuarioViewModel(get(), get(), get(), get(), get()) }
     viewModel { ProcurarViagemViewModel(get(), get()) }
-    viewModel { ViagensViewModel(get(), get(), get(), get()) }
+    viewModel { ViagensViewModel(get(), get(), get()) }
 }
 
 val dataStoreModule = module {

@@ -3,7 +3,9 @@ package com.example.caronaapp.presentation.view_models
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
 import com.example.caronaapp.data.dto.solicitacao.SolicitacaoFidelizacaoCriacaoDto
+import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.repositories.CaronaRepositoryImpl
 import com.example.caronaapp.data.repositories.FidelizacaoRepositoryImpl
 import com.example.caronaapp.data.repositories.SolicitacaoFidelizacaoRepositoryImpl
@@ -12,9 +14,13 @@ import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioUiState
 import com.example.caronaapp.utils.functions.calculateCriteriosFeedback
 import com.example.caronaapp.utils.functions.isUrlFotoUserValida
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PerfilOutroUsuarioViewModel(
     private val usuarioRepository: UsuarioRepositoryImpl,
@@ -38,7 +44,7 @@ class PerfilOutroUsuarioViewModel(
                 if (response.isSuccessful) {
                     state.update {
                         it.copy(
-                            userData = response.body()!!,
+                            userData = setUserDataComAvaliacoesVerificadas(response.body()!!),
                             avaliacoesCriterioUser = calculateCriteriosFeedback(response.body()!!.avaliacoes),
                             isFotoValida = if (response.body() == null) false
                             else isUrlFotoUserValida(response.body()!!.fotoUrl),
@@ -49,7 +55,7 @@ class PerfilOutroUsuarioViewModel(
                         )
                     }
                     if (response.body()?.perfil == "MOTORISTA") {
-                    // verifica se passageiro e motorista estão fidelizados
+                        // verifica se passageiro e motorista estão fidelizados
                         state.update {
                             it.copy(
                                 isPassageiroFidelizado = verifyFidelizacaoBetweenPassageiroAndMotorista(
@@ -197,6 +203,27 @@ class PerfilOutroUsuarioViewModel(
                 isError = false,
                 messageToDisplay = "",
             )
+        }
+    }
+
+    private suspend fun setUserDataComAvaliacoesVerificadas(userData: UsuarioDetalhesListagemDto): UsuarioDetalhesListagemDto {
+        val userUpdated = userData.copy(
+            avaliacoes = if (userData.avaliacoes.isEmpty()) emptyList() else setAvaliacoesComFotosVerificadas(
+                userData.avaliacoes
+            )
+        )
+        return userUpdated
+    }
+
+    private suspend fun setAvaliacoesComFotosVerificadas(feedbacks: List<FeedbackListagemDto>): List<FeedbackListagemDto> {
+        return withContext(Dispatchers.IO) {
+            feedbacks.map { feedback ->
+                async {
+                    feedback.apply {
+                        this.avaliador.isFotoValida = isUrlFotoUserValida(this.avaliador.fotoUrl)
+                    }
+                }
+            }.awaitAll() // Espera todas as validações serem concluídas
         }
     }
 }

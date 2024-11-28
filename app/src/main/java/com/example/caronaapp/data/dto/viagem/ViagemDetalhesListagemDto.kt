@@ -4,7 +4,6 @@ import com.example.caronaapp.data.dto.solicitacao.SolicitacaoViagemListagemDto
 import com.example.caronaapp.data.dto.usuario.PassageiroDto
 import com.example.caronaapp.data.dto.usuario.UsuarioSimplesListagemDto
 import com.example.caronaapp.data.enums.StatusViagem
-import com.example.caronaapp.utils.functions.formatDate
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -22,10 +21,10 @@ data class ViagemDetalhesListagemDto(
     var passageiros: List<PassageiroDto>,
     val trajeto: TrajetoDto,
     val solicitacoes: List<SolicitacaoViagemListagemDto>,
-    val distanciaPartida: Double,
-    val distanciaDestino: Double,
+    val distanciaPartida: Double = 0.0,
+    val distanciaDestino: Double = 0.0,
 ) {
-    private val dataInDate: LocalDate
+    val dataInDate: LocalDate
         get() = data.let { LocalDate.parse(it) }
 
     val horarioPartidaInTime: LocalTime
@@ -33,15 +32,6 @@ data class ViagemDetalhesListagemDto(
 
     val horarioChegadaInTime: LocalTime
         get() = horarioChegada.let { LocalTime.parse(it) }
-
-    val dataToShow =
-        if (dataInDate.isEqual(LocalDate.now())) {
-            "Hoje"
-        } else if (dataInDate.isEqual(LocalDate.now().plusDays(1))) {
-            "Amanhã"
-        } else {
-            formatDate(dataInDate)
-        }
 
     data class CarroDto(
         val cor: String,
