@@ -1,7 +1,6 @@
 package com.example.caronaapp.presentation.screens.cadastro
 
 import android.net.Uri
-import com.example.caronaapp.utils.functions.formatDate
 import java.time.LocalDate
 
 
@@ -25,7 +24,7 @@ data class UserCadastroState(
     val cpf: String = "",
     val perfil: String = "",
     val genero: String = "",
-    val dataNascimento: String = formatDate(LocalDate.now()),
+    val dataNascimento: LocalDate = LocalDate.now(),
     val foto: Uri? = null,
     val senha: String = "",
     val confirmacaoSenha: String = "",

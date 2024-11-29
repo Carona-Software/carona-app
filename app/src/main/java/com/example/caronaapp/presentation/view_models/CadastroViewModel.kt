@@ -12,7 +12,6 @@ import com.example.caronaapp.presentation.screens.cadastro.CadastroField
 import com.example.caronaapp.presentation.screens.cadastro.UserCadastroState
 import com.example.caronaapp.presentation.screens.cadastro.UserCadastroValidations
 import com.example.caronaapp.utils.functions.configPhotoToUpload
-import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.functions.isCepValido
 import com.example.caronaapp.utils.functions.isCpfValido
 import com.example.caronaapp.utils.functions.isEmailValid
@@ -72,7 +71,7 @@ class CadastroViewModel(
                         dataNascimento = field.value.format(DateTimeFormatter.ISO_LOCAL_DATE)
                     )
                 }
-                userCadastroState.update { it.copy(dataNascimento = formatDate(field.value)) }
+                userCadastroState.update { it.copy(dataNascimento = field.value) }
             }
 
             is CadastroField.Genero -> {
