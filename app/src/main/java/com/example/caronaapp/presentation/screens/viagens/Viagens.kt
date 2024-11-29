@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,21 +47,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
+import com.example.caronaapp.data.dto.usuario.UsuarioSimplesListagemDto
+import com.example.caronaapp.data.dto.viagem.Coordenadas
+import com.example.caronaapp.data.dto.viagem.LocalidadeDto
+import com.example.caronaapp.data.dto.viagem.TrajetoDto
 import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
 import com.example.caronaapp.data.dto.viagem.ViagemProcuraDto
+import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.presentation.view_models.ViagensViewModel
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.AmareloMedio
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
-import com.example.caronaapp.ui.theme.Carro
 import com.example.caronaapp.ui.theme.Cinza90
-import com.example.caronaapp.ui.theme.CinzaCB
+import com.example.caronaapp.ui.theme.CinzaD9
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
+import com.example.caronaapp.ui.theme.Distancia
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.Filtro
 import com.example.caronaapp.ui.theme.LaranjaLonge
@@ -79,6 +82,9 @@ import com.example.caronaapp.utils.layout.PrecoFieldComponent
 import com.example.caronaapp.utils.layout.QtdPassageirosField
 import com.example.caronaapp.utils.layout.TopBarTitle
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -519,7 +525,7 @@ fun ViagemCard(
                     } else {
                         CustomDefaultImage(modifier = Modifier.size(48.dp))
                     }
-
+                    Spacer(modifier = Modifier.width(4.dp))
                     Column(modifier = Modifier.padding(start = 8.dp)) {
                         Text(
                             text = viagemData.motorista.nome,
@@ -545,24 +551,6 @@ fun ViagemCard(
                         }
                     }
                 }
-//                IconButton(onClick = {
-//                    setFavorito(true)
-//                }) {
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .background(CinzaF5),
-//                        horizontalArrangement = Arrangement.Center,
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        Icon(
-//                            imageVector = CoracaoPreenchido,
-//                            modifier = Modifier.size(26.dp),
-//                            tint = VermelhoErro,
-//                            contentDescription = "Favoritar"
-//                        )
-//                    }
-//                }
             }
         }
     }
@@ -573,59 +561,26 @@ fun DistanciaIndicator(
     distancia: Double
 ) {
     Row {
-        Row(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(24.dp)
-                .background(if (distancia <= 2.0) VerdePerto else CinzaCB),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxSize(),
-                imageVector = Carro,
-                contentDescription = null,
-                tint = Color.White,
-            )
-        }
-        Spacer(modifier = Modifier.width(5.dp))
-        Row(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(24.dp)
-                .background(if (distancia > 3.0 && distancia <= 10.0) AmareloMedio else CinzaCB),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxSize(),
-                imageVector = Carro,
-                contentDescription = null,
-                tint = Color.White,
-            )
-        }
-        Spacer(modifier = Modifier.width(5.dp))
-        Row(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(24.dp)
-                .background(if (distancia > 10.0) LaranjaLonge else CinzaCB),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxSize(),
-                imageVector = Carro,
-                contentDescription = null,
-                tint = Color.White,
-            )
-        }
+        Icon(
+            imageVector = Distancia,
+            contentDescription = null,
+            tint = if (distancia <= 2.0) VerdePerto else CinzaD9,
+            modifier = Modifier.size(28.dp)
+        )
+        Spacer(modifier = Modifier.width(2.dp))
+        Icon(
+            imageVector = Distancia,
+            contentDescription = null,
+            tint = if (distancia > 3.0 && distancia <= 10.0) AmareloMedio else CinzaD9,
+            modifier = Modifier.size(28.dp)
+        )
+        Spacer(modifier = Modifier.width(2.dp))
+        Icon(
+            imageVector = Distancia,
+            contentDescription = null,
+            tint = if (distancia > 10.0) LaranjaLonge else CinzaD9,
+            modifier = Modifier.size(28.dp)
+        )
     }
 }
 
@@ -634,11 +589,48 @@ fun DistanciaIndicator(
 @Composable
 fun PreviewViagensScreen() {
     CaronaAppTheme {
-        ViagensScreen(
-            navController = rememberNavController(),
-            viagem = ViagemProcuraDto(),
-            pontoPartida = "São Paulo, SP",
-            pontoDestino = "Taubaté, SP",
+        ViagemCard(
+            viagemData = ViagemListagemDto(
+                id = 1,
+                capacidadePassageiros = 4,
+                apenasMulheres = false,
+                preco = 30.0,
+                horarioChegada = LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME),
+                horarioPartida = LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME),
+                distanciaPartida = 2.0,
+                distanciaDestino = 5.0,
+                data = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE),
+                status = StatusViagem.PENDENTE,
+                motorista = UsuarioSimplesListagemDto(
+                    id = 1,
+                    nome = "Gustavo",
+                    notaGeral = 4.5,
+                    fotoUrl = "",
+                    isFotoValida = false,
+                    perfil = "MOTORISTA"
+                ),
+                trajeto = TrajetoDto(
+                    pontoPartida = LocalidadeDto(
+                        coordenadas = Coordenadas(latitude = 0.0, longitude = 0.0),
+                        cep = "04244000",
+                        cidade = "São Paulo",
+                        uf = "SP",
+                        logradouro = "Estrada das Lágrimas",
+                        bairro = "São João Clímaco",
+                        numero = 3621
+                    ),
+                    pontoChegada = LocalidadeDto(
+                        coordenadas = Coordenadas(latitude = 0.0, longitude = 0.0),
+                        cep = "04244000",
+                        cidade = "São Paulo",
+                        uf = "SP",
+                        logradouro = "Estrada das Lágrimas",
+                        bairro = "São João Clímaco",
+                        numero = 3621
+                    ),
+                )
+            ),
+            navigate = {}
         )
     }
 }

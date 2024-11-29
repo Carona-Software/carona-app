@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.caronaapp.R
+import com.example.caronaapp.data.dto.viagem.Coordenadas
 import com.example.caronaapp.data.dto.viagem.LocalidadeDto
 import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.presentation.view_models.DetalhesViagemViewModel
@@ -50,11 +51,11 @@ import com.example.caronaapp.ui.theme.AmareloMedio
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
 import com.example.caronaapp.ui.theme.CaronaAppTheme
-import com.example.caronaapp.ui.theme.Carro
 import com.example.caronaapp.ui.theme.Check
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.Circulo
+import com.example.caronaapp.ui.theme.Distancia
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.LaranjaLonge
 import com.example.caronaapp.ui.theme.Localizacao
@@ -740,21 +741,12 @@ fun EnderecoComponent(
             if (distancia != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) { // distância
-                    Column(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(getColorDistanciaViagem())
-                            .padding(3.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            imageVector = Carro,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Distancia,
+                        contentDescription = null,
+                        tint = getColorDistanciaViagem(),
+                        modifier = Modifier.size(28.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = stringResource(
@@ -976,14 +968,19 @@ fun SolicitacaoUserRow(
 @Composable
 fun DetalhesViagemmScreenPreview() {
     CaronaAppTheme {
-        UserRow(
-            nome = "Gustavo Medeiros",
-            fotoUrl = "",
-            isFotoValida = false,
-            notaMedia = 4.5,
-            viagemFinalizada = true,
-            isTheUserLoggedIn = true
+        EnderecoComponent(
+            icon = PontoPartida,
+            endereco = LocalidadeDto(
+                coordenadas = Coordenadas(latitude = 0.0, longitude = 0.0),
+                cep = "04244000",
+                cidade = "São Paulo",
+                uf = "SP",
+                logradouro = "Estrada das Lágrimas",
+                bairro = "São João Clímaco",
+                numero = 3621
+            ),
+            distancia = 2.6,
+            isPartida = true
         )
-
     }
 }
