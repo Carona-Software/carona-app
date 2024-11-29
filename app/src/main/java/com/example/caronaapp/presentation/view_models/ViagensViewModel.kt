@@ -49,20 +49,10 @@ class ViagensViewModel(
             it.copy(
                 pontoPartida = pontoPartida,
                 pontoDestino = pontoDestino,
-                data = transformData(LocalDate.parse(viagem.data))
+                data = formatDate(LocalDate.parse(viagem.data))
             )
         }
         procurarViagens()
-    }
-
-    private fun transformData(data: LocalDate): String {
-        return if (data.isEqual(LocalDate.now())) {
-            "Hoje"
-        } else if (data.isEqual(LocalDate.now().plusDays(1))) {
-            "Amanhã"
-        } else {
-            formatDate(data)
-        }
     }
 
     private fun procurarViagens() {
@@ -80,23 +70,28 @@ class ViagensViewModel(
                         "Sucesso ao buscar viagens: ${response.body()}"
                     )
 
-                    val viagensComDistancia = response.body()?.content?.map { viagem ->
-                        val distanciaPartida = calcularDistancia(
-                            coordenadasPartida = viagemProcuraDto.value.pontoPartida!!,
-                            coordenadasDestino = viagem.trajeto.pontoPartida.coordenadas
-                        )
-                        val distanciaDestino = calcularDistancia(
-                            coordenadasPartida = viagemProcuraDto.value.pontoChegada!!,
-                            coordenadasDestino = viagem.trajeto.pontoChegada.coordenadas
-                        )
+                    if (response.code() == 200) {
+                        val viagensOrdenadas =
+                            sortViagensByHorarioPartida(response.body()?.content!!)
 
-                        viagem.copy(
-                            distanciaPartida = distanciaPartida,
-                            distanciaDestino = distanciaDestino,
-                            motorista = validarFotoMotorista(viagem.motorista)
-                        )
+                        val viagensComDistancia = viagensOrdenadas.map { viagem ->
+                            val distanciaPartida = calcularDistancia(
+                                coordenadasPartida = viagemProcuraDto.value.pontoPartida!!,
+                                coordenadasDestino = viagem.trajeto.pontoPartida.coordenadas
+                            )
+                            val distanciaDestino = calcularDistancia(
+                                coordenadasPartida = viagemProcuraDto.value.pontoChegada!!,
+                                coordenadasDestino = viagem.trajeto.pontoChegada.coordenadas
+                            )
+
+                            viagem.copy(
+                                distanciaPartida = distanciaPartida,
+                                distanciaDestino = distanciaDestino,
+                                motorista = validarFotoMotorista(viagem.motorista)
+                            )
+                        }
+                        viagens.update { viagensComDistancia }
                     }
-                    viagens.update { viagensComDistancia }
                 } else {
                     Log.e(
                         "procurarViagem",
@@ -112,6 +107,10 @@ class ViagensViewModel(
                 isLoadingScreen.update { false }
             }
         }
+    }
+
+    private fun sortViagensByHorarioPartida(viagens: List<ViagemListagemDto>): List<ViagemListagemDto> {
+        return viagens.sortedBy { it.horarioPartidaInTime }.toList()
     }
 
     fun showBottomSheet() {

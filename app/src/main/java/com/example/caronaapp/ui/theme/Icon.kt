@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.RunCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -56,6 +58,8 @@ val Fidelizacao = Icons.Default.Loyalty
 val Carro = Icons.Default.DirectionsCar
 val SetaDireita = Icons.AutoMirrored.Filled.ArrowForwardIos
 val SetaEsquerda = Icons.Default.ArrowBackIosNew
+val Fechar = Icons.Default.Close
+val Distancia = Icons.Default.RunCircle
 val Chevron = Icons.Default.KeyboardArrowDown
 val EstrelaPreenchida = Icons.Default.Star
 val EstrelaVazada = Icons.Default.StarBorder

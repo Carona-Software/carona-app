@@ -7,6 +7,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Ease
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -97,7 +101,21 @@ class MainActivity : ComponentActivity() {
                     composable("login") {
                         LoginScreen(navController)
                     }
-                    composable("cadastro") {
+                    composable(
+                        route = "cadastro",
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                            )
+                        }
+                    ) {
                         CadastroScreen(navController)
                     }
                     composable("esqueci-senha") {
@@ -116,13 +134,55 @@ class MainActivity : ComponentActivity() {
                     composable("meu-perfil/notificacoes") {
                         NotificacoesScreen(navController)
                     }
-                    composable("meu-perfil/avaliacoes") {
+                    composable(
+                        route = "meu-perfil/avaliacoes",
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
+                    ) {
                         AvaliacoesScreen(navController)
                     }
-                    composable("meu-perfil/fidelizados") {
+                    composable(
+                        route = "meu-perfil/fidelizados",
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
+                    ) {
                         FidelizadosScreen(navController)
                     }
-                    composable("meu-perfil/carros") {
+                    composable(
+                        route = "meu-perfil/carros",
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
+                    ) {
                         CarrosScreen(navController)
                     }
                     composable(
@@ -140,7 +200,19 @@ class MainActivity : ComponentActivity() {
                                 name = "ponto_destino",
                                 builder = { type = NavType.StringType }
                             ),
-                        )
+                        ),
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                            )
+                        }
                     ) { entry ->
                         val viagem = entry.arguments?.getString("viagem")
                         val pontoPartida = entry.arguments?.getString("ponto_partida") ?: ""
@@ -186,7 +258,19 @@ class MainActivity : ComponentActivity() {
                                     defaultValue = null
                                 }
                             ),
-                        )
+                        ),
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
                     ) { entry ->
                         val viagemId = entry.arguments?.getInt("id")
                         val distanciaPartida =
@@ -211,7 +295,19 @@ class MainActivity : ComponentActivity() {
                                 name = "pontoPartida",
                                 builder = { type = NavType.StringType }
                             )
-                        )
+                        ),
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
                     ) { entry ->
                         val viagemId = entry.arguments?.getInt("viagemId") ?: 0
                         val pontoPartida = entry.arguments?.getString("pontoPartida")
@@ -229,26 +325,66 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(navArgument(
                             name = "id",
                             builder = { type = NavType.IntType }
-                        ))) { entry ->
+                        )),
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
+                    ) { entry ->
                         val userId = entry.arguments?.getInt("id") ?: 0
                         PerfilOutroUsuarioScreen(navController, userId)
                     }
                     composable("chat") {
                         ChatScreen(navController)
                     }
-                    composable("chat/conversa") {
+                    composable(
+                        route = "chat/conversa",
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
+                            )
+                        }
+                    ) {
                         ConversaScreen(navController)
                     }
                     composable(
                         route = "feedback/{viagem_id}/{usuario_id}",
-                        arguments = listOf(navArgument(
-                            name = "viagem_id",
-                            builder = { type = NavType.IntType }
-                        ),
+                        arguments = listOf(
+                            navArgument(
+                                name = "viagem_id",
+                                builder = { type = NavType.IntType }
+                            ),
                             navArgument(
                                 name = "usuario_id",
                                 builder = { type = NavType.IntType })
-                        )
+                        ),
+                        enterTransition = {
+                            slideIntoContainer(
+                                animationSpec = tween(500, easing = Ease),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                animationSpec = tween(500, easing = EaseOut),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                            )
+                        }
                     ) { entry ->
                         val viagemId = entry.arguments?.getInt("viagem_id")
                         val usuarioId = entry.arguments?.getInt("usuario_id")

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.caronaapp.R
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.Calendario
+import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CustomDatePickerDialog
 import com.example.caronaapp.utils.layout.InputField
@@ -107,7 +108,7 @@ fun CadastroPessoais(
         )
         InputField(
             label = stringResource(id = R.string.label_data_nascimento),
-            value = userData.dataNascimento,
+            value = formatDate(userData.dataNascimento),
             enabled = false,
             supportingText = stringResource(id = R.string.input_message_error_data_nascimento),
             isError = validations.isDataNascimentoInvalida,
@@ -122,7 +123,7 @@ fun CadastroPessoais(
             allowedDateValidator = {
                 it.isBefore(LocalDate.now().minusYears(18))
             },
-            selectedDate = LocalDate.parse(userData.dataNascimento),
+            selectedDate = userData.dataNascimento,
             onDateChange = { novaData ->
                 onChangeEvent(CadastroField.DataNascimento(novaData))
             }

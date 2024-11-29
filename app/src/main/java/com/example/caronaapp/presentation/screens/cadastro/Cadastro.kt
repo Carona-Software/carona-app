@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +38,10 @@ import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.AzulStepCadastro
 import com.example.caronaapp.ui.theme.BrancoF1
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaD9
+import com.example.caronaapp.ui.theme.Fechar
+import com.example.caronaapp.ui.theme.SetaEsquerda
 import com.example.caronaapp.utils.layout.CustomCard
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -131,9 +132,9 @@ fun CadastroScreen(
             ) {
                 IconButton(onClick = { viewModel.onBackClick() }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
+                        imageVector = if (etapaAtual == 1) Fechar else SetaEsquerda,
                         contentDescription = "Voltar",
-                        tint = Azul
+                        tint = if (etapaAtual == 1) Cinza90 else Azul
                     )
                 }
             }
