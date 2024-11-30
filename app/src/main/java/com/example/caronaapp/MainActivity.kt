@@ -71,24 +71,23 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-//                LaunchedEffect(key1 = Unit) {
-//                    val isOnboardingDone = dataStoreManager.getOnboardingState()
-//                    val idUser = dataStoreManager.getIdUser()
-//
-//                    Log.d("initial", "isOnboardingDone: $isOnboardingDone")
-//                    Log.d("initial", "idUser: $idUser")
-//
-//                    if (isOnboardingDone == null) {
-//                        navigate("onboarding")
-//                    } else if (idUser != null && idUser != 0) {
-//                        navigate("meu-perfil")
-//                    } else {
-//                        navigate("login")
-//                    }
-//                }
+                LaunchedEffect(key1 = Unit) {
+                    val isOnboardingDone = dataStoreManager.getOnboardingState()
+                    val idUser = dataStoreManager.getIdUser()
 
-//                NavHost(navController = navController, startDestination = "post-splash") {
-                NavHost(navController = navController, startDestination = "viagens/historico") {
+                    Log.d("initial", "isOnboardingDone: $isOnboardingDone")
+                    Log.d("initial", "idUser: $idUser")
+
+                    if (isOnboardingDone == null) {
+                        navigate("onboarding")
+                    } else if (idUser != null && idUser != 0) {
+                        navigate("meu-perfil")
+                    } else {
+                        navigate("login")
+                    }
+                }
+
+                NavHost(navController = navController, startDestination = "post-splash") {
                     composable("post-splash") {
                         Box(
                             modifier = Modifier
@@ -377,13 +376,13 @@ class MainActivity : ComponentActivity() {
                         enterTransition = {
                             slideIntoContainer(
                                 animationSpec = tween(500, easing = Ease),
-                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
                             )
                         },
                         exitTransition = {
                             slideOutOfContainer(
                                 animationSpec = tween(500, easing = EaseOut),
-                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
                             )
                         }
                     ) { entry ->
