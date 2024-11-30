@@ -116,6 +116,8 @@
     <string name="foto">Foto</string>
     <string name="senha">Senha</string>
     <string name="historico">Histórico</string>
+    <string name="proxima_viagem">Próxima viagem</string>
+    <string name="viagem_em_andamento">Viagem em andamento</string>
     <string name="viagens">Viagens</string>
     <string name="viagem">Viagem</string>
     <string name="alterar_foto">Alterar foto</string>
@@ -139,7 +141,7 @@
     <string name="viagem_cidade_uf">%1$s, %2$s</string>
     <string name="viagem_data_hora">%1$s - %2$s</string>
     <string name="total_viagens_realizadas">%1$d viagens realizadas</string>
-    <string name="procurar_usuario">Procurar usuário...</string>
+    <string name="procurar_usuario">Procurar usuário…</string>
     <string name="zero">0</string>
     <string name="cinco">5</string>
     <string name="trajeto">Trajeto</string>

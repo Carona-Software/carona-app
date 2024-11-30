@@ -71,23 +71,24 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                LaunchedEffect(key1 = Unit) {
-                    val isOnboardingDone = dataStoreManager.getOnboardingState()
-                    val idUser = dataStoreManager.getIdUser()
+//                LaunchedEffect(key1 = Unit) {
+//                    val isOnboardingDone = dataStoreManager.getOnboardingState()
+//                    val idUser = dataStoreManager.getIdUser()
+//
+//                    Log.d("initial", "isOnboardingDone: $isOnboardingDone")
+//                    Log.d("initial", "idUser: $idUser")
+//
+//                    if (isOnboardingDone == null) {
+//                        navigate("onboarding")
+//                    } else if (idUser != null && idUser != 0) {
+//                        navigate("meu-perfil")
+//                    } else {
+//                        navigate("login")
+//                    }
+//                }
 
-                    Log.d("initial", "isOnboardingDone: $isOnboardingDone")
-                    Log.d("initial", "idUser: $idUser")
-
-                    if (isOnboardingDone == null) {
-                        navigate("onboarding")
-                    } else if (idUser != null && idUser != 0) {
-                        navigate("meu-perfil")
-                    } else {
-                        navigate("login")
-                    }
-                }
-
-                NavHost(navController = navController, startDestination = "post-splash") {
+//                NavHost(navController = navController, startDestination = "post-splash") {
+                NavHost(navController = navController, startDestination = "viagens/historico") {
                     composable("post-splash") {
                         Box(
                             modifier = Modifier

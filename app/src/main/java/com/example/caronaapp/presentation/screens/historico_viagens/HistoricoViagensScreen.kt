@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
 import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
+import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.presentation.view_models.HistoricoViagensViewModel
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
@@ -53,6 +54,7 @@ import com.example.caronaapp.ui.theme.Localizacao
 import com.example.caronaapp.ui.theme.PontoPartida
 import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.functions.formatTime
+import com.example.caronaapp.utils.layout.AnimationStatusViagem
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.CustomItemCard
 import com.example.caronaapp.utils.layout.LoadingScreen
@@ -73,7 +75,9 @@ fun HistoricoViagensScreen(
     val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
     val perfilUser by viewModel.perfilUser.collectAsState()
     val viagens by viewModel.viagens.collectAsState()
+    val viagemPendente by viewModel.viagemPendente.collectAsState()
     val viagensFiltradas by viewModel.viagensFiltradas.collectAsState()
+    val showViagensFiltradas by viewModel.showViagensFiltradas.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
     val currentFilterOption by viewModel.currentFilterOption.collectAsState()
 
@@ -109,89 +113,122 @@ fun HistoricoViagensScreen(
                 if (isLoadingScreen) {
                     LoadingScreen(backGround = CinzaF5)
                 } else {
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 12.dp, horizontal = 20.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.historico),
-                            color = Azul,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-
-                        if (viagens != null) {
-                            Box {
-                                Button(
-                                    onClick = { viewModel.expandDropdownMenu() },
+                    if (viagens == null) {
+                        NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
+                    } else {
+                        if (viagemPendente != null) {
+                            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                Row(
                                     modifier = Modifier
-                                        .shadow(
-                                            elevation = 4.dp,
-                                            shape = RoundedCornerShape(12.dp),
-                                            clip = false, // Deixar o conteúdo sem sombra no topo
-                                            ambientColor = CinzaSombra,
-                                            spotColor = Cinza90
-                                        )
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .height(40.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.White
-                                    ),
-                                    contentPadding = PaddingValues(
-                                        horizontal = 12.dp,
-                                        vertical = 0.dp
-                                    ),
+                                        .padding(vertical = 12.dp, horizontal = 20.dp)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = currentFilterOption,
+                                        text = stringResource(
+                                            id =
+                                            if (viagemPendente!!.status == StatusViagem.PENDENTE) R.string.proxima_viagem
+                                            else R.string.viagem_em_andamento
+                                        ),
                                         color = Azul,
-                                        style = MaterialTheme.typography.bodySmall,
+                                        style = MaterialTheme.typography.bodyLarge,
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Icon(
-                                        imageVector = Filtro,
-                                        contentDescription = null,
-                                        tint = Azul,
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    AnimationStatusViagem(statusViagem = viagemPendente!!.status)
                                 }
-
-                                DropdownMenu(
-                                    expanded = isExpanded,
-                                    onDismissRequest = { viewModel.onDismissRequest() },
-                                    modifier = Modifier.background(Color.White)
-                                ) {
-                                    itensDropdownMenu.forEach { item ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    text = item.label,
-                                                    color = Azul,
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                )
-                                            },
-                                            onClick = {
-                                                viewModel.onMenuItemClick(
-                                                    item.label,
-                                                    item.data!!
-                                                )
-                                            }
-                                        )
-                                    }
+                                ViagemCard(viagemData = viagemPendente!!) {
+                                    navController.navigate("viagens/detalhes/${viagemPendente!!.id}/null/null")
                                 }
                             }
                         }
-                    }
 
-                    if (viagensFiltradas.isEmpty()) {
-                        NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_viagem))
-                    } else {
-                        LazyColumn {
-                            items(items = viagensFiltradas.toList()) { viagem ->
-                                ViagemCard(viagemData = viagem) {
-                                    navController.navigate("viagens/detalhes/${viagem.id}/null/null")
+                        if (showViagensFiltradas) {
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(vertical = 12.dp, horizontal = 20.dp)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.historico),
+                                        color = Azul,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+
+                                    Box {
+                                        Button(
+                                            onClick = { viewModel.expandDropdownMenu() },
+                                            modifier = Modifier
+                                                .shadow(
+                                                    elevation = 4.dp,
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    clip = false, // Deixar o conteúdo sem sombra no topo
+                                                    ambientColor = CinzaSombra,
+                                                    spotColor = Cinza90
+                                                )
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .height(40.dp),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color.White
+                                            ),
+                                            contentPadding = PaddingValues(
+                                                horizontal = 12.dp,
+                                                vertical = 0.dp
+                                            ),
+                                        ) {
+                                            Text(
+                                                text = currentFilterOption,
+                                                color = Azul,
+                                                style = MaterialTheme.typography.bodySmall,
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Icon(
+                                                imageVector = Filtro,
+                                                contentDescription = null,
+                                                tint = Azul,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = isExpanded,
+                                            onDismissRequest = { viewModel.onDismissRequest() },
+                                            modifier = Modifier.background(Color.White)
+                                        ) {
+                                            itensDropdownMenu.forEach { item ->
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            text = item.label,
+                                                            color = Azul,
+                                                            style = MaterialTheme.typography.bodySmall,
+                                                        )
+                                                    },
+                                                    onClick = {
+                                                        viewModel.onMenuItemClick(
+                                                            item.label,
+                                                            item.data!!
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (viagensFiltradas.isEmpty()) {
+                                    NoResultsComponent(text = stringResource(id = R.string.nenhuma_viagem_encontrada))
+                                } else {
+                                    LazyColumn {
+                                        items(items = viagensFiltradas.toList()) { viagem ->
+                                            ViagemCard(viagemData = viagem) {
+                                                navController.navigate("viagens/detalhes/${viagem.id}/null/null")
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

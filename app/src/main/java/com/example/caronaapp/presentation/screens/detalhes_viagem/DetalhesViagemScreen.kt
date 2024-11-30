@@ -54,7 +54,6 @@ import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Check
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
-import com.example.caronaapp.ui.theme.Circulo
 import com.example.caronaapp.ui.theme.Distancia
 import com.example.caronaapp.ui.theme.EstrelaPreenchida
 import com.example.caronaapp.ui.theme.LaranjaLonge
@@ -63,15 +62,15 @@ import com.example.caronaapp.ui.theme.Pessoas
 import com.example.caronaapp.ui.theme.PontoPartida
 import com.example.caronaapp.ui.theme.Preco
 import com.example.caronaapp.ui.theme.SetaDireita
+import com.example.caronaapp.ui.theme.VerdeCirclePendente
 import com.example.caronaapp.ui.theme.VerdePerto
-import com.example.caronaapp.ui.theme.VerdeSwitchButton
-import com.example.caronaapp.ui.theme.VermelhoComboBox
 import com.example.caronaapp.ui.theme.VermelhoExcluir
 import com.example.caronaapp.ui.theme.Viagem
 import com.example.caronaapp.utils.functions.formatCep
 import com.example.caronaapp.utils.functions.formatDate
 import com.example.caronaapp.utils.functions.formatTime
 import com.example.caronaapp.utils.functions.returnCorCarro
+import com.example.caronaapp.utils.layout.AnimationStatusViagem
 import com.example.caronaapp.utils.layout.ButtonAction
 import com.example.caronaapp.utils.layout.CardButton
 import com.example.caronaapp.utils.layout.CustomAsyncImage
@@ -157,26 +156,22 @@ fun DetalhesViagemScreen(
                                     modifier = Modifier,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    val statusIcon =
-                                        if (state.viagem!!.status == StatusViagem.PENDENTE || state.viagem!!.status == StatusViagem.ANDAMENTO) Circulo
-                                        else Check
-
-                                    val statusColor =
-                                        if (state.viagem!!.status == StatusViagem.PENDENTE || state.viagem!!.status == StatusViagem.FINALIZADA) VerdeSwitchButton
-                                        else VermelhoComboBox
-
                                     val viagemStatus = when (state.viagem!!.status) {
                                         StatusViagem.PENDENTE -> "Pendente"
                                         StatusViagem.ANDAMENTO -> "Em andamento"
                                         StatusViagem.FINALIZADA -> "Finalizada"
                                     }
 
-                                    Icon(
-                                        imageVector = statusIcon,
-                                        contentDescription = "Status",
-                                        tint = statusColor,
-                                        modifier = Modifier.size(28.dp)
-                                    )
+                                    if (state.viagem!!.status == StatusViagem.FINALIZADA) {
+                                        Icon(
+                                            imageVector = Check,
+                                            contentDescription = "Status",
+                                            tint = VerdeCirclePendente,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    } else {
+                                        AnimationStatusViagem(statusViagem = state.viagem!!.status)
+                                    }
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
                                         text = viagemStatus,

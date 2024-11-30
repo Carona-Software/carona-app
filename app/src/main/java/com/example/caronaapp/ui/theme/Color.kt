@@ -39,3 +39,8 @@ val CinzaComboBox = Color(0xFF808080)
 val AmareloComboBox = Color(0xFFEDE917)
 val PrataComboBox = Color(0xFFC0C0C0)
 val VinhoComboBox = Color(0xFF781D1D)
+
+val VermelhoCircleAndamento = Color(0xFFE44343)
+val VermelhoBackgroundCircleAndamento = Color(0xFFFFCACA)
+val VerdeCirclePendente = Color(0xFF6BBB6A)
+val VerdeBackgroundCirclePendente = Color(0xFFCCF5BE)
