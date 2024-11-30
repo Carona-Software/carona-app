@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.viagem.ViagemListagemDto
+import com.example.caronaapp.data.enums.StatusViagem
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +20,10 @@ class HistoricoViagensViewModel(
     val isLoadingScreen = MutableStateFlow(true)
     val perfilUser = MutableStateFlow("")
     val viagens = MutableStateFlow<List<ViagemListagemDto>?>(null)
+    val viagemPendente = MutableStateFlow<ViagemListagemDto?>(null)
     var viagensFiltradas = MutableStateFlow<List<ViagemListagemDto>>(emptyList())
     val isExpanded = MutableStateFlow(false)
+    val showViagensFiltradas = MutableStateFlow(false)
     val currentFilterOption = MutableStateFlow("Filtrar")
 
     init {
@@ -42,7 +45,7 @@ class HistoricoViagensViewModel(
                     )
                     if (response.code() == 200) {
                         viagens.update { response.body() }
-                        viagensFiltradas.update { response.body() ?: emptyList() }
+                        handleRetrievedViagens()
                     }
                 } else {
                     Log.e(
@@ -58,6 +61,24 @@ class HistoricoViagensViewModel(
             } finally {
                 isLoadingScreen.update { false }
             }
+        }
+    }
+
+    private fun handleRetrievedViagens() {
+        viagemPendente.update {
+            viagens.value?.find { viagem ->
+                viagem.status == StatusViagem.PENDENTE || viagem.status == StatusViagem.ANDAMENTO
+            }
+        }
+
+        viagensFiltradas.update {
+            viagens.value?.filter { viagem ->
+                viagem.status == StatusViagem.FINALIZADA
+            } ?: emptyList()
+        }
+
+        if (viagensFiltradas.value.isNotEmpty()) {
+            showViagensFiltradas.update { true }
         }
     }
 
@@ -82,8 +103,8 @@ class HistoricoViagensViewModel(
     }
 
     private fun filterViagens(data: LocalDate): List<ViagemListagemDto> {
-        val viagensFiltradas = viagens.value!!.filter { viagem -> !viagem.dataInDate.isBefore(data) }
-
-        return viagensFiltradas
+        return viagens.value!!.filter { viagem ->
+            viagem.status == StatusViagem.FINALIZADA && !viagem.dataInDate.isBefore(data)
+        }
     }
 }

@@ -376,13 +376,13 @@ class MainActivity : ComponentActivity() {
                         enterTransition = {
                             slideIntoContainer(
                                 animationSpec = tween(500, easing = Ease),
-                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
                             )
                         },
                         exitTransition = {
                             slideOutOfContainer(
                                 animationSpec = tween(500, easing = EaseOut),
-                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right
                             )
                         }
                     ) { entry ->
