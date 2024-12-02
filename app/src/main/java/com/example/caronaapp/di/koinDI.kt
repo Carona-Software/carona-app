@@ -14,6 +14,8 @@ import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.data.repositories.ViaCepRepositoryImpl
 import com.example.caronaapp.data.repositories.ViagemRepositoryImpl
 import com.example.caronaapp.data.repositories.VpicCarrosRepositoryImpl
+import com.example.caronaapp.presentation.screens.feature.chat.ChatViewModel
+import com.example.caronaapp.presentation.screens.feature.conversas.HomeViewModel
 import com.example.caronaapp.presentation.view_models.AvaliacoesViewModel
 import com.example.caronaapp.presentation.view_models.CadastroViewModel
 import com.example.caronaapp.presentation.view_models.CarrosViewModel
@@ -54,7 +56,7 @@ const val BASE_URL_CLOUDINARY = "https://api.cloudinary.com/v1_1/"
 const val BASE_URL_GOOGLE_MAPS = "https://maps.googleapis.com/maps/api/"
 const val BASE_URL_MAPBOX = "https://api.mapbox.com/directions/v5/mapbox/driving/"
 const val BASE_URL_VPIC_CARROS = "https://vpic.nhtsa.dot.gov/api/vehicles/"
-const val BASE_URL_CARONA = "http://34.194.147.50:80/api/"
+const val BASE_URL_CARONA = "http://18.207.70.46:80/api/"
 
 fun logginInterceptor(): HttpLoggingInterceptor {
     Log.d("logginInterceptor", "Iniciando logginInterceptor")
@@ -172,6 +174,8 @@ val viewModelModule = module {
     viewModel { PerfilOutroUsuarioViewModel(get(), get(), get(), get(), get()) }
     viewModel { ProcurarViagemViewModel(get(), get()) }
     viewModel { ViagensViewModel(get(), get(), get()) }
+    viewModel { ChatViewModel() }
+    viewModel { HomeViewModel(get()) }
 }
 
 val dataStoreModule = module {

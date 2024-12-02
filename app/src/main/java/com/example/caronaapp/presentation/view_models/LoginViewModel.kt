@@ -7,7 +7,9 @@ import com.example.caronaapp.data.dto.usuario.UsuarioLoginDto
 import com.example.caronaapp.data.repositories.UsuarioRepositoryImpl
 import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.utils.functions.setPasswordVisibility
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,13 +25,32 @@ class LoginViewModel(
     val isError = MutableStateFlow(false)
     val showPassword = MutableStateFlow(false)
 
+    private val _state = MutableStateFlow<SignInState>(SignInState.Nothing)
+    val state = _state.asStateFlow()
+
     fun onLoginClick() {
         viewModelScope.launch {
             isLoading.update { true }
             try {
                 Log.i("login", "Login Dto: ${userLoginDto.value}")
                 val response = repository.login(userLoginDto.value)
+
                 if (response.isSuccessful) {
+                    _state.value = SignInState.Loading
+
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(userLoginDto.value.email, userLoginDto.value.senha)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                task.result.user?.let {
+                                    _state.value = SignInState.Success
+                                    return@addOnCompleteListener
+                                }
+                                _state.value = SignInState.Error
+                            } else {
+                                _state.value = SignInState.Error
+                            }
+                        }
+
                     Log.i("login", "Login realizado com sucesso: ${response.body()}")
                     isLoginSuccessful.update { true }
 
@@ -76,4 +97,11 @@ class LoginViewModel(
     fun setLoginPasswordVisibility() {
         showPassword.update { setPasswordVisibility(showPassword.value) }
     }
+}
+
+sealed class SignInState {
+    object Nothing : SignInState()
+    object Loading : SignInState()
+    object Success : SignInState()
+    object Error : SignInState()
 }

@@ -22,7 +22,11 @@ import com.example.caronaapp.utils.functions.senhaContainsMaiuscula
 import com.example.caronaapp.utils.functions.senhaContainsMinuscula
 import com.example.caronaapp.utils.functions.senhaContainsNumero
 import com.example.caronaapp.utils.functions.setPasswordVisibility
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
@@ -142,6 +146,9 @@ class CadastroViewModel(
         }
     }
 
+    private val _state = MutableStateFlow<SignUpState>(SignUpState.Nothing)
+    val state = _state.asStateFlow()
+
     fun onSignUpClick(context: Context) {
         viewModelScope.launch {
             Log.i("cadastro", "Cadastro Dto: ${userCadastroData.value}")
@@ -151,6 +158,44 @@ class CadastroViewModel(
                 val response = usuarioRepository.post(userCadastroData.value)
 
                 if (response.isSuccessful) {
+                    _state.value = SignUpState.Loading
+
+                    val auth = FirebaseAuth.getInstance()
+                    val firestore = FirebaseFirestore.getInstance()
+
+                    auth.createUserWithEmailAndPassword(userCadastroData.value.email, userCadastroData.value.senha)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                task.result.user?.let { user ->
+                                    user.updateProfile(userProfileChangeRequest {
+                                        displayName = userCadastroData.value.nome
+                                    }).addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            val userData = mapOf(
+                                                "userId" to user.uid,
+                                                "nome" to userCadastroData.value.nome,
+                                                "email" to userCadastroData.value.email,
+                                                "status" to "offline",
+                                                "fotoUrl" to userCadastroData.value.fotoUrl,
+                                                "perfil" to userCadastroData.value.perfil
+                                            )
+                                            firestore.collection("users")
+                                                .document(user.uid)
+                                                .set(userData)
+                                                .addOnSuccessListener {
+                                                    _state.value = SignUpState.Success
+                                                }
+                                                .addOnFailureListener {
+                                                    _state.value = SignUpState.Error
+                                                }
+                                        } else {
+                                            _state.value = SignUpState.Error
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                     isSignUpSuccessful.update { true }
                     Log.i("cadastro", "Sucesso ao cadastrar usuário: ${response.body()}")
                 } else {
@@ -291,4 +336,11 @@ class CadastroViewModel(
             )
         }
     }
+}
+
+sealed class SignUpState {
+    object Nothing : SignUpState()
+    object Loading : SignUpState()
+    object Success : SignUpState()
+    object Error : SignUpState()
 }

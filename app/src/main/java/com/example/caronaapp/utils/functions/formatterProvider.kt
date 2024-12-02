@@ -1,8 +1,18 @@
 package com.example.caronaapp.utils.functions
 
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+fun convertTimestampToLocalTime(timestamp: Long): LocalTime {
+    val localTime = Instant.ofEpochMilli(timestamp)
+        .atZone(ZoneId.systemDefault())
+        .toLocalTime()
+    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    return localTime
+}
 
 fun formatDate(date: LocalDate): String {
     return if (date.isEqual(LocalDate.now())) {

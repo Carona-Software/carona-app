@@ -30,12 +30,13 @@ import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.avaliacoes.AvaliacoesScreen
 import com.example.caronaapp.presentation.screens.cadastro.CadastroScreen
 import com.example.caronaapp.presentation.screens.carros.CarrosScreen
-import com.example.caronaapp.presentation.screens.chat.ChatScreen
 import com.example.caronaapp.presentation.screens.chat.ConversaScreen
 import com.example.caronaapp.presentation.screens.detalhes_viagem.DetalhesViagemScreen
 import com.example.caronaapp.presentation.screens.esqueci_senha.EsqueciSenhaCodigoScreen
 import com.example.caronaapp.presentation.screens.esqueci_senha.EsqueciSenhaEmailScreen
 import com.example.caronaapp.presentation.screens.esqueci_senha.RedefinirSenhaScreen
+import com.example.caronaapp.presentation.screens.feature.chat.ChatScreen
+import com.example.caronaapp.presentation.screens.feature.conversas.HomeScreen
 import com.example.caronaapp.presentation.screens.feedback.FeedbackScreen
 import com.example.caronaapp.presentation.screens.fidelizados.FidelizadosScreen
 import com.example.caronaapp.presentation.screens.historico_viagens.HistoricoViagensScreen
@@ -49,6 +50,7 @@ import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOut
 import com.example.caronaapp.presentation.screens.procurar_viagem.ProcurarViagemScreen
 import com.example.caronaapp.presentation.screens.viagens.ViagensScreen
 import com.example.caronaapp.ui.theme.CaronaAppTheme
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,6 +62,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         setContent {
             CaronaAppTheme {
+                val currentUser = FirebaseAuth.getInstance().currentUser
                 val navController = rememberNavController()
                 val dataStoreManager = DataStoreManager(LocalContext.current)
 
@@ -342,11 +345,18 @@ class MainActivity : ComponentActivity() {
                         val userId = entry.arguments?.getInt("id") ?: 0
                         PerfilOutroUsuarioScreen(navController, userId)
                     }
+
                     composable("chat") {
-                        ChatScreen(navController)
+                        HomeScreen(navController = navController)
                     }
+
                     composable(
-                        route = "chat/conversa",
+                        "chat/{chatId}/{userBName}/{fotoUrl}",
+                        arguments = listOf(
+                            navArgument("chatId") { type = NavType.StringType },
+                            navArgument("userBName") { type = NavType.StringType },
+                            navArgument("fotoUrl") { type = NavType.StringType }
+                        ),
                         enterTransition = {
                             slideIntoContainer(
                                 animationSpec = tween(500, easing = Ease),
@@ -359,9 +369,18 @@ class MainActivity : ComponentActivity() {
                                 towards = AnimatedContentTransitionScope.SlideDirection.Right
                             )
                         }
-                    ) {
-                        ConversaScreen(navController)
+                    ) { backStackEntry ->
+                        val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+                        val userBName = backStackEntry.arguments?.getString("userBName") ?: ""
+                        val fotoUrl = backStackEntry.arguments?.getString("fotoUrl") ?: ""
+                        ChatScreen(
+                            navController = navController,
+                            fotoUrl = fotoUrl,
+                            chatId = chatId,
+                            userBName = userBName
+                        )
                     }
+
                     composable(
                         route = "feedback/{viagem_id}/{usuario_id}",
                         arguments = listOf(

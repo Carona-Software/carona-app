@@ -2,11 +2,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.dagger.hilt)
+    id("com.google.gms.google-services")
+    kotlin("kapt")
 }
 
 android {
     namespace = "com.example.caronaapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.caronaapp"
@@ -91,6 +94,7 @@ dependencies {
 
     // DateTime Picker Dialog
     implementation(libs.datetime)
+    implementation(libs.firebase.firestore.ktx)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Coil Compose para Imagens
@@ -125,4 +129,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //Firebase
+    implementation(libs.dagger.hilt.android)
+    implementation(libs.firebase.crashlytics.buildtools)
+    kapt(libs.dagger.hilt.compiler)
+    implementation(libs.dagger.hilt.compose)
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-messaging")
 }
