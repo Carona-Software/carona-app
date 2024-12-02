@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098773949552",
+    "project_id": "carona-chat",
+    "storage_bucket": "carona-chat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098773949552:android:2c7afdd56861682ff658b5",
+        "android_client_info": {
+          "package_name": "com.example.caronaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8KO0v0bpR0QeLDhmx_GoCS15jlMBsM_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

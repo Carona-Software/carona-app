@@ -35,6 +35,12 @@ runtimeLivedata = "1.7.4"
 secretsGradlePlugin = "2.0.1"
 uiTextGoogleFonts = "1.7.0"
 material = "1.12.0"
+firebaseFirestoreKtx = "25.1.1"
+dagger-hilt ="2.51"
+firebaseCrashlyticsBuildtools = "2.9.9"
+hilt-compose = "1.2.0"
+material3Android = "1.2.1"
+coil = "2.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,8 +85,19 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+dagger-hilt-android = {module ="com.google.dagger:hilt-android", version.ref = "dagger-hilt"}
+dagger-hilt-compiler = {module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt"}
+dagger-hilt-compose  = {module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-compose"}
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+
+
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 
