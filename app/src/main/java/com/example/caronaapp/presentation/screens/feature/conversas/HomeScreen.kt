@@ -51,12 +51,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.data.dto.chat.ChatItem
 import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.presentation.screens.feature.chat.ChatViewModel
+import com.example.caronaapp.presentation.view_models.PerfilOutroUsuarioViewModel
 import com.example.caronaapp.ui.theme.Azul
 import com.example.caronaapp.ui.theme.CaronaAppTheme
 import com.example.caronaapp.ui.theme.Cinza90
 import com.example.caronaapp.ui.theme.CinzaE8
 import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.utils.layout.BottomNavBar
+import com.example.caronaapp.utils.layout.CustomAsyncImage
+import com.example.caronaapp.utils.layout.CustomDefaultImage
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -66,10 +69,13 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(navController: NavController) {
     val sheetState = rememberModalBottomSheetState()
 
+
     val viewModel = koinViewModel<HomeViewModel>()
     val chatViewModel = koinViewModel<ChatViewModel>()
+
     val searchedUsers by viewModel.searchedUsers.collectAsState()
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
+
     val chatItems by chatViewModel.chatList.collectAsState()
     val perfilUser by viewModel.perfilUser.collectAsState()
 
@@ -137,6 +143,9 @@ fun ChatListScreen(chatItems: List<ChatItem>, navController: NavController) {
 
 @Composable
 fun ChatListItem(chatItem: ChatItem, navController: NavController) {
+    val perfilOutroUsuarioViewModel = koinViewModel<PerfilOutroUsuarioViewModel>()
+    val state by perfilOutroUsuarioViewModel.searchedUser.collectAsState()
+
     val chatViewModel = koinViewModel<ChatViewModel>()
     Column {
         Row(modifier = Modifier.padding(horizontal = 20.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -146,22 +155,35 @@ fun ChatListItem(chatItem: ChatItem, navController: NavController) {
                     .padding(vertical = 12.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .clickable {
-                        navController.navigate("chat/${chatItem.chatId}/${Uri.encode(chatItem.userName)}/${chatItem.fotoUrl}")
+                        navController.navigate(
+                            "chat/${chatItem.chatId}/${
+                                Uri.encode(
+                                    chatItem?.userName ?: ""
+                                )
+                            }/${Uri.encode(chatItem?.fotoUrl ?: "")}"
+                        )
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(Azul)
-                ) {
-                    Text(
-                        text = chatItem.userName.firstOrNull()?.uppercase() ?: "",
-                        color = Color.White,
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.align(Alignment.Center)
+                if (chatItem.isFotoValida) {
+                    CustomAsyncImage(
+                        fotoUrl = chatItem.fotoUrl,
+                        modifier = Modifier.size(50.dp)
                     )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .background(Azul)
+                    ) {
+                        Text(
+                            text = chatItem.userName.firstOrNull()?.uppercase() ?: "",
+                            color = Color.White,
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
@@ -279,30 +301,43 @@ fun UserItem(user: UsuarioCriacaoDto, currentUserId: String, navController: NavC
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 20.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
             .clickable {
                 coroutineScope.launch {
-                    chatViewModel.createOrGetChat(currentUserId, user.userId) { chatId ->
-                        navController.navigate("chat/$chatId/${Uri.encode(user.nome)}")
+                    chatViewModel.createOrGetChat(currentUserId=currentUserId, targetUserId = user.userId) { chatId ->
+                        navController.navigate(
+                            "chat/${chatId}/${
+                                Uri.encode(
+                                    user?.nome ?: ""
+                                )
+                            }/${Uri.encode(user?.fotoUrl ?: "")}"
+                        )
                     }
                 }
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(Azul)
-        ) {
-            Text(
-                text = user.nome.firstOrNull()?.uppercase() ?: "",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.align(Alignment.Center)
+        if (user.isFotoValida) {
+            CustomAsyncImage(
+                fotoUrl = user.fotoUrl,
+                modifier = Modifier.size(50.dp)
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(Azul)
+            ) {
+                Text(
+                    text = user.nome.firstOrNull()?.uppercase() ?: "",
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
 
         Column(modifier = Modifier.padding(horizontal = 8.dp)) {

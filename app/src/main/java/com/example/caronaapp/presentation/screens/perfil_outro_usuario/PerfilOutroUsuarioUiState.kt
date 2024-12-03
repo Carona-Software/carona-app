@@ -6,6 +6,7 @@ import com.example.caronaapp.presentation.screens.meu_perfil.AvaliacoesCriterioU
 data class PerfilOutroUsuarioUiState (
     val isLoadingScreen: Boolean = true,
     val perfilUser: String = "",
+    val currentFirebaseUser: String = "",
     val userData: UsuarioDetalhesListagemDto? = null,
     val isSuccessful: Boolean = false,
     val isError: Boolean = false,

@@ -1,5 +1,6 @@
 package com.example.caronaapp.presentation.screens.feature.chat
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +55,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatScreen(navController: NavController, fotoUrl: String, chatId: String, userBName: String) {
-    Scaffold {
+    Scaffold(
+        modifier = Modifier.background(Color.White)
+    ) {
         val viewModel: ChatViewModel = koinViewModel()
         val messages = viewModel.messages.collectAsState()
 
@@ -70,9 +73,10 @@ fun ChatScreen(navController: NavController, fotoUrl: String, chatId: String, us
             TopBarUser(
                 navController = navController,
                 fotoUrl = fotoUrl,
-                isUrlFotoValida = false,
+                isUrlFotoValida = true,
                 nome = userBName
             )
+            Log.i("ChatScreen", "Foto do usuario: ${fotoUrl}")
             HorizontalDivider(
                 modifier = Modifier,
                 color = CinzaE8,
@@ -101,6 +105,7 @@ fun ChatMessages(
     var msg = remember { mutableStateOf("") }
 
     Scaffold(
+        modifier = Modifier.background(Color.White),
         bottomBar = {
             Column(
                 modifier = Modifier
@@ -117,6 +122,7 @@ fun ChatMessages(
                 Row(
                     modifier = Modifier
                         .padding(16.dp)
+                        .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(CinzaF5),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -175,6 +181,7 @@ fun ChatMessages(
         ) {
             LazyColumn(
                 modifier = Modifier
+                    .background(Color.White)
                     .weight(1f)
                     .padding(top = 8.dp)
                     .fillMaxWidth()

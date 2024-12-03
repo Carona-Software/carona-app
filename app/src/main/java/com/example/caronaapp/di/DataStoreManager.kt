@@ -18,6 +18,7 @@ class DataStoreManager(private val context: Context) {
     private val ID_USER = intPreferencesKey("idUser")
     private val PERFIL_USER = stringPreferencesKey("perfilUser")
     private val GENERO_USER = stringPreferencesKey("generoUser")
+    private val TOKEN_FIREBASE_USER = stringPreferencesKey("tokenFirebaseUser")
 
     // Gravação
     suspend fun setOnboardingDone() {
@@ -44,6 +45,12 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
+    suspend fun setTokenFirebaseUser(token: String) {
+        context.dataStore.edit { preferences ->
+            preferences[TOKEN_FIREBASE_USER] = token
+        }
+    }
+
     // Leitura
     private val idUserFlow: Flow<Int?> = context.dataStore.data.map { preferences ->
         preferences[ID_USER]
@@ -61,6 +68,10 @@ class DataStoreManager(private val context: Context) {
         preferences[ONBOARDING_DONE]
     }
 
+    private val tokenFirebaseUserFlow: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[TOKEN_FIREBASE_USER]
+    }
+
     suspend fun getIdUser(): Int? {
         return idUserFlow.first()
     }
@@ -75,6 +86,10 @@ class DataStoreManager(private val context: Context) {
 
     suspend fun getOnboardingState(): Boolean? {
         return onboardingDoneFlow.first()
+    }
+
+    suspend fun getTokenFirebaseUser(): String? {
+        return tokenFirebaseUserFlow.first()
     }
 
     // Limpar

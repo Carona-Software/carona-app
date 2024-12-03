@@ -43,6 +43,8 @@ class LoginViewModel(
                             if (task.isSuccessful) {
                                 task.result.user?.let {
                                     _state.value = SignInState.Success
+                                    val idUser = FirebaseAuth.getInstance().currentUser?.uid
+                                    Log.i("firebaseLogin", "login sucesso -> Token firebase: ${idUser}")
                                     return@addOnCompleteListener
                                 }
                                 _state.value = SignInState.Error
@@ -51,6 +53,7 @@ class LoginViewModel(
                             }
                         }
 
+                    dataStoreManager.setTokenFirebaseUser(FirebaseAuth.getInstance().currentUser!!.uid)
                     Log.i("login", "Login realizado com sucesso: ${response.body()}")
                     isLoginSuccessful.update { true }
 
@@ -66,6 +69,7 @@ class LoginViewModel(
                     Log.i("dataStore", "IdUser: ${dataStoreManager.getIdUser()}")
                     Log.i("dataStore", "PerfilUser: ${dataStoreManager.getPerfilUser()}")
                     Log.i("dataStore", "GeneroUser: ${dataStoreManager.getGeneroUser()}")
+                    Log.i("dataStore", "TokenFirebaseUser: ${dataStoreManager.getTokenFirebaseUser()}")
                 } else {
                     Log.e("login", "Erro ao realizar login: ${response.errorBody()}")
                     isError.update { true }

@@ -42,6 +42,7 @@ class HomeViewModel(private val dataStoreManager: DataStoreManager) : ViewModel(
                             document.toObject(UsuarioCriacaoDto::class.java)
                         }
                         _searchedUsers.value = users
+                        Log.i("HomeViewModel", "Retorno searchedUsers: ${_searchedUsers.value}")
                     }
                     .addOnFailureListener { exception ->
                         _searchedUsers.value = emptyList()
