@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.caronaapp.data.dto.feedback.FeedbackListagemDto
 import com.example.caronaapp.data.dto.solicitacao.SolicitacaoFidelizacaoCriacaoDto
+import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.data.dto.usuario.UsuarioDetalhesListagemDto
 import com.example.caronaapp.data.repositories.CaronaRepositoryImpl
 import com.example.caronaapp.data.repositories.FidelizacaoRepositoryImpl
@@ -14,12 +15,15 @@ import com.example.caronaapp.di.DataStoreManager
 import com.example.caronaapp.presentation.screens.perfil_outro_usuario.PerfilOutroUsuarioUiState
 import com.example.caronaapp.utils.functions.calculateCriteriosFeedback
 import com.example.caronaapp.utils.functions.isUrlFotoUserValida
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class PerfilOutroUsuarioViewModel(
@@ -31,17 +35,89 @@ class PerfilOutroUsuarioViewModel(
 ) : ViewModel() {
 
     val state = MutableStateFlow(PerfilOutroUsuarioUiState())
+    private val db = FirebaseFirestore.getInstance()
+
+    private val _searchedUser = MutableStateFlow(UsuarioCriacaoDto())
+    val searchedUser: StateFlow<UsuarioCriacaoDto> = _searchedUser
+
+    suspend fun createOrGetChat(
+        currentUserId: String,
+        targetUserId: String,
+        onChatReady: (String) -> Unit
+    ) {
+        if (currentUserId.isBlank() || targetUserId.isBlank()) {
+            Log.e(
+                "ChatViewModel",
+                "IDs de usuário inválidos: currentUserId=$currentUserId, targetUserId=$targetUserId"
+            )
+            return
+        }
+
+        val sortedIds = listOf(currentUserId, targetUserId).sorted()
+        val chatId = sortedIds.joinToString("_")
+
+        val chatRef = db.collection("chats").document(chatId)
+
+        try {
+            val snapshot = chatRef.get().await()
+            if (snapshot.exists()) {
+                onChatReady(chatId)
+                Log.i("PerfilOutroUsuarioVIewModel", "chatId: ${chatId}")
+            } else {
+                // Criar novo chat
+                val chatData = mapOf(
+                    "participants" to sortedIds,
+                    "timestamp" to System.currentTimeMillis()
+                )
+                chatRef.set(chatData).await()
+                chatRef.get().await()
+                onChatReady(chatId)
+
+            }
+        } catch (e: Exception) {
+
+            Log.e("PerfilOutroUsuarioVIewModel", "Erro ao buscar/criar chat: ${e.message}")
+        }
+    }
+
+    fun searchUser(query: String) {
+        viewModelScope.launch {
+            if (query.isNotBlank()) {
+                db.collection("users")
+                    .whereGreaterThanOrEqualTo("nome", query)
+                    .whereLessThanOrEqualTo("nome", query + "\uf8ff")
+                    .get()
+                    .addOnSuccessListener { snapshot ->
+                        val users = snapshot.documents.mapNotNull { document ->
+                            document.toObject(UsuarioCriacaoDto::class.java)
+                        }
+                        _searchedUser.value = users.first()
+                        Log.i("PerfilOutroUsuarioVIewModel", "Retorno searchedUser: ${_searchedUser.value}")
+                    }
+                    .addOnFailureListener { exception ->
+                        _searchedUser.value
+                        Log.e("PerfilOutroUsuarioVIewModel", "Erro ao buscar usuários: ${exception.message}")
+                    }
+            } else {
+                _searchedUser.value
+            }
+        }
+    }
 
     fun getDetalhesUsuario(id: Int) {
         viewModelScope.launch {
             try {
                 state.update {
-                    it.copy(perfilUser = dataStoreManager.getPerfilUser() ?: "")
+                    it.copy(
+                        perfilUser = dataStoreManager.getPerfilUser() ?: "",
+                        currentFirebaseUser = dataStoreManager.getTokenFirebaseUser() ?: ""
+                    )
                 }
 
                 val response = usuarioRepository.findById(id)
 
                 if (response.isSuccessful) {
+                    searchUser(response.body()?.nome ?: "")
                     state.update {
                         it.copy(
                             userData = setUserDataComAvaliacoesVerificadas(response.body()!!),

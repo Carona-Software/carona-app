@@ -11,6 +11,7 @@ data class ChatItem(
     val chatId: String,
     val userName: String,
     val fotoUrl: String,
+    val isFotoValida: Boolean = true,
     val lastMessage: String,
     val lastMessageTime: Long,
     val isUnread: Boolean

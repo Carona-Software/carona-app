@@ -131,7 +131,6 @@ class ChatViewModel : ViewModel() {
         try {
             val snapshot = chatRef.get().await()
             if (snapshot.exists()) {
-                // Chat já existe
                 onChatReady(chatId)
             } else {
                 // Criar novo chat
@@ -140,6 +139,7 @@ class ChatViewModel : ViewModel() {
                     "timestamp" to System.currentTimeMillis()
                 )
                 chatRef.set(chatData).await()
+                chatRef.get().await()
                 onChatReady(chatId)
             }
         } catch (e: Exception) {
@@ -176,6 +176,7 @@ class ChatViewModel : ViewModel() {
                 val userData = document.toObject(UsuarioCriacaoDto::class.java)
                 if (userData != null) {
                     onResult(userData)
+                    Log.i("ChatViewModel", "userData infos: ${userData}")
                 }
             }
             .addOnFailureListener { exception ->
@@ -202,7 +203,7 @@ class ChatViewModel : ViewModel() {
                 snapshot?.documents?.forEach { document ->
                     val participants = document.get("participants") as? List<String> ?: return@forEach
                     val lastMessage = document.getString("lastMessage") ?: ""
-                    val isRead = document.getBoolean("${currentUserId}_read") ?: true // Supondo que você armazena quem leu
+                    val isRead = document.getBoolean("${currentUserId}_read") ?: true
                     val chatId = document.id
                     val fotoUrl = document.getString("fotoUrl") ?: ""
                     val otherUserId = participants.firstOrNull { it != currentUserId } ?: ""
@@ -213,10 +214,11 @@ class ChatViewModel : ViewModel() {
                             ChatItem(
                                 chatId = chatId,
                                 userName = userData.nome,
-                                fotoUrl = fotoUrl?: "",
+                                fotoUrl = userData.fotoUrl,
                                 lastMessage = lastMessage,
                                 lastMessageTime = lastMessageTime,
-                                isUnread = !isRead // Indicador de mensagem não lida
+                                isFotoValida = true,
+                                isUnread = !isRead
                             )
                         )
 

@@ -1,5 +1,7 @@
 package com.example.caronaapp.presentation.screens.perfil_outro_usuario
 
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.caronaapp.R
+import com.example.caronaapp.presentation.screens.feature.chat.ChatViewModel
 import com.example.caronaapp.presentation.view_models.PerfilOutroUsuarioViewModel
 import com.example.caronaapp.ui.theme.Amarelo
 import com.example.caronaapp.ui.theme.Azul
@@ -54,6 +58,7 @@ import com.example.caronaapp.utils.layout.LoadingScreen
 import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.example.caronaapp.utils.layout.TopBarUser
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 
@@ -66,6 +71,7 @@ fun PerfilOutroUsuarioScreen(
     val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val searchedUser by viewModel.searchedUser.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getDetalhesUsuario(id)
@@ -302,8 +308,30 @@ fun PerfilOutroUsuarioScreen(
                                         }
                                         Spacer(modifier = Modifier.height(16.dp))
                                     }
+                                    val coroutineScope = rememberCoroutineScope()
+                                    val chatViewModel = koinViewModel<ChatViewModel>()
 
-                                    ButtonAction(label = stringResource(id = R.string.label_button_conversar)) {}
+                                    ButtonAction(label = stringResource(id = R.string.label_button_conversar)) {
+                                        coroutineScope.launch {
+                                            chatViewModel.createOrGetChat(
+                                                currentUserId = state.currentFirebaseUser,
+                                                targetUserId = searchedUser?.userId ?: ""
+                                            ) { chatId ->
+                                                Log.d(
+                                                    "createOrGetChat",
+                                                    "IDs recebidos: currentUserId=${state.currentFirebaseUser}, targetUserId=${searchedUser.userId}"
+                                                )
+                                                Log.d("createOrGetChat", "chatId gerado: $chatId")
+                                                navController.navigate(
+                                                    "chat/$chatId/${
+                                                        Uri.encode(
+                                                            searchedUser?.nome ?: ""
+                                                        )
+                                                    }/${Uri.encode(searchedUser?.fotoUrl ?: "")}"
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
 

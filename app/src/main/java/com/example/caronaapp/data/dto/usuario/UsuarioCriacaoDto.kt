@@ -4,6 +4,7 @@ import com.example.caronaapp.data.dto.endereco.EnderecoCriacaoDto
 
 data class UsuarioCriacaoDto(
     val userId: String = "",
+    var isFotoValida: Boolean = true,
     var nome: String = "",
     var email: String = "",
     var senha: String = "",
