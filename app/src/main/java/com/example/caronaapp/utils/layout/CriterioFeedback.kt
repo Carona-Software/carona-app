@@ -42,7 +42,10 @@ fun CriterioFeedback(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = if (notaMedia == 0.0) "" else "($notaMedia)",
+                text = if (notaMedia == 0.0) "" else stringResource(
+                    id = R.string.nota_media,
+                    notaMedia
+                ),
                 color = Cinza90,
                 style = MaterialTheme.typography.displayLarge
             )

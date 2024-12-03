@@ -43,11 +43,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.caronaapp.R
 import com.example.caronaapp.data.dto.chat.ChatItem
 import com.example.caronaapp.data.dto.usuario.UsuarioCriacaoDto
 import com.example.caronaapp.presentation.screens.feature.chat.ChatViewModel
@@ -60,6 +62,7 @@ import com.example.caronaapp.ui.theme.CinzaF5
 import com.example.caronaapp.utils.layout.BottomNavBar
 import com.example.caronaapp.utils.layout.CustomAsyncImage
 import com.example.caronaapp.utils.layout.CustomDefaultImage
+import com.example.caronaapp.utils.layout.NoResultsComponent
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -134,9 +137,13 @@ fun HomeScreen(navController: NavController) {
 }
 @Composable
 fun ChatListScreen(chatItems: List<ChatItem>, navController: NavController) {
-    LazyColumn {
-        items(chatItems) { chatItem ->
-            ChatListItem(chatItem = chatItem, navController = navController)
+    if (chatItems.isEmpty()) {
+        NoResultsComponent(text = stringResource(id = R.string.nenhuma_conversa_encontrada))
+    } else {
+        LazyColumn {
+            items(chatItems) { chatItem ->
+                ChatListItem(chatItem = chatItem, navController = navController)
+            }
         }
     }
 }
@@ -306,7 +313,10 @@ fun UserItem(user: UsuarioCriacaoDto, currentUserId: String, navController: NavC
             .background(Color.White)
             .clickable {
                 coroutineScope.launch {
-                    chatViewModel.createOrGetChat(currentUserId=currentUserId, targetUserId = user.userId) { chatId ->
+                    chatViewModel.createOrGetChat(
+                        currentUserId = currentUserId,
+                        targetUserId = user.userId
+                    ) { chatId ->
                         navController.navigate(
                             "chat/${chatId}/${
                                 Uri.encode(

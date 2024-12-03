@@ -217,36 +217,36 @@ fun PerfilOutroUsuarioScreen(
                                 thickness = 8.dp
                             )
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Localizacao,
-                                    contentDescription = "Localização",
-                                    tint = Azul,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = stringResource(
-                                        id = R.string.viagem_cidade_uf,
-                                        state.userData!!.endereco.cidade,
-                                        state.userData!!.endereco.uf
-                                    ),
-                                    color = Azul,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    modifier = Modifier.fillMaxWidth(0.92f)
-                                )
-                            }
-
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .padding(vertical = 24.dp)
-                                    .scale(1.2f),
-                                color = CinzaE8,
-                                thickness = 8.dp
-                            )
+//                            Row(
+//                                modifier = Modifier.fillMaxWidth(),
+//                                verticalAlignment = Alignment.CenterVertically
+//                            ) {
+//                                Icon(
+//                                    imageVector = Localizacao,
+//                                    contentDescription = "Localização",
+//                                    tint = Azul,
+//                                    modifier = Modifier.size(28.dp)
+//                                )
+//                                Spacer(modifier = Modifier.width(16.dp))
+//                                Text(
+//                                    text = stringResource(
+//                                        id = R.string.viagem_cidade_uf,
+//                                        state.userData!!.endereco.cidade,
+//                                        state.userData!!.endereco.uf
+//                                    ),
+//                                    color = Azul,
+//                                    style = MaterialTheme.typography.labelLarge,
+//                                    modifier = Modifier.fillMaxWidth(0.92f)
+//                                )
+//                            }
+//
+//                            HorizontalDivider(
+//                                modifier = Modifier
+//                                    .padding(vertical = 24.dp)
+//                                    .scale(1.2f),
+//                                color = CinzaE8,
+//                                thickness = 8.dp
+//                            )
 
                             Column(
                                 modifier = Modifier.fillMaxWidth()

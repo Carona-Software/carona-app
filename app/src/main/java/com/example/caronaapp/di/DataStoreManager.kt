@@ -98,6 +98,7 @@ class DataStoreManager(private val context: Context) {
             preferences[ID_USER] = 0
             preferences[PERFIL_USER] = ""
             preferences[GENERO_USER] = ""
+            preferences[TOKEN_FIREBASE_USER] = ""
         }
     }
 }
