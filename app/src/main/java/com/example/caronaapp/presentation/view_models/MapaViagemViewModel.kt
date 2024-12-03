@@ -211,19 +211,19 @@ class MapaViagemViewModel(
         whitePaint.isAntiAlias = true
         whitePaint.color = Color.parseColor("#E6AD47")
         whitePaint.style = Paint.Style.STROKE
-        whitePaint.strokeWidth = 80f
-        canvas.drawCircle(circleRadius, circleRadius, circleRadius - 80f / 2, whitePaint)
+        whitePaint.strokeWidth = 30f
+        canvas.drawCircle(circleRadius, circleRadius, circleRadius - 30f / 2, whitePaint)
 
         // Desenhar a borda ao redor
         val borderPaint = Paint()
         borderPaint.isAntiAlias = true
         borderPaint.color = whiteColor
         borderPaint.style = Paint.Style.STROKE
-        borderPaint.strokeWidth = 60f
+        borderPaint.strokeWidth = 15f
         canvas.drawCircle(
             circleRadius,
             circleRadius,
-            circleRadius - 80f - 60f / 2,
+            circleRadius - 30f - 15f / 2,
             borderPaint
         )
 

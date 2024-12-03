@@ -94,17 +94,19 @@ fun FeedbackScreen(
 
     Scaffold(
         bottomBar = {
-            Column {
-                HorizontalDivider(color = CinzaE8, thickness = 1.dp)
-                Row(
-                    modifier = Modifier
-                        .background(Color.White)
-                        .padding(horizontal = 20.dp, vertical = 16.dp)
-                ) {
-                    ButtonAction(
-                        label = stringResource(id = R.string.label_button_avaliar),
-                        handleClick = { viewModel.saveFeedback() }
-                    )
+            if (usuarioAvaliado != null) {
+                Column {
+                    HorizontalDivider(color = CinzaE8, thickness = 1.dp)
+                    Row(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .padding(horizontal = 20.dp, vertical = 16.dp)
+                    ) {
+                        ButtonAction(
+                            label = stringResource(id = R.string.label_button_avaliar),
+                            handleClick = { viewModel.saveFeedback() }
+                        )
+                    }
                 }
             }
         }
@@ -124,7 +126,10 @@ fun FeedbackScreen(
                     LoadingScreen()
                 } else {
                     if (usuarioAvaliado == null) {
-                        NoResultsComponent(text = stringResource(id = R.string.sem_conteudo_perfil_feedback))
+                        NoResultsComponent(
+                            modifier = Modifier.fillMaxSize().background(Color.White),
+                            text = stringResource(id = R.string.sem_conteudo_perfil_feedback)
+                        )
                     } else {
                         Column(
                             modifier = Modifier

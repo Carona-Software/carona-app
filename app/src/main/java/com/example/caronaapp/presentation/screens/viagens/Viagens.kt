@@ -106,7 +106,7 @@ fun ViagensScreen(
     val isLoadingScreen by viewModel.isLoadingScreen.collectAsState()
     val viagens by viewModel.viagens.collectAsState()
     val state by viewModel.state.collectAsState()
-    val perfilUser by viewModel.perfilUser.collectAsState()
+    val generoUser by viewModel.generoUser.collectAsState()
 
     val sheetState = rememberModalBottomSheetState()
 
@@ -348,7 +348,7 @@ fun ViagensScreen(
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // Apenas Mulheres
-                        if (perfilUser.uppercase() == "FEMININO") {
+                        if (generoUser.uppercase() == "FEMININO") {
                             ApenasMulheresSwitch(
                                 checked = state.apenasMulheres,
                                 onCheckedChange = {

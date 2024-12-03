@@ -27,14 +27,14 @@ class ViagensViewModel(
 
     val isLoadingScreen = MutableStateFlow(true)
     val idUser = MutableStateFlow(0)
-    val perfilUser = MutableStateFlow("")
+    val generoUser = MutableStateFlow("")
     private val viagemProcuraDto = MutableStateFlow(ViagemProcuraDto())
     val viagens = MutableStateFlow<List<ViagemListagemDto>?>(null)
     val state = MutableStateFlow(ViagensState())
 
     init {
         viewModelScope.launch {
-            perfilUser.update { dataStoreManager.getPerfilUser() ?: "" }
+            generoUser.update { dataStoreManager.getGeneroUser() ?: "" }
             idUser.update { dataStoreManager.getIdUser() ?: 0 }
         }
     }
@@ -91,12 +91,15 @@ class ViagensViewModel(
                             )
                         }
                         viagens.update { viagensComDistancia }
+                    } else {
+                        viagens.update { null }
                     }
                 } else {
                     Log.e(
                         "procurarViagem",
                         "Erro ao buscar viagens: ${response.errorBody()}"
                     )
+                    viagens.update { null }
                 }
             } catch (e: Exception) {
                 Log.e(
